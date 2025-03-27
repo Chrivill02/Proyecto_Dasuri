@@ -2,12 +2,52 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <link rel="stylesheet" href="/styles.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Catálogo de Productos</title>
+  <title>Ventas de productos</title>
   <style>
     body {
+      background-color: #DCD0FF; /* Color lila de fondo */
       font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
     }
+
+    /* Barra de navegación */
+    .navbar {
+      background-color: #DCD0FF; /* Color lila para la barra */
+      padding: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      border-radius: 5px;
+    }
+    .navbar a {
+      text-decoration: none;
+      color: #333;
+      padding: 10px 20px;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+    .navbar a:hover {
+      background-color: #BFA6FF; /* Lila más oscuro al pasar el mouse */
+    }
+
+    /* Estilos adicionales */
+    .header-text {
+      text-align: center;
+      font-size: 30px;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+
+    .sub-header {
+      text-align: center;
+      font-size: 20px;
+      color: #333;
+      margin-top: 20px;
+    }
+
     .producto {
       margin: 20px;
       padding: 10px;
@@ -18,14 +58,141 @@
     .producto h3 {
       margin: 0;
     }
+
+    .btn-lila {
+      background-color: #DCD0FF;
+      color: #333;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn-lila:hover {
+      background-color: #BFA6FF; /* Lila más oscuro al pasar el mouse */
+    }
+
+    .card {
+      background: white;
+      border: 2px solid #DCD0FF;
+      padding: 20px;
+      width: 300px;
+      border-radius: 10px;
+      box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Estilos para el menú hamburguesa */
+    .hamburger {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    .hamburger div {
+      width: 30px;
+      height: 4px;
+      background-color: #333;
+      transition: all 0.3s ease;
+    }
+
+    /* Menú desplegable */
+    .menu {
+      display: none;
+      flex-direction: column;
+      position: absolute;
+      top: 50px;
+      right: 20px;
+      background-color: #DCD0FF;
+      border-radius: 5px;
+      padding: 10px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .menu a {
+      padding: 10px;
+      text-decoration: none;
+      color: #333;
+      font-size: 16px;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .menu a:hover {
+      background-color: #BFA6FF;
+    }
+
+    /* Estilos para cuando el menú está abierto */
+    .menu.open {
+      display: flex;
+    }
+
+    .hamburger.open div:nth-child(1) {
+      transform: rotate(45deg);
+      position: relative;
+      top: 8px;
+    }
+
+    .hamburger.open div:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.open div:nth-child(3) {
+      transform: rotate(-45deg);
+      position: relative;
+      top: -8px;
+    }
   </style>
 </head>
 <body>
+  <!-- Título "Dashuri" arriba de la barra -->
+  <div class="header-text">Dashuri</div>
+  <!-- Título "Make up" debajo de la barra -->
+  <div class="sub-header">Make up</div>
+  <!-- Barra de navegación -->
+  <div class="navbar">
+    <a href="#">Maquillaje</a>
+    <a href="#">Servicios</a>
+    <a href="#">Log in</a>
+  </div>
 
-  <h1>Modulo de ventas (Reservas)</h1>
+
+
+
   <div id="productos"></div>
+  <button class="btn-lila">Reservar</button>
+  <div class="card">
+    <h2>Reserva tu cita</h2>
+    <p>Selecciona un servicio y elige tu horario.</p>
+  </div>
+
+  <!-- Menú hamburguesa -->
+  <div class="hamburger" onclick="toggleMenu()">
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+
+  <!-- Menú desplegable -->
+  <div class="menu">
+    <a href="#">Ventas</a>
+    <a href="#">Compras</a>
+  </div>
 
   <script>
+    // Función para abrir y cerrar el menú hamburguesa
+    function toggleMenu() {
+      const menu = document.querySelector('.menu');
+      const hamburger = document.querySelector('.hamburger');
+      menu.classList.toggle('open');
+      hamburger.classList.toggle('open');
+    }
+
     // Fetch de productos desde el servidor
     fetch('/productos')
       .then(response => response.json())
@@ -43,6 +210,5 @@
         });
       });
   </script>
-
 </body>
 </html>
