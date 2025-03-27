@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo de Productos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .producto {
+      margin: 20px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .producto h3 {
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Modulo de ventas (Reservas)</h1>
+  <div id="productos"></div>
+
+  <script>
+    // Fetch de productos desde el servidor
+    fetch('/productos')
+      .then(response => response.json())
+      .then(data => {
+        const productosContainer = document.getElementById('productos');
+        data.forEach(producto => {
+          const productoDiv = document.createElement('div');
+          productoDiv.classList.add('producto');
+          productoDiv.innerHTML = `
+            <h3>${producto.nombre}</h3>
+            <p>${producto.descripcion}</p>
+            <p><strong>Precio: $${producto.precio}</strong></p>
+          `;
+          productosContainer.appendChild(productoDiv);
+        });
+      });
+  </script>
+
+</body>
+</html>

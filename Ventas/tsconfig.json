@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",           // Carpeta donde se guardarán los archivos compilados
+    "rootDir": "./",              // Carpeta raíz de Ventas, ya que los archivos TypeScript están dentro de subcarpetas
+    "target": "es6",              // O la versión de ECMAScript que prefieras
+    "module": "commonjs",         // Para trabajar con módulos comunes
+    "strict": true,               // Habilitar todas las verificaciones estrictas
+    "esModuleInterop": true,      // Para compatibilidad con módulos CommonJS
+    "skipLibCheck": true,         // Omite la comprobación de las definiciones de librerías
+    "forceConsistentCasingInFileNames": true // Fuerza el uso consistente de mayúsculas/minúsculas en nombres de archivo
+  },
+  "include": [
+    "models/**/*.ts",   // Incluye todos los archivos .ts dentro de la carpeta 'models'
+    "routes/**/*.ts",   // Incluye todos los archivos .ts dentro de la carpeta 'routes'
+    "index.ts"          // Incluye el archivo index.ts
+  ],
+  "exclude": [
+    "node_modules"      // Excluye la carpeta node_modules
+  ]
+}
