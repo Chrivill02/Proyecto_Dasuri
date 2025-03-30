@@ -16,13 +16,12 @@ mysql -u root -p -e "CREATE DATABASE dashuri;"
 #fijarse que se encuentren en la ruta /Proyecto_Dasuri/nextjs-mysql-dashuri y si se mira el path asi en su terminal ejecutar el comando:
 mysql -u root -p dashuri < src/libs/dashuri.sql
 
-# PASO 4: Configurar variables de entorno en el archivo libs -> src/libs archivo mysql.js
-host:'localhost',//dejar de esta manera,
-user: 'usuario',//su usuario de mysql
-password: 'contrasenia',//la contraseña de su mysql
-port: 3306,//el puerto donde lo estan corriendo
-database: 'dashuri'//esto dejarlo asi
-
+# PASO 4: Configurar variables de entorno ver que se encuentren en la ruta /Proyecto_Dasuri/nextjs-mysql-dashuri
+#Recordar que los datos son los de ustedes!!
+echo "DB_HOST=localhost" > .env.local
+echo "DB_USER=root" >> .env.local
+echo "DB_PASSWORD=tu_contraseña" >> .env.local
+echo "DB_NAME=dashuri" >> .env.local
 # PASO 5: Iniciar la aplicación
 npm run dev
 

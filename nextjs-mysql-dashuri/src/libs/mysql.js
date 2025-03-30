@@ -2,10 +2,10 @@ import mysql from 'serverless-mysql'
 
 export const pool = mysql({
 	config:{
-		host:'localhost',
-		user: 'root',//su usuario de mysql
-		password: 'fernando8923',//la contraseña de su mysql
-		port: 3306,//el puerto donde lo estan corriendo
-		database: 'dashuri'//esto dejarlo asi
+		host: process.env.DB_HOST,
+		port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
 	}
 })
