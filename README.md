@@ -14,7 +14,7 @@ npm install
 #Ejecuta esto en tu terminal que nos permite crear la base de datos que se va a usar
 mysql -u root -p -e "CREATE DATABASE dashuri;"
 #fijarse que se encuentren en la ruta /Proyecto_Dasuri/nextjs-mysql-dashuri y si se mira el path asi en su terminal ejecutar el comando:
-mysql -u root -p dashuri < src/libs/dashuri.sql
+
 
 # PASO 4: Configurar variables de entorno ver que se encuentren en la ruta /Proyecto_Dasuri/nextjs-mysql-dashuri
 #Recordar que los datos son los de ustedes!!
