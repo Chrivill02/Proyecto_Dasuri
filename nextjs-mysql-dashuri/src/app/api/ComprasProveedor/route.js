@@ -9,3 +9,8 @@ OJO!!:
 	import { pool } from "@/libs/mysql";
 esta linea nos importa la coneccion a la base de datos por lo que sus datos son diferentes tener en cuanta eso verifiquen el archivo pool y sus valores para la conexion de la base de datos
 */
+
+import { NextResponse } from "next/server";
+export function GET() {
+	return NextResponse.json( {message: "HOLA MUNDOOO"} )
+}
