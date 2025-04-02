@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { pool } from "@/libs/mysql";
 
 export async function GET(){
-	const result = await pool.query('SELECT NOW()')
-	return NextResponse.json({message:result[0]['NOW()']});
+	const result = await pool.query('SHOW TABLES;')
+	return NextResponse.json({message:result});
 }
 
 export function POST(){
