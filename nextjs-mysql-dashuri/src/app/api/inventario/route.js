@@ -19,6 +19,8 @@ export async function POST(request){
 			sub_total,
 			detalles
 		});
+
+		console.log(result);
 		
 		return NextResponse.json({
 			//id: result.insertidcompra,
@@ -29,8 +31,12 @@ export async function POST(request){
 			subtotal,
 			detalles
 		});
+
+
 		
 	} catch (error) {
+		
+		console.log(error)
 		return NextResponse.json(
 			{
 				message : error.message,
