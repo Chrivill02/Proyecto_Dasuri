@@ -11,6 +11,10 @@ esta linea nos importa la coneccion a la base de datos por lo que sus datos son 
 */
 
 import { NextResponse } from "next/server";
-export function GET() {
-	return NextResponse.json( {message: "HOLA MUNDOOO"} )
+import { pool } from "@/libs/mysql";
+
+
+export async function GET() {
+	const result = await pool.query("SELECT NOW()")
+	return NextResponse.json( {message: result[0]["NOW()"]} )
 }

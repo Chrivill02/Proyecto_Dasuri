@@ -519,27 +519,25 @@ COLLATE = utf8mb4_0900_ai_ci;
 DROP TABLE IF EXISTS `dashuri`.`detalles_compra` ;
 
 CREATE TABLE IF NOT EXISTS `dashuri`.`detalles_compra` (
-  `id` INT NOT NULL AUTO_INCREMENT,
+  `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `compra_id` INT NOT NULL,
   `producto_id` INT NOT NULL,
   `cantidad` INT NOT NULL,
   `precio_unitario` DECIMAL(10,2) NOT NULL,
   `sub_total` DECIMAL(10,2) NOT NULL,
   `detalles` TEXT NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
+  
   INDEX `compra_id` (`compra_id` ASC) VISIBLE,
   INDEX `producto_id` (`producto_id` ASC) VISIBLE,
   CONSTRAINT `detalles_compra_ibfk_1`
-    FOREIGN KEY (`compra_id`)
-    REFERENCES `dashuri`.`compra` (`id`)
-    ON DELETE CASCADE,
+    FOREIGN KEY (`compra_id`) REFERENCES `dashuri`.`compra` (`id`) ON DELETE CASCADE,
   CONSTRAINT `detalles_compra_ibfk_2`
-    FOREIGN KEY (`producto_id`)
-    REFERENCES `dashuri`.`producto` (`id`)
-    ON DELETE CASCADE)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+    FOREIGN KEY (`producto_id`) REFERENCES `dashuri`.`producto` (`id`) ON DELETE CASCADE
+);
+ENGINE = InnoDB,
+DEFAULT CHARACTER SET = utf8mb4,
+COLLATE = utf8mb4_0900_ai_ci
+
 
 
 -- -----------------------------------------------------
