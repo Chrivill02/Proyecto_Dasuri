@@ -1,10 +1,58 @@
-function Inventario() {
-	return (
-		<div className="text-center p-10">
-			<h1 className="text-2xl font-bold my-4">pagina inventario</h1>
-			<p className="text-gray-300">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Aspernatur dolorum sint maiores inventore quo doloremque amet culpa harum atque odio unde iusto minus, reprehenderit quaerat fuga esse eius nemo repudiandae quam! Aspernatur iste culpa aperiam? Animi iure quo doloremque et perferendis. Dolores exercitationem magni labore eos eaque ipsum aliquam expedita optio minus pariatur laudantium repudiandae, fugiat reprehenderit culpa, ea ipsam delectus adipisci illo architecto provident eius ex. Illum eius velit, magnam natus iure repellat quibusdam minus. Similique facilis obcaecati autem, maiores est impedit! Officia recusandae exercitationem nisi! Cum qui, magnam quidem vel nam placeat accusantium? Eligendi excepturi laborum laudantium sunt maiores delectus dolorem illo! Fuga, excepturi! Laborum sit ducimus iste dignissimos ab corporis voluptatibus. Quam doloribus itaque ad inventore alias nemo sequi quae magni repudiandae provident repellendus similique recusandae error nihil nostrum ex nulla sed praesentium debitis saepe porro, est voluptate. Repudiandae voluptates enim eaque aperiam quis veniam quae odit, voluptas veritatis fuga dolores corrupti nobis assumenda! Mollitia culpa tempore praesentium accusamus nemo debitis est eveniet odit? Dolores inventore possimus culpa quasi! Neque aliquid sit explicabo minus facilis, esse perspiciatis voluptas dicta eum ab ea animi ad, deserunt necessitatibus excepturi assumenda a ullam atque voluptates, corrupti commodi rem. Numquam, hic.</p>
-		</div>
-	)
+import axios from "axios";
+import Buttons from "./buttons";
+import ButtonAdd from "./buttonAdd";
+
+async function loadProducts() {
+  const { data } = await axios.get("http://localhost:3000/api/inventario");
+  return data;
 }
 
-export default Inventario
+async function ViewInventario() {
+  const products = await loadProducts();
+  return (
+    <div className="relative overflow-x-auto p-9 bg-white mt-9">
+      <ButtonAdd />
+      <table className="w-full text-sm text-left text-black border border-gray-400">
+        <thead className="text-xs uppercase bg-white text-black border-b border-gray-400">
+          <tr>
+            <th scope="col" class="px-6 py-3">
+              Nombre
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Stock
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Precio
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Categoría
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Acciones
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {products.map((product) => (
+            <tr className="bg-white border-b border-gray-400" key={product.id}>
+              <th
+                scope="row"
+                className="px-6 py-4 font-medium text-black whitespace-nowrap"
+              >
+                {product.nombre}
+              </th>
+
+              <td class="px-6 py-4">{product.stock}</td>
+              <td class="px-6 py-4">{product.precio}</td>
+              <td class="px-6 py-4">categoria</td>
+              <Buttons productId={product.id} />
+            </tr>
+          ))}
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200"></tr>
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+export default ViewInventario;

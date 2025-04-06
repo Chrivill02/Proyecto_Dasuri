@@ -22,26 +22,31 @@ export async function GET(request, { params }) {
   }
 }
 
-export async function DELETE(request, { params }) {
+export async function DELETE(request, {params}) {
   try {
-    const result = await pool.query("DELETE FROM producto WHERE id = ?", [
-      params.id,
-    ]);
+    const  id  = params.id;
+
+    const result = await pool.query("DELETE FROM producto WHERE id = ?", [id]);
+
+    if (!id) {
+      return NextResponse.json(
+        { message: "ID no proporcionado" },
+        { status: 400 }
+      );
+    }
+
     if (result.affectedRows === 0) {
       return NextResponse.json(
         { message: "Producto no encontrado" },
         { status: 404 }
       );
     }
-    return NextResponse.json({ message: "Producto eliminado", result: result });
+
+    return NextResponse.json({ message: "Producto eliminado correctamente" });
   } catch (error) {
     return NextResponse.json(
-      {
-        message: error.message,
-      },
-      {
-        status: 500,
-      }
+      { message: error.message },
+      { status: 500 }
     );
   }
 }

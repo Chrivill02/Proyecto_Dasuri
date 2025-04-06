@@ -2,5 +2,5 @@
 
 body {
   @apply bg-gray-950;
-  color: white;
+  color: rgb(0, 0, 0);
 }
