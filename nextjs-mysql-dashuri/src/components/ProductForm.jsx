@@ -1,6 +1,6 @@
 "use client";
-import { useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useRef, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
 import axios from "axios";
 import ButtonCancel from "./buttonCancel";
 
@@ -15,6 +15,7 @@ function ProductForm() {
   });
 
   const form = useRef(null);
+  const params = useParams();
 
   const handleChange = (e) => {
     setProducto({
@@ -22,6 +23,20 @@ function ProductForm() {
       [e.target.name]: e.target.value,
     });
   };
+
+  useEffect(() => {
+    if (params.id) {
+      console.log(params.id)
+      axios.get('/api/inventario/'+params.id).then((res) => {
+        setProducto({
+          nombre: res.data.nombre,
+          stock: res.data.stock,
+          precio: res.data.precio,
+          categoria_id: res.data.categoria_id
+        });
+      });
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,6 +59,7 @@ function ProductForm() {
           type="text"
           placeholder="nombre"
           onChange={handleChange}
+          valur={producto.nombre}
           className="shadow appearence-none border rounded w-full py-2 px-3"
         />
 
@@ -58,6 +74,7 @@ function ProductForm() {
           type="number"
           placeholder="stock"
           onChange={handleChange}
+          value={producto.stock}
           className="shadow appearence-none border rounded w-full py-2 px-3"
         />
 
@@ -74,6 +91,7 @@ function ProductForm() {
           min="0"
           placeholder="00.00"
           onChange={handleChange}
+          valur={producto.precio}
           className="shadow appearence-none border rounded w-full py-2 px-3"
         />
 
@@ -88,6 +106,7 @@ function ProductForm() {
           type="number"
           placeholder="Categoria"
           onChange={handleChange}
+          valur={producto.categoria_id}
           className="shadow appearence-none border rounded w-full py-2 px-3"
         />
 

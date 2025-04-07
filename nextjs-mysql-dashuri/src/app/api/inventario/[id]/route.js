@@ -3,28 +3,34 @@ import { pool } from "@/libs/mysql";
 
 export async function GET(request, { params }) {
   try {
-    const result = await pool.query("SELECT * FROM producto WHERE id = ?", [
-      params.id,
-    ]);
-    if (result.length === 0) {
-      return NextResponse.json({ message: "Producto no encontrado" });
+    
+    const id =await params?.id;
+    console.log(id);
+
+    if (!id) {
+      return NextResponse.json(
+        { message: "ID no proporcionado" },
+        { status: 400 }
+      );
     }
-    return NextResponse.json({ result: result }, { status: 404 });
+
+    const result = await pool.query("SELECT * FROM producto WHERE id = ?", [id]);
+    if (result.length === 0) {
+      return NextResponse.json({ message: "Producto no encontrado" }, { status: 404 });
+    }
+
+    return NextResponse.json({ result }, { status: 200 });
   } catch (error) {
     return NextResponse.json(
-      {
-        message: error.message,
-      },
-      {
-        status: 500,
-      }
+      { message: error.message },
+      { status: 500 }
     );
   }
 }
 
-export async function DELETE(request, {params}) {
+export async function DELETE(request, { params }) {
   try {
-    const  id  = params.id;
+    const id = params.id;
 
     const result = await pool.query("DELETE FROM producto WHERE id = ?", [id]);
 
@@ -44,10 +50,7 @@ export async function DELETE(request, {params}) {
 
     return NextResponse.json({ message: "Producto eliminado correctamente" });
   } catch (error) {
-    return NextResponse.json(
-      { message: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }
 
