@@ -3,7 +3,7 @@ import { pool } from "@/libs/mysql";
 
 export async function GET(){
 	try {
-		const result = await pool.query('SELECT * FROM producto')
+		const result = await pool.query('SELECT p.id, p.nombre, p.stock, p.precio, c.nombre AS categoria_nombre FROM producto p INNER JOIN categoria_producto c ON p.categoria_id = c.id;')
 		return NextResponse.json(result);
 	} catch (error) {
 		console.log(error);	

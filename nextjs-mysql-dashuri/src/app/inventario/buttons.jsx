@@ -5,7 +5,11 @@ function Buttons({ productId }) {
 	const router = useRouter();
   return (
     <td>
-      <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-3 rounded mr-4">
+      <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-3 rounded mr-4"
+      onClick={()=>{
+        router.push('/inventario/edit/' + productId)
+      }} 
+      >
         Actualizar
       </button>
       <button

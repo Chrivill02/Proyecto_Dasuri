@@ -3,7 +3,7 @@ const nextConfig = {
 	async redirects(){
 		return[
 			{
-				source: '/', destination: '/viewInventario',permanent: true,
+				source: '/', destination: '/inventario',permanent: true,
 			}
 		]
 	}

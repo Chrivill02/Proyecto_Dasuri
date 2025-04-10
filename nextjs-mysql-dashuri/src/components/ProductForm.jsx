@@ -5,17 +5,16 @@ import axios from "axios";
 import ButtonCancel from "./buttonCancel";
 
 function ProductForm() {
-  const router = useRouter();
-
   const [producto, setProducto] = useState({
     nombre: "",
-    stock: 0,
-    precio: 0,
-    categoria_id: 0,
+    stock: "",
+    precio: "",
+    categoria_id: "",
   });
 
   const form = useRef(null);
   const params = useParams();
+  const router = useRouter();
 
   const handleChange = (e) => {
     setProducto({
@@ -26,13 +25,12 @@ function ProductForm() {
 
   useEffect(() => {
     if (params.id) {
-      console.log(params.id)
-      axios.get('/api/inventario/'+params.id).then((res) => {
+      axios.get("/api/inventario/" + params.id).then((res) => {
         setProducto({
-          nombre: res.data.nombre,
-          stock: res.data.stock,
-          precio: res.data.precio,
-          categoria_id: res.data.categoria_id
+          nombre: res.data.result[0].nombre,
+          stock: res.data.result[0].stock,
+          precio: res.data.result[0].precio,
+          categoria_id: res.data.result[0].categoria_id,
         });
       });
     }
@@ -40,8 +38,14 @@ function ProductForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await axios.post("/api/inventario", producto);
+
+    if (!params.id) {
+      const res = await axios.post("/api/inventario", producto);
+    } else {
+      await axios.put("/api/inventario/" + params.id, producto);
+    }
     form.current.reset();
+    router.refresh();
     router.push("/inventario");
   };
 
@@ -59,7 +63,8 @@ function ProductForm() {
           type="text"
           placeholder="nombre"
           onChange={handleChange}
-          valur={producto.nombre}
+          value={producto.nombre}
+          required
           className="shadow appearence-none border rounded w-full py-2 px-3"
         />
 
@@ -75,6 +80,7 @@ function ProductForm() {
           placeholder="stock"
           onChange={handleChange}
           value={producto.stock}
+          required
           className="shadow appearence-none border rounded w-full py-2 px-3"
         />
 
@@ -85,13 +91,14 @@ function ProductForm() {
           Precio del producto
         </label>
         <input
+          required
           name="precio"
           type="number"
           step="0.01"
           min="0"
           placeholder="00.00"
           onChange={handleChange}
-          valur={producto.precio}
+          value={producto.precio}
           className="shadow appearence-none border rounded w-full py-2 px-3"
         />
 
@@ -106,12 +113,13 @@ function ProductForm() {
           type="number"
           placeholder="Categoria"
           onChange={handleChange}
-          valur={producto.categoria_id}
+          required
+          value={producto.categoria_id}
           className="shadow appearence-none border rounded w-full py-2 px-3"
         />
 
         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4 mr-4">
-          Guardar datos
+          {params.id ? "Actulaizar":"Guardar"}
         </button>
       </form>
       <ButtonCancel />

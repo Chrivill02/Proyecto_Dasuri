@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { pool } from "@/libs/mysql";
 
-export async function GET(request, { params }) {
+export async function GET(request, props) {
+  const params = await props.params;
   try {
     
     const id =await params?.id;
@@ -28,7 +29,8 @@ export async function GET(request, { params }) {
   }
 }
 
-export async function DELETE(request, { params }) {
+export async function DELETE(request, props) {
+  const params = await props.params;
   try {
     const id = params.id;
 
@@ -54,7 +56,8 @@ export async function DELETE(request, { params }) {
   }
 }
 
-export async function PUT(request, { params }) {
+export async function PUT(request, props) {
+  const params = await props.params;
   try {
     const data = await request.json();
     const result = await pool.query("UPDATE producto SET ? WHERE id = ? ", [
