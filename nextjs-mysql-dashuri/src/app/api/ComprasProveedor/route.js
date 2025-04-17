@@ -15,38 +15,30 @@ import { pool } from "@/libs/mysql";
 
 
 export async function GET() {
-	const result = await pool.query("SELECT NOW()")
-	return NextResponse.json( {message: result[0]["NOW()"]} )
+	const results = await pool.query("SELECT * FROM proveedor")
+	return NextResponse.json(results)
 }
 
 export async function POST(request){
 	try {
 
-		const {compra_id, producto_id, cantidad, precio_unitario, sub_total, detalles} = await request.json()
+		const {nombre, telefono, correo} = await request.json()
 
-		const result = await pool.query("INSERT INTO detalles_compra SET?",{
-			compra_id,
-			producto_id,
-			cantidad,
-			precio_unitario,
-			sub_total,
-			detalles
+		const result = await pool.query("INSERT INTO proveedor SET?",{
+			nombre,
+			telefono,
+			correo
 		});
 
 		console.log(result);
 		
-		return NextResponse.json({
-			//id: result.insertidcompra,
-			compra_id,
-			producto_id,
-			cantidad,
-			precio_unitario,
-			sub_total,
-			detalles
+		return NextResponse.json({ 
+			id: result.insertId,
+			nombre,
+			telefono,
+			correo
 		});
 
-
-		
 	} catch (error) {
 		
 		console.log(error)
