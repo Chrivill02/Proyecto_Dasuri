@@ -15,9 +15,9 @@ export async function GET() {
 
         // 3. Consulta real con manejo de errores explícito
         const [ventas] = await connection.query(`
-            SELECT v.*, c.nombre as cliente_nombre 
+            SELECT v.*, u.nombre as usuario_nombre 
             FROM venta v
-            LEFT JOIN cliente c ON v.cliente_id = c.id
+            LEFT JOIN usuario u ON v.usuario_id = u.id
             LIMIT 10
         `);
 
