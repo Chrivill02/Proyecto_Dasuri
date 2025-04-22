@@ -1,10 +1,12 @@
-import {proveedorform} from "@/components/proveedorform"
+import proveedorform from "@/components/proveedorform"
 
 function CompraProveedor() {
 
 	return (
 		<div>
-			<proveedorform />
+
+			< proveedorform />
+
 		</div>
 	)
 }
