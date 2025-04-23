@@ -165,7 +165,7 @@ export default function VentasPage() {
                                 {ventas.map((venta) => (
                                     <tr key={venta.id}>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{venta.id}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{venta.cliente_nombre || 'Sin cliente'}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{venta.usuario_nombre || 'Sin cliente'}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{venta.total}</td>
 										<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{venta.descripcion}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
