@@ -10,11 +10,20 @@ function ProductForm() {
     stock: "",
     precio: "",
     categoria_id: "",
+    fecha_exp: "",
   });
 
   const form = useRef(null);
   const params = useParams();
   const router = useRouter();
+
+  const obtenerSoloFecha = (fechaCompleta) => {
+    const fecha = new Date(fechaCompleta);
+    const año = fecha.getFullYear();
+    const mes = String(fecha.getMonth() + 1).padStart(2, "0");
+    const dia = String(fecha.getDate()).padStart(2, "0");
+    return `${año}-${mes}-${dia}`;
+  };
 
   const handleChange = (e) => {
     setProducto({
@@ -31,6 +40,7 @@ function ProductForm() {
           stock: res.data.result[0].stock,
           precio: res.data.result[0].precio,
           categoria_id: res.data.result[0].categoria_id,
+          fecha_exp: obtenerSoloFecha(res.data.result[0].fecha_exp),
         });
       });
     }
@@ -118,8 +128,24 @@ function ProductForm() {
           className="shadow appearence-none border rounded w-full py-2 px-3"
         />
 
+        <label
+          htmlFor="fecha_exp"
+          className="block text-gray-700 text-sm font-bold mb-2"
+        >
+          Fecha de Expiración
+        </label>
+        <input
+          name="fecha_exp"
+          type="date"
+          placeholder="Fecha de Expiración"
+          onChange={handleChange}
+          required
+          value={producto.fecha_exp}
+          className="shadow appearence-none border rounded w-full py-2 px-3"
+        />
+
         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4 mr-4">
-          {params.id ? "Actulaizar":"Guardar"}
+          {params.id ? "Actulaizar" : "Guardar"}
         </button>
       </form>
       <ButtonCancel />

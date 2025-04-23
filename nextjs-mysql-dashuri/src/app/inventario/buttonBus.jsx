@@ -10,6 +10,15 @@ function ButtonBusqueda() {
   const [selectedOption, setSelectedOption] = useState("");
   const [categorias, setCategorias] = useState([]);
 
+
+  const obtenerSoloFecha = (fechaCompleta)=> {
+    const fecha = new Date(fechaCompleta);
+    const año = fecha.getFullYear();
+    const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+    const dia = String(fecha.getDate()).padStart(2, '0');
+    return `${año}-${mes}-${dia}`;
+  }
+
   const cargaDatos = async (selectedOption) => {
     if (
       selectedOption === "todo" ||
@@ -116,6 +125,9 @@ function ButtonBusqueda() {
               Precio
             </th>
             <th scope="col" className="px-6 py-3">
+              Fecha de expiración
+            </th>
+            <th scope="col" className="px-6 py-3">
               Categoría
             </th>
             <th scope="col" className="px-6 py-3">
@@ -134,11 +146,12 @@ function ButtonBusqueda() {
                   scope="row"
                   className="px-6 py-4 font-medium text-black whitespace-nowrap"
                 >
-                  {product.nombre}
+                  {product.nombre.charAt(0).toUpperCase() + product.nombre.slice(1)}
                 </th>
                 <td className="px-6 py-4">{product.stock}</td>
                 <td className="px-6 py-4">{product.precio}</td>
-                <td className="px-6 py-4">{product.categoria_nombre}</td>
+                <td className="px-6 py-4">{obtenerSoloFecha(product.fecha_exp)}</td>
+                <td className="px-6 py-4">{ product.categoria_nombre.charAt(0).toUpperCase() + product.categoria_nombre.slice(1)}</td>
                 <Buttons productId={product.id} />
               </tr>
             ))}

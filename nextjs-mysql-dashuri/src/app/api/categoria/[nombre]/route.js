@@ -15,7 +15,7 @@ export async function GET(request, props) {
       );
     }
 
-    const result = await pool.query("SELECT p.id, p.nombre, p.stock, p.precio, c.nombre AS categoria_nombre FROM producto p INNER JOIN categoria_producto c ON p.categoria_id = c.id WHERE c.nombre = ?", [nombre]);
+    const result = await pool.query("SELECT p.id, p.nombre, p.stock, p.precio,p.fecha_exp, c.nombre AS categoria_nombre FROM producto p INNER JOIN categoria_producto c ON p.categoria_id = c.id WHERE c.nombre = ?", [nombre]);
     if (result.length === 0) {
       return NextResponse.json({ message: "Producto no encontrado" }, { status: 404 });
     }
