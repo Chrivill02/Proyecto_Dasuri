@@ -3,13 +3,11 @@ import { useState } from "react";
 
 function proveedorform() {
 
-
     const [proveedor, setProveedor] = useState({
-            nombre : "",
-            tel: "",
+            nombre: "",
+            telefono: "",
             correo: "",  
         });
-
 
     const handleChange = ( e ) => {
 		console.log(e);
@@ -23,7 +21,7 @@ function proveedorform() {
             <input type="text" placeholder="nombre" onChange={handleChange} />
 
             <label htmlFor="tel">teléfono: </label>
-            <input type="text" placeholder="tel"  onChange={handleChange}/>
+            <input type="text" placeholder="telefono"  onChange={handleChange}/>
 
             <label htmlFor="correo">correo: </label>
             <input type="text" placeholder="correo"  onChange={handleChange}/>
@@ -32,4 +30,4 @@ function proveedorform() {
     );
 }
 
-export default proveedorform
+export default proveedorform;

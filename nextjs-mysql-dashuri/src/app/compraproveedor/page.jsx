@@ -1,14 +1,12 @@
-import proveedorform from "@/components/proveedorform"
+import proveedorform from "@/components/ProveedorForm.jsx";
+const Forms = proveedorform
 
-function CompraProveedor() {
-
+function compraproveedor() {
 	return (
 		<div>
-
-			< proveedorform />
-
+			<Forms />
 		</div>
-	)
+	);
 }
 
-export default CompraProveedor
+export default compraproveedor;
