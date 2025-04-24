@@ -6,6 +6,17 @@ export default function VentasPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [errorDetails, setErrorDetails] = useState(null);
+    const [esAdmin, setEsAdmin] = useState(false);
+
+    // Verificar el nivel del usuario en localStorage
+    useEffect(() => {
+        const usuarioNivel = localStorage.getItem('usuarioNivel');
+        if (usuarioNivel && parseInt(usuarioNivel) === 1) {
+            setEsAdmin(true);
+        } else {
+            setEsAdmin(false);
+        }
+    }, []);
 
     const fetchVentas = async () => {
         try {
@@ -64,8 +75,10 @@ export default function VentasPage() {
         fetchVentas();
     }, []);
 
-    
-    
+    if (!esAdmin) {
+        return <p>No tienes acceso a esta página.</p>;
+    }
+
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[300px]">
@@ -117,7 +130,7 @@ export default function VentasPage() {
         );
     }
 
-    return (
+return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="flex justify-between items-center mb-8">
                 <h1 className="text-2xl font-bold text-blue">Registro de reservas</h1>
@@ -167,7 +180,7 @@ export default function VentasPage() {
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{venta.id}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{venta.usuario_nombre || 'Sin cliente'}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{venta.total}</td>
-										<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{venta.descripcion}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{venta.descripcion}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <button
                                                 onClick={() => eliminarVenta(venta.id)}

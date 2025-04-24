@@ -5,7 +5,12 @@ body {
   color: white;
 }
 
-input {
-  color: black !important;
+input,
+select {
+  color: black !important; /* Esto hace que tanto inputs como selects tengan el texto en negro */
 }
 
+/* Asegúrate de que los textos dentro de los 'option' también tengan el color adecuado */
+select option {
+  color: black !important;
+}

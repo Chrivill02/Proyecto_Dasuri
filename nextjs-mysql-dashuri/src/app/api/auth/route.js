@@ -1,3 +1,4 @@
+// src/app/api/auth/route.js
 import { pool } from '@/libs/mysql';
 import bcrypt from 'bcrypt';
 import { NextResponse } from 'next/server';
@@ -13,7 +14,7 @@ export async function POST(req) {
   try {
     connection = await pool.getConnection();
     const [rows] = await connection.query(
-      'SELECT * FROM usuario WHERE correo = ? LIMIT 1',
+      'SELECT id, nombre, correo, contraseña, nivel FROM usuario WHERE correo = ? LIMIT 1',
       [correo]
     );
 
@@ -29,7 +30,16 @@ export async function POST(req) {
     }
 
     // Aquí podrías usar cookies, tokens, etc.
-    return NextResponse.json({ success: true, message: 'Login exitoso', usuario });
+    return NextResponse.json({
+      success: true,
+      message: 'Login exitoso',
+      usuario: {
+        id: usuario.id,
+        nombre: usuario.nombre,
+        correo: usuario.correo,
+        nivel: usuario.nivel,  // Incluye el nivel aquí
+      },
+    });
 
   } catch (error) {
     console.error('Error en login:', error);

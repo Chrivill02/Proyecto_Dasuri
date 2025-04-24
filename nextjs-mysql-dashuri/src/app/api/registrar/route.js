@@ -1,3 +1,4 @@
+// src/app/api/registrar/route.js
 import { pool } from '@/libs/mysql'
 import bcrypt from 'bcrypt'
 import { NextResponse } from 'next/server'
@@ -12,9 +13,12 @@ export async function POST(req) {
   try {
     const hashedContraseña = await bcrypt.hash(contraseña, 10)
 
+    // Asegúrate de que el nivel sea un valor válido (0 o 1)
+    const userNivel = nivel === 1 ? 1 : 0
+
     const [resultado] = await pool.query(
       'INSERT INTO usuario (nombre, correo, telefono, contraseña, nivel) VALUES (?, ?, ?, ?, ?)',
-      [nombre, email, telefono || null, hashedContraseña, nivel || null]
+      [nombre, email, telefono || null, hashedContraseña, userNivel]
     )
 
     return NextResponse.json({ message: 'Usuario registrado con éxito', id: resultado.insertId })

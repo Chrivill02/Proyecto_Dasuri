@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
 export default function RegistrarPage() {
@@ -7,12 +7,19 @@ export default function RegistrarPage() {
   const [email, setEmail] = useState('')
   const [telefono, setTelefono] = useState('')
   const [contraseña, setContraseña] = useState('')
-  const [nivel, setNivel] = useState('')
+  const [nivel, setNivel] = useState('0')  // Por defecto el nivel es 0 (usuario)
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [userNivel, setUserNivel] = useState(null)  // Para guardar el nivel del usuario logueado
 
   const router = useRouter()
+
+  useEffect(() => {
+    // Obtener el nivel desde localStorage
+    const nivel = localStorage.getItem('usuarioNivel');
+    setUserNivel(parseInt(nivel));  // Guardamos el nivel en el estado
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -21,10 +28,11 @@ export default function RegistrarPage() {
     setLoading(true)
 
     try {
+      // Enviar los datos al backend, incluyendo el nivel
       const res = await fetch('/api/registrar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre, email, telefono, contraseña, nivel }),
+        body: JSON.stringify({ nombre, email, telefono, contraseña, nivel: parseInt(nivel) }), // Convertimos el nivel a entero
       })
 
       const data = await res.json()
@@ -36,10 +44,10 @@ export default function RegistrarPage() {
       setEmail('')
       setTelefono('')
       setContraseña('')
-      setNivel('')
+      setNivel('0')  // Resetear el nivel al valor por defecto
 
       setTimeout(() => {
-        router.push('/ventas') // o donde quieras redirigir
+        router.push('/ventas') // Redirigir después de 2 segundos
       }, 2000)
     } catch (err) {
       setError(err.message)
@@ -100,7 +108,21 @@ export default function RegistrarPage() {
             />
           </div>
 
-        
+          {/* Si el usuario es admin, mostrar el campo de nivel */}
+          {userNivel === 1 && (
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Nivel</label>
+              <select
+                className="w-full px-3 py-2 border rounded"
+                value={nivel} // Vinculamos el valor del select al estado "nivel"
+                onChange={(e) => setNivel(e.target.value)} // Actualizamos el estado al cambiar
+                required
+              >
+                <option value="0">Usuario</option>
+                <option value="1">Admin</option>
+              </select>
+            </div>
+          )}
 
           <button
             type="submit"

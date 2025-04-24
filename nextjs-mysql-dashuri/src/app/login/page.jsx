@@ -25,6 +25,9 @@ export default function LoginPage() {
 
       if (!res.ok) throw new Error(data.message || 'Error de autenticación')
 
+      // Aquí guardas el nivel del usuario después de hacer login
+      localStorage.setItem('usuarioNivel', data.usuario.nivel);  // Guardamos el nivel en localStorage
+
       // Redirigir al dashboard u otra página
       router.push('/ventas')
     } catch (err) {
