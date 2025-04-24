@@ -13,6 +13,8 @@ function ProductForm() {
     fecha_exp: "",
   });
 
+  const [categoria, setCategoria] = useState([]);
+
   const form = useRef(null);
   const params = useParams();
   const router = useRouter();
@@ -44,6 +46,17 @@ function ProductForm() {
         });
       });
     }
+
+    const loadCategorias = async () => {
+      try {
+        const { data } = await axios.get("http://localhost:3000/api/categoria");
+        setCategoria(data);
+        console.log(categoria);
+      } catch (error) {
+        console.error("Error al cargar categorías:", error);
+      }
+    };
+    loadCategorias();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -112,21 +125,27 @@ function ProductForm() {
           className="shadow appearence-none border rounded w-full py-2 px-3"
         />
 
+        {/* Boton para escoger la categoria*/}
         <label
           htmlFor="categoria_id"
           className="block text-gray-700 text-sm font-bold mb-2"
         >
-          Categoria del producto
+          Categoría del producto
         </label>
-        <input
+        <select
+          id="categoria"
           name="categoria_id"
-          type="number"
-          placeholder="Categoria"
+          value={producto.categoria_id}
           onChange={handleChange}
           required
-          value={producto.categoria_id}
           className="shadow appearence-none border rounded w-full py-2 px-3"
-        />
+        >
+          {categoria.map((cat) => (
+            <option key={cat.id} value={cat.id}>
+              {cat.nombre.charAt(0).toUpperCase() + cat.nombre.slice(1)}
+            </option>
+          ))}
+        </select>
 
         <label
           htmlFor="fecha_exp"
