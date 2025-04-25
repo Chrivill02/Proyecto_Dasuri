@@ -3,7 +3,7 @@ const Forms = proveedorform
 
 function compraproveedor() {
 	return (
-		<div>
+		<div className="flex justify-center items-center h-full"> 
 			<Forms />
 		</div>
 	);

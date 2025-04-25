@@ -1,5 +1,7 @@
 "use client"
-import { useState } from "react";
+import axios from "axios";
+import { useRef, useState } from "react";
+
 
 function proveedorform() {
 
@@ -8,23 +10,61 @@ function proveedorform() {
             telefono: "",
             correo: "",  
         });
+    const form = useRef(null);
 
     const handleChange = ( e ) => {
-		console.log(e);
+        setProveedor({
+            ...proveedor,
+            [e.target.name]: e.target.value
+        })
 	}
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const res = await axios.post("/api/ComprasProveedor", proveedor)
+        console.log(res)
+        form.current.reset();
+    }
 
 
     return (
-        <form className="bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4">
+        <form className="bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4"
+        onSubmit={handleSubmit}
+        ref={form}
+        >
+            
+            <label 
+            htmlFor="nombre"
+            className="block text-gray-700 text-sm font-bold mb-2"
+            >
+                Nombre del proveedor: 
+            </label>
+            <input name="nombre" type="text" placeholder="nombre" onChange={handleChange} 
+                className="shadow appearance-none border rounded w-full py-2 px-3"
+            />
 
-            <label htmlFor="nombre">Nombre del proveedor: </label>
-            <input type="text" placeholder="nombre" onChange={handleChange} />
+            <label htmlFor="tel"
+            className="block text-gray-700 text-sm font-bold mb-2"
+            >
+                teléfono: 
+            </label>
+            <input name="telefono" type="text" placeholder="telefono"  onChange={handleChange}
+            className="shadow appearance-none border rounded w-full py-2 px-3"
+            />
 
-            <label htmlFor="tel">teléfono: </label>
-            <input type="text" placeholder="telefono"  onChange={handleChange}/>
+            <label htmlFor="correo"
+            className="block text-gray-700 text-sm font-bold mb-2"
+            >
+                correo: 
+            </label>
+            <input name="correo" type="text" placeholder="correo"  onChange={handleChange}
+            className="shadow appearance-none border rounded w-full py-2 px-3"
+            />
 
-            <label htmlFor="correo">correo: </label>
-            <input type="text" placeholder="correo"  onChange={handleChange}/>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                agregarProducto:
+
+            </button>
 
         </form>
     );
