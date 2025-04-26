@@ -9,11 +9,11 @@ function botonMostrarCompras() {
     <div
       onClick={() => setActivo(!activo)}
       style={{
-        width: '120px',
-        height: '34px',
+        width: '150px',
+        height: '50px',
         top: '10',
         borderRadius: '30px',
-        backgroundColor: activo ? '#4caf50' : '#f70e0e',
+        backgroundColor: activo ? '#A74BE3' : '#9365A9', //a057cf
         position: 'absolute',
         top: '340px',   // posición vertical
         left: '1250px',   // posición horizontal
@@ -21,22 +21,23 @@ function botonMostrarCompras() {
         transition: 'background-color 0.3s ease',
         display: 'flex',
         alignItems: 'center',
-        padding: '4px',
+        padding: '6px',
         boxSizing: 'border-box',
-        border: '2px solid black' // <-- Aquí agregas el borde
+        border: '6px solid #000000' // <-- Aquí agregas el borde
       }}
     >
       {/* Círculo deslizante */}
       <div
         style={{
-          width: '26px',
-          height: '26px',
-          backgroundColor: 'white',
+          width: '32px',
+          height: '32px',
+          backgroundColor: '#6600A1',
           borderRadius: '50%',
           position: 'absolute',
-          left: activo ? '90px' : '4px',
+          left: activo ? '103px' : '4px',
           top: '4px',
           transition: 'left 0.3s ease',
+          border: '4px', // <-- Aquí agregas el borde
         }}
       />
 
@@ -45,7 +46,7 @@ function botonMostrarCompras() {
         style={{
           position: 'absolute',
           left: activo ? '10px' : '42px',
-          color: '#000',
+          color: '#000000',
           fontWeight: 'bold',
           fontSize: '12px',
           transition: 'left 0.3s ease',
