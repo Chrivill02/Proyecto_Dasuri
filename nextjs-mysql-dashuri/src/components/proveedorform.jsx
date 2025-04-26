@@ -28,7 +28,8 @@ function proveedorform() {
 
 
     return (
-        <form className="bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4"
+        <form 
+        className="absolute bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4 w-[300px] h-[300px] top-[10px] left-[1185px]" //x máx 1195
         onSubmit={handleSubmit}
         ref={form}
         >
@@ -61,12 +62,23 @@ function proveedorform() {
             className="shadow appearance-none border rounded w-full py-2 px-3"
             />
 
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                agregarProducto:
+            <button style={{
+            position: 'absolute',
+            top: '245px',       // posición en Y
+            left: '78px',      // posición en X
+            width: '150px',     // ancho
+            height: '40px',      // alto
+            backgroundColor: "#6600A1",
+            color: '#fff',
+            borderRadius: '12px' // Bordes redondeados
+            }}>
+                Agregar Proveedor
 
             </button>
 
         </form>
+
+        
     );
 }
 
