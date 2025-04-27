@@ -5,9 +5,7 @@ import { useRef, useState, useEffect } from "react";
 
 
 function comprasform() {
-    const [compras, setProveedores] = useState([]);
-    const [opciones, setOpciones] = useState([]);
-    const [seleccionado, setSeleccionado] = useState('');
+    const [options, setOptions] = useState([]);
 
     const [compra, setCompras] = useState({
             fecha: "",
@@ -28,38 +26,27 @@ function comprasform() {
         const res = await axios.post("/api/solicitud", compra)
         console.log(res)
         form.current.reset();
+        setCompras({
+            fecha: "",
+            total: "",
+            proveedor_id: "",
+        });
     }
 
     const handleChange2 = (e) => {
-        setSeleccionado(e.target.value);
+        setSelectedOption(e.target.value);
     };
 
     useEffect(() => {
-        async function fetchCompras() {
-            try {
-              const res = await fetch('/api/ComprasProveedor');
-              const data = await res.json();
-              setProveedores(data);
+        const fetchData = async () => {
+
+            const response = await fetch('api/ComprasProveedor');
+            const data = await response.json();
+
+            setOptions(data);
+          };
       
-              // Aquí construimos las opciones manualmente
-              const opcionesGeneradas = [];
-              if (Array.isArray(data)) {
-                for (let i = 0; i < data.length; i++) {
-                  const compra = data[i];
-                  opcionesGeneradas.push(
-                    <option key={compra.id} value={compra.id}>
-                      {compra.id}
-                    </option>
-                  );
-                }
-              }
-              setOpciones(opcionesGeneradas);
-      
-            } catch (error) {
-              console.error('Error cargando compras:', error);
-            }
-          }
-          fetchCompras();
+          fetchData();
         }, []);
 
 
@@ -102,13 +89,26 @@ function comprasform() {
             </label>
             
             <select
-            value={seleccionado}
+            value={compra.proveedor_id}
             onChange={handleChange}
-            className="border border-gray-300 rounded-md p-2"
+            name="proveedor_id"
+            style={{
+                position: 'absolute',
+                top: '190px',       // posición en Y
+                left: '30px',      // posición en X
+                width: '70px',     // ancho
+                height: '40px',      // alto
+                backgroundColor: "#6600A1",
+                color: '#fff',
+                borderRadius: '12px' // Bordes redondeados
+                }}
             >
-                <option value="">-ID-</option>
-                {opciones}
-
+                <option value="">-- ID --</option>
+                {options.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.id}
+                </option>
+              ))}
             </select>
 
 
