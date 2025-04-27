@@ -5,23 +5,26 @@ import { useRef, useState } from "react";
 
 function comprarAproveedor() {
 
-    const [proveedor, setProveedor] = useState({
-            nombre: "",
-            telefono: "",
-            correo: "",  
+    const [detallecompra, setDetalleCompra] = useState({
+            compra_id: "",
+            producto_id: "",
+            cantidad: "",
+            precio_unitario: "",
+            sub_total: "",
+            detalles: "",  
         });
     const form = useRef(null);
 
     const handleChange = ( e ) => {
-        setProveedor({
-            ...proveedor,
+        setDetalleCompra({
+            ...detallecompra,
             [e.target.name]: e.target.value
         })
 	}
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const res = await axios.post("/api/ComprasProveedor", proveedor)
+        const res = await axios.post("/api/inventario", detallecompra)
         console.log(res)
         form.current.reset();
     }
@@ -29,17 +32,265 @@ function comprarAproveedor() {
 
     return (
         <form 
-        className="absolute bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4 w-[1160px] h-[300px] top-[10px] left-[10px]" //x máx 1195 y máx 441
+        className="absolute bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4 w-[850px] h-[300px] top-[10px] left-[323px]" //x máx 1195 y máx 441
         onSubmit={handleSubmit}
         ref={form}
         >   
 
             <label 
-            htmlFor="Aqui se van a solicitar las compras al proveedor"
-            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="ID_proveedor"
+            style={{
+                position: 'absolute',
+                top: '20px',       // posición en Y
+                left: '20px',      // posición en X
+                //width: '150px',     // ancho
+                //height: '40px',      // alto
+                //  backgroundColor: "#6600A1",
+                color: '#fff',
+                //borderRadius: '12px' // Bordes redondeados
+                }}
             >
-                Aqui se van a solicitar las compras al proveedor
+                ID del proveedor: 
             </label>
+            <input name="ID" type="text" placeholder="ID" onChange={handleChange} 
+                style={{
+                    position: 'absolute',
+                    top: '50px',       // posición en Y
+                    left: '20px',      // posición en X
+                    width: '70px',     // ancho
+                    height: '40px',      // alto
+                    backgroundColor: "#6600A1",
+                    color: '#fff',
+                    borderRadius: '12px' // Bordes redondeados
+                    }}
+            />
+
+
+            <label 
+            htmlFor="dproveedor"
+            style={{
+                position: 'absolute',
+                top: '110px',       // posición en Y
+                left: '20px',      // posición en X
+                //width: '150px',     // ancho
+                //height: '40px',      // alto
+                //  backgroundColor: "#6600A1",
+                color: '#fff',
+                //borderRadius: '12px' // Bordes redondeados
+                }}
+            >
+                Descripción: 
+            </label>
+            <textarea name="dproveedor" type="text" placeholder="Descripcion" onChange={handleChange} 
+                style={{
+                    position: 'absolute',
+                    top: '140px',       // posición en Y
+                    left: '20px',      // posición en X
+                    width: '200px',     // ancho
+                    height: '150px',      // alto
+                    backgroundColor: "#6600A1",
+                    color: '#fff',
+                    resize: 'none',
+                    borderRadius: '12px' // Bordes redondeados
+                    }}
+            />
+
+
+
+            
+            <label 
+            htmlFor="IDsolicitud"
+            style={{
+                position: 'absolute',
+                top: '20px',       // posición en Y
+                left: '250px',      // posición en X
+                //width: '150px',     // ancho
+                //height: '40px',      // alto
+                //  backgroundColor: "#6600A1",
+                color: '#fff',
+                //borderRadius: '12px' // Bordes redondeados
+                }}
+            >
+                ID de la solicitud: 
+            </label>
+            <input name="IDsolicitud" type="text" placeholder="ID" onChange={handleChange} 
+                style={{
+                    position: 'absolute',
+                    top: '50px',       // posición en Y
+                    left: '250px',      // posición en X
+                    width: '70px',     // ancho
+                    height: '40px',      // alto
+                    backgroundColor: "#6600A1",
+                    color: '#fff',
+                    borderRadius: '12px' // Bordes redondeados
+                    }}
+            />
+
+
+            <label 
+            htmlFor="dproveedor"
+            style={{
+                position: 'absolute',
+                top: '110px',       // posición en Y
+                left: '250px',      // posición en X
+                //width: '150px',     // ancho
+                //height: '40px',      // alto
+                //  backgroundColor: "#6600A1",
+                color: '#fff',
+                //borderRadius: '12px' // Bordes redondeados
+                }}
+            >
+                Descripción: 
+            </label>
+            <textarea name="dproveedor" type="text" placeholder="Descripcion" onChange={handleChange} 
+                style={{
+                    position: 'absolute',
+                    top: '140px',       // posición en Y
+                    left: '250px',      // posición en X
+                    width: '200px',     // ancho
+                    height: '150px',      // alto
+                    backgroundColor: "#6600A1",
+                    color: '#fff',
+                    resize: 'none',
+                    borderRadius: '12px' // Bordes redondeados
+                    }}
+            />
+
+
+
+            <label 
+            htmlFor="cantidad"
+            style={{
+                position: 'absolute',
+                top: '20px',       // posición en Y
+                left: '480px',      // posición en X
+                //width: '150px',     // ancho
+                //height: '40px',      // alto
+                //  backgroundColor: "#6600A1",
+                color: '#fff',
+                //borderRadius: '12px' // Bordes redondeados
+                }}
+            >
+                Cantidad: 
+            </label>
+            <input name="cantidad" type="text" placeholder="Cantidad" onChange={handleChange} 
+                style={{
+                    position: 'absolute',
+                    top: '50px',       // posición en Y
+                    left: '480px',      // posición en X
+                    width: '110px',     // ancho
+                    height: '40px',      // alto
+                    backgroundColor: "#6600A1",
+                    color: '#fff',
+                    borderRadius: '12px' // Bordes redondeados
+                    }}
+            />
+
+
+            <label 
+            htmlFor="preciounitario"
+            style={{
+                position: 'absolute',
+                top: '110px',       // posición en Y
+                left: '480px',      // posición en X
+                //width: '150px',     // ancho
+                //height: '40px',      // alto
+                //  backgroundColor: "#6600A1",
+                color: '#fff',
+                //borderRadius: '12px' // Bordes redondeados
+                }}
+            >
+                Precio unitario: 
+            </label>
+            <input name="preciounitario" type="text" placeholder="Precio Unitario" onChange={handleChange} 
+                style={{
+                    position: 'absolute',
+                    top: '140px',       // posición en Y
+                    left: '480px',      // posición en X
+                    width: '110px',     // ancho
+                    height: '40px',      // alto
+                    backgroundColor: "#6600A1",
+                    color: '#fff',
+                    borderRadius: '12px' // Bordes redondeados
+                    }}
+            />
+
+
+
+            <label 
+            htmlFor="subtotal"
+            style={{
+                position: 'absolute',
+                top: '20px',       // posición en Y
+                left: '680px',      // posición en X
+                //width: '150px',     // ancho
+                //height: '40px',      // alto
+                //  backgroundColor: "#6600A1",
+                color: '#fff',
+                //borderRadius: '12px' // Bordes redondeados
+                }}
+            >
+                Sub-total: 
+            </label>
+            <input name="subtotal" type="text" placeholder="subtotal" onChange={handleChange} 
+                style={{
+                    position: 'absolute',
+                    top: '50px',       // posición en Y
+                    left: '680px',      // posición en X
+                    width: '110px',     // ancho
+                    height: '40px',      // alto
+                    backgroundColor: "#6600A1",
+                    color: '#fff',
+                    borderRadius: '12px' // Bordes redondeados
+                    }}
+            />
+
+
+            <label 
+            htmlFor="dcompra"
+            style={{
+                position: 'absolute',
+                top: '110px',       // posición en Y
+                left: '650px',      // posición en X
+                //width: '150px',     // ancho
+                //height: '40px',      // alto
+                //  backgroundColor: "#6600A1",
+                color: '#fff',
+                //borderRadius: '12px' // Bordes redondeados
+                }}
+            >
+                Detalles de la compra: 
+            </label>
+            <textarea name="dcompra" type="text" placeholder="Detalles de la compra" onChange={handleChange} 
+                style={{
+                    position: 'absolute',
+                    top: '140px',       // posición en Y
+                    left: '630px',      // posición en X
+                    width: '200px',     // ancho
+                    height: '150px',      // alto
+                    backgroundColor: "#6600A1",
+                    color: '#fff',
+                    resize: 'none',
+                    borderRadius: '12px' // Bordes redondeados
+                    }}
+            
+            />
+
+            
+            <button style={{
+            position: 'absolute',
+            top: '245px',       // posición en Y
+            left: '465px',      // posición en X
+            width: '150px',     // ancho
+            height: '40px',      // alto
+            backgroundColor: "#a74be3",
+            color: '#fff',
+            borderRadius: '12px' // Bordes redondeados
+            }}>
+                Realizar Compra
+
+            </button>
+
         </form>
         
     );

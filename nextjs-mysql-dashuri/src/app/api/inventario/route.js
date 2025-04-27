@@ -28,7 +28,7 @@ export async function POST(request){
 			producto_id,
 			cantidad,
 			precio_unitario,
-			subtotal,
+			sub_total,
 			detalles
 		});
 

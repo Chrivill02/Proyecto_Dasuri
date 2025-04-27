@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function botonMostrarCompras() {
+
   const [activo, setActivo] = useState(false);
 
   return (
