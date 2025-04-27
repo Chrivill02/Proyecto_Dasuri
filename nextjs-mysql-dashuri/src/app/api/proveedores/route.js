@@ -2,6 +2,25 @@
 import { NextResponse } from "next/server";
 import { pool } from "@/libs/mysql";
 
+// Obtener todos los proveedores
+export async function GET() {
+    let connection;
+    try {
+        connection = await pool.getConnection();
+        const [rows] = await connection.query("SELECT * FROM proveedor");
+        return NextResponse.json(rows);
+    } catch (error) {
+        console.error("Error al obtener proveedores:", error);
+        return NextResponse.json({
+            success: false,
+            message: "Error al obtener proveedores",
+            details: process.env.NODE_ENV === 'development' ? error.message : null
+        }, { status: 500 });
+    } finally {
+        if (connection) connection.release();
+    }
+}
+
 // Agregar un proveedor
 export async function POST(req) {
     const { nombre, telefono, correo } = await req.json();
