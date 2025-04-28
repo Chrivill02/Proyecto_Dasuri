@@ -9,41 +9,53 @@
 			<img
 			src="/fondo.avif"
 			alt="Portada de maquillaje"
-			className="w-full h-full object-cover"
+			className="w-full h-full object-cover object-center"
 			/>
 			{/* Texto superpuesto sobre la imagen */}
-			<div className="absolute inset-0 flex flex-col top-center items-center bg-black opacity-50">
-			<h1 className="text-5xl font-bold mb-4">DASHURI</h1>
+			<div className="absolute inset-0 flex flex-col top-center items-center">
+			<h1 className="text-5xl font-bold mb-4 mt-10">DASHURI</h1>
 			<p className="text-xl">MAKE UP</p>
 
 
 			<div className="flex justify-center gap-4 mt-6">
-        <button className="bg-transparent-600 text-white px-6 py-2 rounded-md hover:bg-purple-700 transition duration-300">
-        MAQUILLAJE
-        </button>
+			<div className="flex justify-evenly w-full mt-6">
+			<div className="flex justify-around w-full mt-6">
+  <button className="bg-transparent text-white px-6 py-2 rounded-md hover:bg-purple-700 transition duration-300">
+    MAQUILLAJE
+  </button>
 
-        <button className="bg-transparent-600 text-white px-6 py-2 rounded-md hover:bg-purple-700 transition duration-300">
-        SERVICIOS
-        </button>
+  <button className="bg-transparent text-white px-6 py-2 rounded-md hover:bg-purple-700 transition duration-300">
+    SERVICIOS
+  </button>
 
-		<button className="bg-transparent-600 text-white px-6 py-2 rounded-md hover:bg-purple-700 transition duration-300">
-        CUIDADO DEL CABELLO
-        </button>
+  <button className="bg-transparent text-white px-6 py-2 rounded-md hover:bg-purple-700 transition duration-300">
+    CUIDADO DEL CABELLO
+  </button>
 
-		<button className="bg-transparent-600 text-white px-6 py-2 rounded-md hover:bg-purple-700 transition duration-300">
-        CUIDADO DE LA PIEL
-        </button>
+  <button className="bg-transparent text-white px-6 py-2 rounded-md hover:bg-purple-700 transition duration-300">
+    CUIDADO DE LA PIEL
+  </button>
+</div>
+
+</div>
 
 		 {/* Botones con imágenes en la parte superior derecha */}
 		 <div className="absolute top-4 right-4 flex gap-4">
         <button className="p-2">
           <img
-            src="/CARRITO.JPG" 
+            src="/buscar.png" 
             alt="Botón 1"
             className="w-10 h-10 object-contain"
           />
         </button>
         <button className="p-2">
+          <img
+            src="/CARRITO.jpg" 
+            alt="Botón 2"
+            className="w-10 h-10 object-contain"
+          />
+        </button>
+		<button className="p-2">
           <img
             src="/usuario.jpg" 
             alt="Botón 2"
@@ -98,15 +110,15 @@
 
 
 		{/* Imagen al final con fondo negro translúcido */}
-		<div className="relative mt-20">
-        <div className="w-full h-96 bg-black bg-opacity-50">
-          <img
-            src="/imagen_final.JPG" // Cambia esta URL por la URL de tu imagen
-            alt="Imagen final"
-            className="w-full h-full object-cover"
-          />
-        </div>
-      </div>
+		<div className="relative mt-20 w-full h-96">
+  <img
+    src="/imagen_final.JPG"
+    alt="Imagen final"
+    className="w-full h-full object-cover absolute inset-0"
+  />
+  <div className="absolute inset-0 flex flex-col top-center items-center bg-black opacity-50"></div>
+</div>
+
 		</div>
 	);
 	}
