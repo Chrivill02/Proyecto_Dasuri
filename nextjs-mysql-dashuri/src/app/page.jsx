@@ -4,25 +4,35 @@ function HomePage() {
   return (
     <div className="bg-gray-300 min-h-screen text-white flex flex-col">
       {/* Sección de portada con imagen */}
-      <section className="relative w-full h-[80vh]">
+      <section className="relative w-full h-[90vh]">
         <img
           src="/fondo.avif"
           alt="Portada de maquillaje"
-          className="w-full h-full object-cover object-center"
+          className="w-full h-full object-cover object-top"
         />
+
+        
         {/* Cuadro centrado */}
-  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-3xl bg-white opacity-90 p-6 text-center">
-    <h2 className="text-2xl font-bold text-black">Maquillaje Facial</h2>
-    <p className="text-black mt-2">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laboriosam temporibus laudantium Zab exercitationem, adipisci repellendus dolor quo fuga sit inventore facere deserunt id perspiciatis, magnam quisquam iste necessitatibus officia. Maxime!Lorem
-		Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque perspiciatis dolorem voluptatum praesentium, voluptate, iste officia qui quaerat harum expedita, architecto culpa? Possimus deleniti dignissimos reprehenderit qui maiores alias ex?
-		Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid laborum necessitatibus nesciunt assumenda molestias quod voluptate distinctio rerum, qui ab delectus recusandae ut iure provident suscipit velit natus modi illum?
-	</p>
-  </div>
+        <div className="absolute left-1/2 top-full transform -translate-x-1/2 -translate-y-1/2 w-3/5 h-48 bg-white opacity-90 p-12 text-center shadow-2xl flex flex-col justify-center">
+  <h2 className="text-2xl font-bold text-black">Maquillaje Facial</h2>
+  <p className="text-black mt-4">
+    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laboriosam temporibus laudantium lorem Lorem ipsum dolor sit amet consectetur, adipisicing elit. Numquam quas possimus tenetur hic neque incidunt praesentium culpa facere similique, alias sit! Fugit nihil minus quia, nulla ullam quibusdam dicta ex?
+  </p>
+</div>
+
+
 
         {/* Texto superpuesto sobre la imagen */}
         <div className="absolute inset-0 flex flex-col top-center items-center">
-          <h1 className="text-5xl fo
-		  nt-bold mb-4 mt-10">DASHURI</h1>
+          
+        <h1 
+  className="text-6xl mb-4 mt-10"
+  style={{ letterSpacing: "0.5em" }}
+>
+  DASHURI
+</h1>
+
+
           <p className="text-xl">MAKE UP</p>
 
           <div className="flex justify-center gap-4 mt-6">
@@ -79,12 +89,12 @@ function HomePage() {
 
       {/* catalogo */}
       <section id="productos" className="w-full text-center py-16 bg-white text-black">
-  <h2 className="text-4xl mb-8">Nuestros productos</h2>
+  <h2 className="text-4xl mb-8 mt-24 font-bold">Nuestros productos</h2>
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
     {/* Producto 1 */}
     <div className="bg-white p-4 rounded-lg shadow-lg">
       <img
-        src="https://via.placeholder.com/300"
+        src="https://thumbs.dreamstime.com/b/sistema-hermoso-del-maquillaje-del-labio-tiro-macro-horizontal-con-los-lipticks-brillantes-colecci%C3%B3n-del-maquillaje-de-los-labios-87509283.jpg"
         alt="Maquillaje"
         className="w-full h-40 object-cover rounded-lg mb-4"
       />
@@ -94,7 +104,7 @@ function HomePage() {
     {/* Producto 2 */}
     <div className="bg-white p-4 rounded-lg shadow-lg">
       <img
-        src="https://via.placeholder.com/300"
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlVZoC_KAMJRE_UB88IOyEF7AIndtIg3HKkw&s"
         alt="Maquillaje"
         className="w-full h-40 object-cover rounded-lg mb-4"
       />
@@ -104,7 +114,38 @@ function HomePage() {
     {/* Producto 3 */}
     <div className="bg-white p-4 rounded-lg shadow-lg">
       <img
-        src="https://via.placeholder.com/300"
+        src="https://thumbs.dreamstime.com/b/conjunto-horizontal-de-productos-maquillaje-con-fondo-blanco-y-sombra-suave-%C3%BAtil-para-banner-268828214.jpg?w=1600"
+        alt="Maquillaje"
+        className="w-full h-40 object-cover rounded-lg mb-4"
+      />
+      <h3 className="text-2xl font-semibold text-black text-center">Labiales</h3>
+      <p className="text-center text-black mt-2">Q150.00</p>
+    </div>
+
+    {/* Producto 1 */}
+    <div className="bg-white p-4 rounded-lg shadow-lg">
+      <img
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcPFcq5EXbSZ5QOYUR6_D8bzjf8V2iBpxYww&s"
+        alt="Maquillaje"
+        className="w-full h-40 object-cover rounded-lg mb-4"
+      />
+      <h3 className="text-2xl font-semibold text-black text-center">Maquillaje para rostro</h3>
+      <p className="text-center text-black mt-2">Q300.00</p>
+    </div>
+    {/* Producto 2 */}
+    <div className="bg-white p-4 rounded-lg shadow-lg">
+      <img
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyNe5XzVson3g633EWsBtBgl7oe-m2W0M82Q&s"
+        alt="Maquillaje"
+        className="w-full h-40 object-cover rounded-lg mb-4"
+      />
+      <h3 className="text-2xl font-semibold text-black text-center">Sombras de ojos</h3>
+      <p className="text-center text-black mt-2">Q200.00</p>
+    </div>
+    {/* Producto 3 */}
+    <div className="bg-white p-4 rounded-lg shadow-lg">
+      <img
+        src="https://previews.123rf.com/images/kopitinphoto/kopitinphoto1509/kopitinphoto150900169/44958592-establecer-cosm%C3%A9ticos-de-maquillaje-polvo-compacto-base-mineral-y-pinceles-de-maquillaje.jpg"
         alt="Maquillaje"
         className="w-full h-40 object-cover rounded-lg mb-4"
       />
