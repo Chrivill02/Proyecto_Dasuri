@@ -90,7 +90,7 @@ function comprarAproveedor() {
                 position: 'absolute',
                 top: '20px',       // posición en Y
                 left: '20px',      // posición en X
-                color: '#fff',
+                color: '#000',
                 }}
             >
                 ID de la Solicitud: 
@@ -107,7 +107,7 @@ function comprarAproveedor() {
                 width: '70px',     // ancho
                 height: '40px',      // alto
                 backgroundColor: "#6600A1",
-                color: '#fff',
+                color: '#000',
                 borderRadius: '12px' // Bordes redondeados
                 }}
             
@@ -119,7 +119,7 @@ function comprarAproveedor() {
                 position: 'absolute',
                 top: '110px',       // posición en Y
                 left: '20px',      // posición en X
-                color: '#fff',
+                color: '#000',
                 }}
             >
                 Descripción: 
@@ -133,7 +133,7 @@ function comprarAproveedor() {
                     width: '200px',     // ancho
                     height: '150px',      // alto
                     backgroundColor: "#6600A1",
-                    color: '#fff',
+                    color: '#000',
                     resize: 'none',
                     borderRadius: '12px' // Bordes redondeados
                     }}
@@ -157,7 +157,7 @@ function comprarAproveedor() {
                 //width: '150px',     // ancho
                 //height: '40px',      // alto
                 //  backgroundColor: "#6600A1",
-                color: '#fff',
+                color: '#000',
                 //borderRadius: '12px' // Bordes redondeados
                 }}
             >
@@ -175,7 +175,7 @@ function comprarAproveedor() {
                 width: '70px',     // ancho
                 height: '40px',      // alto
                 backgroundColor: "#6600A1",
-                color: '#fff',
+                color: '#000',
                 borderRadius: '12px' // Bordes redondeados
             }}
 
@@ -188,7 +188,7 @@ function comprarAproveedor() {
                 position: 'absolute',
                 top: '110px',       // posición en Y
                 left: '250px',      // posición en X
-                color: '#fff',
+                color: '#000',
                 }}
             >
                 Descripción: 
@@ -202,7 +202,7 @@ function comprarAproveedor() {
                     width: '200px',     // ancho
                     height: '150px',      // alto
                     backgroundColor: "#6600A1",
-                    color: '#fff',
+                    color: '#000',
                     resize: 'none',
                     borderRadius: '12px' // Bordes redondeados
                     }}
@@ -225,7 +225,7 @@ function comprarAproveedor() {
                 //width: '150px',     // ancho
                 //height: '40px',      // alto
                 //  backgroundColor: "#6600A1",
-                color: '#fff',
+                color: '#000',
                 //borderRadius: '12px' // Bordes redondeados
                 }}
             >
@@ -239,7 +239,7 @@ function comprarAproveedor() {
                     width: '110px',     // ancho
                     height: '40px',      // alto
                     backgroundColor: "#6600A1",
-                    color: '#fff',
+                    color: '#000',
                     borderRadius: '12px' // Bordes redondeados
                     }}
             />
@@ -254,7 +254,7 @@ function comprarAproveedor() {
                 //width: '150px',     // ancho
                 //height: '40px',      // alto
                 //  backgroundColor: "#6600A1",
-                color: '#fff',
+                color: '#000',
                 //borderRadius: '12px' // Bordes redondeados
                 }}
             >
@@ -268,7 +268,7 @@ function comprarAproveedor() {
                     width: '110px',     // ancho
                     height: '40px',      // alto
                     backgroundColor: "#6600A1",
-                    color: '#fff',
+                    color: '#000',
                     borderRadius: '12px' // Bordes redondeados
                     }}
             />
@@ -284,7 +284,7 @@ function comprarAproveedor() {
                 //width: '150px',     // ancho
                 //height: '40px',      // alto
                 //  backgroundColor: "#6600A1",
-                color: '#fff',
+                color: '#000',
                 //borderRadius: '12px' // Bordes redondeados
                 }}
             >
@@ -298,7 +298,7 @@ function comprarAproveedor() {
                     width: '110px',     // ancho
                     height: '40px',      // alto
                     backgroundColor: "#6600A1",
-                    color: '#fff',
+                    color: '#000',
                     borderRadius: '12px' // Bordes redondeados
                     }}
             />
@@ -313,7 +313,7 @@ function comprarAproveedor() {
                 //width: '150px',     // ancho
                 //height: '40px',      // alto
                 //  backgroundColor: "#6600A1",
-                color: '#fff',
+                color: '#000',
                 //borderRadius: '12px' // Bordes redondeados
                 }}
             >
@@ -327,7 +327,7 @@ function comprarAproveedor() {
                     width: '200px',     // ancho
                     height: '150px',      // alto
                     backgroundColor: "#6600A1",
-                    color: '#fff',
+                    color: '#000',
                     resize: 'none',
                     borderRadius: '12px' // Bordes redondeados
                     }}
@@ -342,7 +342,7 @@ function comprarAproveedor() {
             width: '150px',     // ancho
             height: '40px',      // alto
             backgroundColor: "#a74be3",
-            color: '#fff',
+            color: '#000',
             borderRadius: '12px' // Bordes redondeados
             }}>
                 Realizar Compra
