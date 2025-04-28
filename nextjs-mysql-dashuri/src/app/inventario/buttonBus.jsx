@@ -36,16 +36,23 @@ function ButtonBusqueda() {
   const cargaDatos = async (selectedOption) => {
     console.log("Cargando productos para la categoría:", selectedOption);
     try {
-      let url = "http://localhost:3000/api/inventario"; // Cargar todos los productos por defecto
-      if (selectedOption && selectedOption !== "todo" && selectedOption !== "Todo") {
-        url = "http://localhost:3000/api/categoria/" + selectedOption; // URL de productos filtrados por categoría
+      let url = "http://localhost:3000/api/inventario";
+      // Usar comparación case-insensitive
+      if (selectedOption && !selectedOption.toLowerCase().includes("todo")) {
+        url = `http://localhost:3000/api/categoria/${selectedOption.toLowerCase()}`;
       }
-
+  
       const { data } = await axios.get(url);
-      console.log("Productos cargados:", data); // Verificamos los datos de los productos
-      setProducts(data);
+      // Verificar que data es un array
+      if (Array.isArray(data)) {
+        setProducts(data);
+      } else {
+        console.error("La respuesta no es un array:", data);
+        setProducts([]);
+      }
     } catch (error) {
       console.error("Error al cargar productos:", error);
+      setProducts([]);
     }
   };
 
@@ -70,17 +77,27 @@ function ButtonBusqueda() {
     cargaDatos(selectedOption);
   }, [selectedOption]);
 
+  useEffect(() => {
+    console.log("selectedOption ha cambiado a:", selectedOption);
+    console.log("Estado actual de productos:", products);
+    cargaDatos(selectedOption);
+  }, [selectedOption]);
+
   // Función para manejar el cambio en el dropdown
   const toggleDropdown = () => {
     setIsOpen((prev) => !prev);
     console.log("Dropdown toggle, isOpen:", !isOpen); // Depuración
   };
 
-  // Función para manejar la selección de categoría en el dropdown
   const handleSelect = (option) => {
-    console.log("Categoría seleccionada:", option); // Depuración
-    setSelectedOption(option);
+    console.log("Categoría seleccionada:", option);
+    // Normalizar a minúsculas para la petición pero mantener visualización
+    const normalizedOption = option === "Todo" ? option : option.toLowerCase();
+    setSelectedOption(option); // Mostrar el nombre original
     setIsOpen(false);
+    
+    // Pasar el nombre normalizado a cargaDatos
+    cargaDatos(normalizedOption);
   };
 
   return (

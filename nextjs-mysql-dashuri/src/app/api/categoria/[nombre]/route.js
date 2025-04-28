@@ -1,29 +1,42 @@
 import { NextResponse } from "next/server";
 import { pool } from "@/libs/mysql";
 
-export async function GET(request, props) {
-  const params = await props.params;
+export async function GET(request, { params }) {
   try {
-    
-    const nombre =await params?.nombre;
-    
+    const { nombre } = params;
 
     if (!nombre) {
       return NextResponse.json(
-        { message: "ID no proporcionado" },
+        { message: "Nombre de categoría no proporcionado" },
         { status: 400 }
       );
     }
 
-    const result = await pool.query("SELECT p.id, p.nombre, p.stock, p.precio,p.fecha_exp, c.nombre AS categoria_nombre FROM producto p INNER JOIN categoria_producto c ON p.categoria_id = c.id WHERE c.nombre = ?", [nombre]);
-    if (result.length === 0) {
-      return NextResponse.json({ message: "Producto no encontrado" }, { status: 404 });
-    }
+    // Consulta modificada para hacer la comparación case-insensitive
+    const [result] = await pool.query(
+      `SELECT 
+        p.id, 
+        p.nombre, 
+        p.stock, 
+        p.precio,
+        p.fecha_exp, 
+        c.nombre AS categoria_nombre 
+       FROM producto p 
+       INNER JOIN categoria_producto c ON p.categoria_id = c.id 
+       WHERE LOWER(c.nombre) = LOWER(?)`, 
+      [nombre.trim()]
+    );
 
-    return NextResponse.json(result);
+    // Siempre devolver un array, incluso si está vacío
+    return NextResponse.json(Array.isArray(result) ? result : []);
+    
   } catch (error) {
+    console.error("Error en API categoría:", error);
     return NextResponse.json(
-      { message: error.message },
+      { 
+        message: "Error al obtener productos por categoría",
+        error: error.message 
+      },
       { status: 500 }
     );
   }
