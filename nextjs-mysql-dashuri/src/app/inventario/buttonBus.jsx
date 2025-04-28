@@ -7,53 +7,86 @@ import axios from "axios";
 function ButtonBusqueda() {
   const [products, setProducts] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("");
+  const [selectedOption, setSelectedOption] = useState("Todo"); // Inicializar como "Todo"
   const [categorias, setCategorias] = useState([]);
 
-
-  const obtenerSoloFecha = (fechaCompleta)=> {
+  const obtenerSoloFecha = (fechaCompleta) => {
+    console.log("Fecha completa:", fechaCompleta); // Verifica qué está recibiendo
+    if (!fechaCompleta) {
+      console.error("Fecha no disponible");
+      return "Fecha no disponible"; // Devolver un mensaje en caso de que la fecha no esté disponible
+    }
+  
     const fecha = new Date(fechaCompleta);
+    
+    // Verificamos si la fecha es válida
+    if (isNaN(fecha.getTime())) {
+      console.error("Fecha inválida:", fechaCompleta);
+      return "Fecha inválida"; // Si la fecha es inválida, devolvemos un mensaje
+    }
+  
     const año = fecha.getFullYear();
-    const mes = String(fecha.getMonth() + 1).padStart(2, '0');
-    const dia = String(fecha.getDate()).padStart(2, '0');
+    const mes = String(fecha.getMonth() + 1).padStart(2, "0");
+    const dia = String(fecha.getDate()).padStart(2, "0");
+  
     return `${año}-${mes}-${dia}`;
-  }
+  };
+  
+  
+  
 
+
+
+  
+  
+
+  // Función para cargar los productos
   const cargaDatos = async (selectedOption) => {
-    if (
-      selectedOption === "todo" ||
-      selectedOption === "Todo" ||
-      selectedOption === ""
-    ) {
-      const { data } = await axios.get("http://localhost:3000/api/inventario");
+    console.log("Cargando productos para la categoría:", selectedOption);
+    try {
+      let url = "http://localhost:3000/api/inventario"; // Cargar todos los productos por defecto
+      if (selectedOption && selectedOption !== "todo" && selectedOption !== "Todo") {
+        url = "http://localhost:3000/api/categoria/" + selectedOption;
+      }
+
+      const { data } = await axios.get(url);
+      console.log("Productos cargados:", data); // Verificamos los datos de los productos
       setProducts(data);
-    } else {
-      const { data } = await axios.get(
-        "http://localhost:3000/api/categoria/" + selectedOption
-      );
-      setProducts(data);
+    } catch (error) {
+      console.error("Error al cargar productos:", error);
     }
   };
 
+  // Cargar categorías al iniciar el componente
   useEffect(() => {
     const loadCategorias = async () => {
       try {
         const { data } = await axios.get("http://localhost:3000/api/categoria");
+        console.log("Categorías cargadas:", data); // Verificamos las categorías
         setCategorias(data);
-        cargaDatos(selectedOption);
       } catch (error) {
         console.error("Error al cargar categorías:", error);
       }
     };
 
     loadCategorias();
+  }, []);
+
+  // Cargar los productos cuando cambia selectedOption
+  useEffect(() => {
+    console.log("selectedOption ha cambiado a:", selectedOption); // Depuración para verificar el cambio
+    cargaDatos(selectedOption);
   }, [selectedOption]);
 
+  // Función para manejar el cambio en el dropdown
   const toggleDropdown = () => {
     setIsOpen((prev) => !prev);
+    console.log("Dropdown toggle, isOpen:", !isOpen); // Depuración
   };
 
+  // Función para manejar la selección de categoría en el dropdown
   const handleSelect = (option) => {
+    console.log("Categoría seleccionada:", option); // Depuración
     setSelectedOption(option);
     setIsOpen(false);
   };
@@ -89,16 +122,20 @@ function ButtonBusqueda() {
         {isOpen && (
           <div className="rounded-xl shadow-lg bg-white absolute top-full w-72 mt-2 z-10">
             <ul className="py-2">
-              {categorias.map((cat) => (
-                <li key={cat.id}>
-                  <a
-                    onClick={() => handleSelect(cat.nombre)}
-                    className="block px-6 py-2 hover:bg-gray-100 text-gray-900 font-medium cursor-pointer"
-                  >
-                    {cat.nombre.charAt(0).toUpperCase() + cat.nombre.slice(1)}
-                  </a>
-                </li>
-              ))}
+              {categorias.length > 0 ? (
+                categorias.map((cat) => (
+                  <li key={cat.id}>
+                    <a
+                      onClick={() => handleSelect(cat.nombre)}
+                      className="block px-6 py-2 hover:bg-gray-100 text-gray-900 font-medium cursor-pointer"
+                    >
+                      {cat.nombre && cat.nombre.charAt(0).toUpperCase() + cat.nombre.slice(1)}
+                    </a>
+                  </li>
+                ))
+              ) : (
+                <li className="px-6 py-2 text-gray-500">Cargando categorías...</li>
+              )}
               <li>
                 <a
                   onClick={() => handleSelect("Todo")}
@@ -138,20 +175,22 @@ function ButtonBusqueda() {
         <tbody>
           {Array.isArray(products) &&
             products.map((product) => (
-              <tr
-                key={product.id}
-                className="bg-white border-b border-gray-400"
-              >
+              <tr key={product.id} className="bg-white border-b border-gray-400">
                 <th
                   scope="row"
                   className="px-6 py-4 font-medium text-black whitespace-nowrap"
                 >
-                  {product.nombre.charAt(0).toUpperCase() + product.nombre.slice(1)}
+                  {product.nombre && product.nombre.charAt(0).toUpperCase() + product.nombre.slice(1)}
                 </th>
                 <td className="px-6 py-4">{product.stock}</td>
                 <td className="px-6 py-4">{product.precio}</td>
-                <td className="px-6 py-4">{obtenerSoloFecha(product.fecha_exp)}</td>
-                <td className="px-6 py-4">{ product.categoria_nombre.charAt(0).toUpperCase() + product.categoria_nombre.slice(1)}</td>
+                <td className="px-6 py-4">
+                  {obtenerSoloFecha(product.fecha_exp)}
+                </td>
+                <td className="px-6 py-4">
+                  {product.categoria_nombre && product.categoria_nombre.charAt(0).toUpperCase() +
+                    product.categoria_nombre.slice(1)}
+                </td>
                 <Buttons productId={product.id} />
               </tr>
             ))}
