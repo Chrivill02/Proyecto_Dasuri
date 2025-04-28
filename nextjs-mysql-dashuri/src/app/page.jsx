@@ -2,7 +2,7 @@ import React from 'react';
 
 function HomePage() {
   return (
-    <div className="bg-gray-400 min-h-screen text-white flex flex-col">
+    <div className="bg-gray-300 min-h-screen text-white flex flex-col">
       {/* Sección de portada con imagen */}
       <section className="relative w-full h-[80vh]">
         <img
@@ -116,18 +116,17 @@ function HomePage() {
 
 
       {/* Imagen al final con fondo negro translúcido */}
-      <div className="relative mt-20 w-full h-96">
+      <div className="relative mt-20 w-full h-140">
         <img
           src="/imagen_final.JPG"
           alt="Imagen final"
-          className="w-full h-full object-cover absolute inset-0"
+          className="w-full h-full object-cover inset-0"
         />
         <div className="absolute inset-0 flex flex-col top-center items-center bg-black opacity-50"></div>
 
 		
 
 
-  {/* Texto encima del cuadro */}
 
 
   <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-3xl mx-auto p-6 text-center">
