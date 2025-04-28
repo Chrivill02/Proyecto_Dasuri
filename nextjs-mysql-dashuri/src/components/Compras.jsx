@@ -2,8 +2,6 @@
 import axios from "axios";
 import { useRef, useState, useEffect } from "react";
 
-
-
 function comprasform() {
     const [options, setOptions] = useState([]);
 
@@ -32,10 +30,6 @@ function comprasform() {
             proveedor_id: "",
         });
     }
-
-    const handleChange2 = (e) => {
-        setSelectedOption(e.target.value);
-    };
 
     useEffect(() => {
         const fetchData = async () => {
