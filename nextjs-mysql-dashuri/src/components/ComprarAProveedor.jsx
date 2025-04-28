@@ -114,7 +114,7 @@ function comprarAproveedor() {
             />
 
             <label 
-            htmlFor="dcompra"
+            htmlFor="ID_compra"
             style={{
                 position: 'absolute',
                 top: '110px',       // posición en Y
