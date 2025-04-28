@@ -31,14 +31,6 @@ function ButtonBusqueda() {
   
     return `${año}-${mes}-${dia}`;
   };
-  
-  
-  
-
-
-
-  
-  
 
   // Función para cargar los productos
   const cargaDatos = async (selectedOption) => {
@@ -46,7 +38,7 @@ function ButtonBusqueda() {
     try {
       let url = "http://localhost:3000/api/inventario"; // Cargar todos los productos por defecto
       if (selectedOption && selectedOption !== "todo" && selectedOption !== "Todo") {
-        url = "http://localhost:3000/api/categoria/" + selectedOption;
+        url = "http://localhost:3000/api/categoria/" + selectedOption; // URL de productos filtrados por categoría
       }
 
       const { data } = await axios.get(url);
@@ -101,9 +93,7 @@ function ButtonBusqueda() {
         >
           {selectedOption || "Todo"}
           <svg
-            className={`w-2.5 h-2.5 text-white transition-transform duration-300 ${
-              isOpen ? "rotate-180" : ""
-            }`}
+            className={`w-2.5 h-2.5 text-white transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
             width="16"
             height="16"
             viewBox="0 0 16 16"
@@ -152,24 +142,12 @@ function ButtonBusqueda() {
       <table className="w-full text-sm text-left text-black border border-gray-400 mt-5">
         <thead className="text-xs uppercase bg-white text-black border-b border-gray-400">
           <tr>
-            <th scope="col" className="px-6 py-3">
-              Nombre
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Stock
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Precio
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Fecha de expiración
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Categoría
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Acciones
-            </th>
+            <th scope="col" className="px-6 py-3">Nombre</th>
+            <th scope="col" className="px-6 py-3">Stock</th>
+            <th scope="col" className="px-6 py-3">Precio</th>
+            <th scope="col" className="px-6 py-3">Fecha de expiración</th>
+            <th scope="col" className="px-6 py-3">Categoría</th>
+            <th scope="col" className="px-6 py-3">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -188,8 +166,7 @@ function ButtonBusqueda() {
                   {obtenerSoloFecha(product.fecha_exp)}
                 </td>
                 <td className="px-6 py-4">
-                  {product.categoria_nombre && product.categoria_nombre.charAt(0).toUpperCase() +
-                    product.categoria_nombre.slice(1)}
+                  {product.categoria_nombre && product.categoria_nombre.charAt(0).toUpperCase() + product.categoria_nombre.slice(1)}
                 </td>
                 <Buttons productId={product.id} />
               </tr>

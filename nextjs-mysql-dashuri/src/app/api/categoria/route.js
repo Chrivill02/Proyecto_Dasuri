@@ -5,11 +5,15 @@ export async function GET() {
   try {
     // Consulta a la tabla de categorías
     const [categorias] = await pool.query('SELECT * FROM categoria_producto');
-    console.log(categorias);  // Asegúrate de que esta consulta devuelva las categorías
+    console.log("Categorías obtenidas desde la base de datos:", categorias);  // Verifica qué datos estamos obteniendo
+
+    if (!categorias || categorias.length === 0) {
+      console.log("No se encontraron categorías en la base de datos.");
+    }
 
     return NextResponse.json(categorias);  // Devolvemos las categorías como respuesta JSON
   } catch (error) {
-    console.log(error);
+    console.log("Error al obtener categorías:", error);
     return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }
