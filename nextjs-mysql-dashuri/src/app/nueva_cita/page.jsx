@@ -1,366 +1,179 @@
 "use client";
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 
-export default function CitasPrincipal() {
-  const router = useRouter();
+import { useState, useEffect, useRef } from "react";
+import axios from "axios";
+
+export default function CitasFormPage() {
   const [citas, setCitas] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  
-  // Estado para el formulario
-  const [formMode, setFormMode] = useState('create'); // 'create' o 'edit'
-  const [formData, setFormData] = useState({
-    id: null,
-    fecha_cita: '',
-    hora_cita: '',
-    estado: 'Pendiente', // Valor por defecto
-    costo: '',
-    nombre_cliente: '',
-    telefono_cliente: ''
+  const [detalleCita, setDetalleCita] = useState(null);
+  const [formulario, setFormulario] = useState({
+    id: "",
+    fecha_cita: "",
+    hora_cita: "",
+    estado: "",
+    costo: "",
+    nombre_cliente: "",
+    telefono_cliente: ""
   });
 
-  // Opciones para el estado de la cita
-  const estadoOptions = ['Pendiente', 'Confirmada', 'Cancelada', 'Completada'];
+  const form = useRef(null);
 
-  // Cargar citas al montar el componente
+  const handleChange = (e) => {
+    setFormulario({
+      ...formulario,
+      [e.target.name]: e.target.value
+    });
+
+    if (e.target.name === "id" && e.target.value) {
+      const cita = citas.find((c) => c.id.toString() === e.target.value);
+      setDetalleCita(cita || null);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      let res;
+      if (formulario.id) {
+        res = await axios.put("/api/nueva_cita", formulario);
+      } else {
+        res = await axios.post("/api/nueva_cita", formulario);
+      }
+
+      console.log(res.data);
+      form.current.reset();
+      setFormulario({
+        id: "",
+        fecha_cita: "",
+        hora_cita: "",
+        estado: "",
+        costo: "",
+        nombre_cliente: "",
+        telefono_cliente: ""
+      });
+      fetchCitas();
+    } catch (error) {
+      console.error("Error al enviar el formulario:", error);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!formulario.id) return;
+    try {
+      const res = await axios.delete("/api/nueva_cita", {
+        data: { id: formulario.id }
+      });
+      console.log(res.data);
+      form.current.reset();
+      setFormulario({
+        id: "",
+        fecha_cita: "",
+        hora_cita: "",
+        estado: "",
+        costo: "",
+        nombre_cliente: "",
+        telefono_cliente: ""
+      });
+      setDetalleCita(null);
+      fetchCitas();
+    } catch (error) {
+      console.error("Error al eliminar cita:", error);
+    }
+  };
+
+  const fetchCitas = async () => {
+    try {
+      const res = await fetch("/api/nueva_cita");
+      const data = await res.json();
+      setCitas(data);
+    } catch (error) {
+      console.error("Error al cargar citas:", error);
+    }
+  };
+
   useEffect(() => {
     fetchCitas();
   }, []);
 
-  // Función para obtener todas las citas
-  const fetchCitas = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const response = await fetch('/api/nueva_cita');
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          errorData.message || `Error HTTP ${response.status} al cargar las citas`
-        );
-      }
-
-      const data = await response.json();
-      setCitas(Array.isArray(data) ? data : (data.data || []));
-    } catch (err) {
-      console.error('Error al cargar citas:', err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Manejar cambios en el formulario
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-  };
-
-  // Resetear el formulario
-  const resetForm = () => {
-    setFormData({
-      id: null,
-      fecha_cita: '',
-      hora_cita: '',
-      estado: 'Pendiente',
-      costo: '',
-      nombre_cliente: '',
-      telefono_cliente: ''
-    });
-    setFormMode('create');
-  };
-
-  // Preparar formulario para editar
-  const handleEdit = (cita) => {
-    setFormData({
-      id: cita.id,
-      fecha_cita: cita.fecha_cita.split('T')[0], // Formatear fecha
-      hora_cita: cita.hora_cita,
-      estado: cita.estado,
-      costo: cita.costo,
-      nombre_cliente: cita.nombre_cliente,
-      telefono_cliente: cita.telefono_cliente || ''
-    });
-    setFormMode('edit');
-    // Desplazar al formulario
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  // Enviar formulario
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-      
-      // Validar campos del formulario
-      if (!formData.fecha_cita || !formData.hora_cita || !formData.estado || !formData.costo || !formData.nombre_cliente) {
-        throw new Error('Por favor complete todos los campos requeridos');
-      }
-
-      // URL y método según modo
-      const url = '/api/nueva_cita';
-      const method = formMode === 'create' ? 'POST' : 'PUT';
-      
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-      
-      const data = await response.json();
-      
-      if (!data.success) {
-        throw new Error(data.message || 'Error al procesar la cita');
-      }
-      
-      // Actualizar lista de citas
-      fetchCitas();
-      // Resetear formulario
-      resetForm();
-      
-      alert(formMode === 'create' ? 'Cita creada con éxito' : 'Cita actualizada con éxito');
-    } catch (err) {
-      setError(err.message);
-      alert(`Error: ${err.message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Eliminar cita
-  const handleDelete = async (id) => {
-    if (!confirm('¿Está seguro de eliminar esta cita?')) return;
-    
-    try {
-      setLoading(true);
-      const response = await fetch('/api/nueva_cita', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ id }),
-      });
-      
-      const data = await response.json();
-      
-      if (!data.success) {
-        throw new Error(data.message || 'Error al eliminar la cita');
-      }
-      
-      // Actualizar lista de citas
-      fetchCitas();
-      alert('Cita eliminada con éxito');
-    } catch (err) {
-      setError(err.message);
-      alert(`Error: ${err.message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Formatear fecha para mostrar
-  const formatDate = (dateString) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES');
-  };
-
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8 text-center">Gestión de Citas</h1>
-      
-      {/* Formulario de cita */}
-      <div className="bg-white shadow-md rounded-lg p-6 mb-8">
-        <h2 className="text-xl font-semibold mb-4">
-          {formMode === 'create' ? 'Nueva Cita' : 'Editar Cita'}
-        </h2>
-        
-        <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Fecha */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Fecha <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="date"
-                name="fecha_cita"
-                value={formData.fecha_cita}
-                onChange={handleInputChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2"
-                required
-              />
-            </div>
-            
-            {/* Hora */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Hora <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="time"
-                name="hora_cita"
-                value={formData.hora_cita}
-                onChange={handleInputChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2"
-                required
-              />
-            </div>
-            
-            {/* Estado */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Estado <span className="text-red-500">*</span>
-              </label>
-              <select
-                name="estado"
-                value={formData.estado}
-                onChange={handleInputChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2"
-                required
-              >
-                {estadoOptions.map(option => (
-                  <option key={option} value={option}>{option}</option>
-                ))}
-              </select>
-            </div>
-            
-            {/* Costo */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Costo <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="number"
-                name="costo"
-                value={formData.costo}
-                onChange={handleInputChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2"
-                min="0"
-                step="0.01"
-                required
-              />
-            </div>
-            
-            {/* Nombre del cliente */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Nombre del Cliente <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="nombre_cliente"
-                value={formData.nombre_cliente}
-                onChange={handleInputChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2"
-                required
-              />
-            </div>
-            
-            {/* Teléfono */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Teléfono
-              </label>
-              <input
-                type="tel"
-                name="telefono_cliente"
-                value={formData.telefono_cliente}
-                onChange={handleInputChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2"
-                placeholder="Opcional"
-              />
-            </div>
-          </div>
-          
-          {/* Botones de acción */}
-          <div className="flex justify-end gap-2 mt-6">
-            <button
-              type="button"
-              onClick={resetForm}
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-              disabled={loading}
-            >
-              {loading ? 'Procesando...' : formMode === 'create' ? 'Crear Cita' : 'Actualizar Cita'}
-            </button>
-          </div>
-        </form>
-      </div>
-      
-      {/* Tabla de citas */}
-      <div className="bg-white shadow-md rounded-lg overflow-hidden">
-        <h2 className="text-xl font-semibold p-4 border-b">Lista de Citas</h2>
-        
-        {loading && <p className="text-center p-4">Cargando citas...</p>}
-        
-        {error && (
-          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
-            <p>{error}</p>
-          </div>
-        )}
-        
-        {!loading && !error && citas.length === 0 && (
-          <p className="text-center p-4 text-gray-500">No hay citas registradas</p>
-        )}
-        
-        {!loading && citas.length > 0 && (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hora</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cliente</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Teléfono</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Costo</th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {citas.map((cita) => (
-                  <tr key={cita.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{formatDate(cita.fecha_cita)}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{cita.hora_cita}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{cita.nombre_cliente}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{cita.telefono_cliente}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{cita.estado}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{cita.costo}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-right">
-                      <button
-                        onClick={() => handleEdit(cita)}
-                        className="text-blue-600 hover:text-blue-900"
-                      >
-                        Editar
-                      </button>
-                      <button
-                        onClick={() => handleDelete(cita.id)}
-                        className="ml-4 text-red-600 hover:text-red-900"
-                      >
-                        Eliminar
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+    <div className="p-6 max-w-2xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Gestión de Citas de Servicio</h1>
+      <form ref={form} onSubmit={handleSubmit} className="space-y-4">
+        <input
+          type="text"
+          name="id"
+          placeholder="ID (para editar/eliminar)"
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+        />
+        <input
+          type="date"
+          name="fecha_cita"
+          placeholder="Fecha"
+          onChange={handleChange}
+          value={formulario.fecha_cita}
+          className="w-full p-2 border rounded"
+        />
+        <input
+          type="time"
+          name="hora_cita"
+          placeholder="Hora"
+          onChange={handleChange}
+          value={formulario.hora_cita}
+          className="w-full p-2 border rounded"
+        />
+        <input
+          type="text"
+          name="estado"
+          placeholder="Estado"
+          onChange={handleChange}
+          value={formulario.estado}
+          className="w-full p-2 border rounded"
+        />
+        <input
+          type="number"
+          name="costo"
+          placeholder="Costo"
+          onChange={handleChange}
+          value={formulario.costo}
+          className="w-full p-2 border rounded"
+        />
+        <input
+          type="text"
+          name="nombre_cliente"
+          placeholder="Nombre del Cliente"
+          onChange={handleChange}
+          value={formulario.nombre_cliente}
+          className="w-full p-2 border rounded"
+        />
+        <input
+          type="text"
+          name="telefono_cliente"
+          placeholder="Teléfono del Cliente"
+          onChange={handleChange}
+          value={formulario.telefono_cliente}
+          className="w-full p-2 border rounded"
+        />
+
+        <button type="submit" className="bg-blue-600 text-white p-2 rounded">
+          Guardar Cita
+        </button>
+
+        <button
+          type="button"
+          onClick={handleDelete}
+          className="bg-red-600 text-white p-2 rounded ml-4"
+        >
+          Eliminar Cita
+        </button>
+      </form>
+
+      {detalleCita && (
+        <div className="mt-6 p-4 border rounded bg-gray-50">
+          <h2 className="font-bold mb-2">Detalle de la cita</h2>
+          <pre>{JSON.stringify(detalleCita, null, 2)}</pre>
+        </div>
+      )}
     </div>
   );
 }
