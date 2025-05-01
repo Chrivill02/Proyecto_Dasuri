@@ -6,6 +6,7 @@ import axios from "axios";
 export default function CitasFormPage() {
   const [citas, setCitas] = useState([]);
   const [detalleCita, setDetalleCita] = useState(null);
+  const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [formulario, setFormulario] = useState({
     id: "",
     fecha_cita: "",
@@ -40,7 +41,6 @@ export default function CitasFormPage() {
         res = await axios.post("/api/nueva_cita", formulario);
       }
 
-      console.log(res.data);
       form.current.reset();
       setFormulario({
         id: "",
@@ -63,7 +63,6 @@ export default function CitasFormPage() {
       const res = await axios.delete("/api/nueva_cita", {
         data: { id: formulario.id }
       });
-      console.log(res.data);
       form.current.reset();
       setFormulario({
         id: "",
@@ -96,80 +95,122 @@ export default function CitasFormPage() {
   }, []);
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Gestión de Citas de Servicio</h1>
-      <form ref={form} onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          name="id"
-          placeholder="ID (para editar/eliminar)"
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="date"
-          name="fecha_cita"
-          placeholder="Fecha"
-          onChange={handleChange}
-          value={formulario.fecha_cita}
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="time"
-          name="hora_cita"
-          placeholder="Hora"
-          onChange={handleChange}
-          value={formulario.hora_cita}
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="text"
-          name="estado"
-          placeholder="Estado"
-          onChange={handleChange}
-          value={formulario.estado}
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="number"
-          name="costo"
-          placeholder="Costo"
-          onChange={handleChange}
-          value={formulario.costo}
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="text"
-          name="nombre_cliente"
-          placeholder="Nombre del Cliente"
-          onChange={handleChange}
-          value={formulario.nombre_cliente}
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="text"
-          name="telefono_cliente"
-          placeholder="Teléfono del Cliente"
-          onChange={handleChange}
-          value={formulario.telefono_cliente}
-          className="w-full p-2 border rounded"
-        />
+    <div className="p-6 max-w-3xl mx-auto bg-white min-h-screen">
+      <h1 className="text-3xl font-bold text-center mb-6 text-purple-800">Gestión de Citas de Servicio</h1>
 
-        <button type="submit" className="bg-blue-600 text-white p-2 rounded">
-          Guardar Cita
-        </button>
+      <div className="bg-[#F3E5F5] border-[3px] border-yellow-500 rounded-lg p-4 shadow-lg mb-6">
+        <h2 className="text-xl font-semibold text-purple-800 mb-4">📓 Libreta de Citas</h2>
+        <table className="w-full table-auto border-collapse">
+          <thead>
+            <tr className="bg-purple-100 text-purple-800">
+              <th className="border p-2">ID</th>
+              <th className="border p-2">Fecha</th>
+              <th className="border p-2">Hora</th>
+              <th className="border p-2">Estado</th>
+              <th className="border p-2">Costo</th>
+              <th className="border p-2">Nombre</th>
+              <th className="border p-2">Teléfono</th>
+            </tr>
+          </thead>
+          <tbody>
+            {citas.map((cita) => (
+              <tr key={cita.id} className="text-purple-700 hover:bg-purple-50">
+                <td className="border p-2">{cita.id}</td>
+                <td className="border p-2">{cita.fecha_cita}</td>
+                <td className="border p-2">{cita.hora_cita}</td>
+                <td className="border p-2">{cita.estado}</td>
+                <td className="border p-2">${cita.costo}</td>
+                <td className="border p-2">{cita.nombre_cliente}</td>
+                <td className="border p-2">{cita.telefono_cliente}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-        <button
-          type="button"
-          onClick={handleDelete}
-          className="bg-red-600 text-white p-2 rounded ml-4"
-        >
-          Eliminar Cita
-        </button>
-      </form>
+      <button
+        onClick={() => setMostrarFormulario(!mostrarFormulario)}
+        className="bg-purple-600 text-white px-4 py-2 rounded mb-4"
+      >
+        {mostrarFormulario ? "Ocultar Formulario" : "➕ Nueva Cita"}
+      </button>
+
+      {mostrarFormulario && (
+        <form ref={form} onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="text"
+            name="id"
+            placeholder="ID (para editar/eliminar)"
+            onChange={handleChange}
+            className="w-full p-2 bg-[#EDE7F6] border rounded text-purple-800"
+          />
+          <input
+            type="date"
+            name="fecha_cita"
+            placeholder="Fecha"
+            onChange={handleChange}
+            value={formulario.fecha_cita}
+            className="w-full p-2 bg-[#EDE7F6] border rounded text-purple-800"
+          />
+          <input
+            type="time"
+            name="hora_cita"
+            placeholder="Hora"
+            onChange={handleChange}
+            value={formulario.hora_cita}
+            className="w-full p-2 bg-[#EDE7F6] border rounded text-purple-800"
+          />
+          <input
+            type="text"
+            name="estado"
+            placeholder="Estado"
+            onChange={handleChange}
+            value={formulario.estado}
+            className="w-full p-2 bg-[#EDE7F6] border rounded text-purple-800"
+          />
+          <input
+            type="number"
+            name="costo"
+            placeholder="Costo"
+            onChange={handleChange}
+            value={formulario.costo}
+            className="w-full p-2 bg-[#EDE7F6] border rounded text-purple-800"
+          />
+          <input
+            type="text"
+            name="nombre_cliente"
+            placeholder="Nombre del Cliente"
+            onChange={handleChange}
+            value={formulario.nombre_cliente}
+            className="w-full p-2 bg-[#EDE7F6] border rounded text-purple-800"
+          />
+          <input
+            type="text"
+            name="telefono_cliente"
+            placeholder="Teléfono del Cliente"
+            onChange={handleChange}
+            value={formulario.telefono_cliente}
+            className="w-full p-2 bg-[#EDE7F6] border rounded text-purple-800"
+          />
+
+          <div className="flex gap-4">
+            <button type="submit" className="bg-purple-700 text-white p-2 rounded">
+              Guardar Cita
+            </button>
+
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="bg-red-600 text-white p-2 rounded"
+            >
+              Eliminar Cita
+            </button>
+          </div>
+        </form>
+      )}
 
       {detalleCita && (
-        <div className="mt-6 p-4 border rounded bg-gray-50">
+        <div className="mt-6 p-4 border rounded bg-purple-50 text-purple-800">
           <h2 className="font-bold mb-2">Detalle de la cita</h2>
           <pre>{JSON.stringify(detalleCita, null, 2)}</pre>
         </div>
