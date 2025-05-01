@@ -1,3 +1,4 @@
+//src\app\api\nueva_cita\route.js
 import { NextResponse } from "next/server";
 import { pool } from "@/libs/mysql";
 
