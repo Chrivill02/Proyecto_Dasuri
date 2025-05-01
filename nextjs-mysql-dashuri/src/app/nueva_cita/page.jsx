@@ -20,14 +20,29 @@ export default function CitasFormPage() {
   const form = useRef(null);
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
+
     setFormulario({
       ...formulario,
-      [e.target.name]: e.target.value
+      [name]: value
     });
 
-    if (e.target.name === "id" && e.target.value) {
-      const cita = citas.find((c) => c.id.toString() === e.target.value);
-      setDetalleCita(cita || null);
+    if (name === "id" && value) {
+      const cita = citas.find((c) => c.id.toString() === value.toString());
+      if (cita) {
+        setDetalleCita(cita);
+        setFormulario({
+          id: cita.id.toString(),
+          fecha_cita: cita.fecha_cita || "",
+          hora_cita: cita.hora_cita || "",
+          estado: cita.estado || "",
+          costo: cita.costo ? cita.costo.toString() : "",
+          nombre_cliente: cita.nombre_cliente || "",
+          telefono_cliente: cita.telefono_cliente || ""
+        });
+      } else {
+        setDetalleCita(null);
+      }
     }
   };
 
@@ -137,13 +152,24 @@ export default function CitasFormPage() {
 
       {mostrarFormulario && (
         <form ref={form} onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            name="id"
-            placeholder="ID (para editar/eliminar)"
-            onChange={handleChange}
-            className="w-full p-2 bg-[#EDE7F6] border rounded text-purple-800"
-          />
+          <div className="flex flex-col">
+            <label htmlFor="id" className="text-purple-800 mb-1">ID (para editar/eliminar)</label>
+            <select
+              id="id"
+              name="id"
+              onChange={handleChange}
+              value={formulario.id}
+              className="w-full p-2 bg-[#EDE7F6] border rounded text-purple-800"
+            >
+              <option value="">-- Seleccionar ID para editar --</option>
+              {citas.map(c => (
+                <option key={c.id} value={c.id}>
+                  {c.id} - {c.nombre_cliente}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <input
             type="date"
             name="fecha_cita"
