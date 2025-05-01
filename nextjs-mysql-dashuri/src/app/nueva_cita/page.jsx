@@ -33,31 +33,25 @@ export default function CitasPrincipal() {
     try {
       setLoading(true);
       setError(null);
-      setErrorDetails(null);
-  
+
       const response = await fetch('/api/nueva_cita');
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(
           errorData.message || `Error HTTP ${response.status} al cargar las citas`
         );
       }
-  
+
       const data = await response.json();
       setCitas(Array.isArray(data) ? data : (data.data || []));
     } catch (err) {
       console.error('Error al cargar citas:', err);
       setError(err.message);
-      setErrorDetails({
-        status: err.status,
-        stack: process.env.NODE_ENV === 'development' ? err.stack : null
-      });
     } finally {
       setLoading(false);
     }
   };
-  
 
   // Manejar cambios en el formulario
   const handleInputChange = (e) => {
@@ -339,32 +333,23 @@ export default function CitasPrincipal() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {citas.map((cita) => (
-                  <tr key={cita.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">{formatDate(cita.fecha_cita)}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{cita.hora_cita}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{cita.nombre_cliente}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{cita.telefono_cliente || '-'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                        ${cita.estado === 'Pendiente' ? 'bg-yellow-100 text-yellow-800' : ''}
-                        ${cita.estado === 'Confirmada' ? 'bg-blue-100 text-blue-800' : ''}
-                        ${cita.estado === 'Cancelada' ? 'bg-red-100 text-red-800' : ''}
-                        ${cita.estado === 'Completada' ? 'bg-green-100 text-green-800' : ''}
-                      `}>
-                        {cita.estado}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">${parseFloat(cita.costo).toFixed(2)}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button 
+                  <tr key={cita.id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{formatDate(cita.fecha_cita)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{cita.hora_cita}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{cita.nombre_cliente}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{cita.telefono_cliente}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{cita.estado}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{cita.costo}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-right">
+                      <button
                         onClick={() => handleEdit(cita)}
-                        className="text-blue-600 hover:text-blue-900 mr-3"
+                        className="text-blue-600 hover:text-blue-900"
                       >
                         Editar
                       </button>
-                      <button 
+                      <button
                         onClick={() => handleDelete(cita.id)}
-                        className="text-red-600 hover:text-red-900"
+                        className="ml-4 text-red-600 hover:text-red-900"
                       >
                         Eliminar
                       </button>
