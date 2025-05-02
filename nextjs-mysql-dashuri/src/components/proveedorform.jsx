@@ -28,6 +28,7 @@ function proveedorform() {
 
 
     return (
+        
         <form 
         className="absolute bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4 w-[300px] h-[300px] top-[10px] left-[1185px]" //x máx 1195
         onSubmit={handleSubmit}
