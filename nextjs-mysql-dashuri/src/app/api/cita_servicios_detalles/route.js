@@ -1,4 +1,4 @@
-// src/app/api/cita_servicio_detalle/route.js
+// src/app/api/cita_servicios_detalles/route.js
 
 import { NextResponse } from "next/server";
 import { pool } from "@/libs/mysql";
@@ -25,9 +25,10 @@ export async function POST(request) {
         const inserts = id_servicios.map(id_servicio =>
             pool.query("INSERT INTO cita_servicio_detalle SET ?", {
                 cita_id: cita_id,
-                id_servicio,
+                servicio_id: id_servicio,  // <- CORREGIDO AQUÍ
             })
         );
+        
         await Promise.all(inserts);
 
         return NextResponse.json({

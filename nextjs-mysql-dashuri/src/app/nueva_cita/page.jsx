@@ -171,10 +171,10 @@ export default function CitasFormPage() {
 
   const asociarServiciosACita = async (idCita, idServicios) => {
     try {
-      const res = await axios.post("/api/cita_servicios_detalles", {
+      await axios.post("/api/cita_servicios_detalles", {
         id_cita: idCita,
-        id_servicios: idServicios
-      });
+        id_servicios: Array.isArray(idServicios) ? idServicios : [idServicios]
+      });      
       // Actualizar los servicios de la cita
       fetchServiciosPorCita(idCita);
     } catch (error) {
