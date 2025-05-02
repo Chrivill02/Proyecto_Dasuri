@@ -90,7 +90,7 @@ function HomePage() {
               <div className="absolute top-4 right-4 flex gap-4">
                 <button 
                   onClick={() => router.push('/buscar')}
-                  className="p-2"
+                  className="p-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 hover:shadow-lg transition-all duration-300 transform hover:scale-105"
                 >
                   <img
                     src="/buscar.png" 
@@ -100,7 +100,7 @@ function HomePage() {
                 </button>
                 <button 
                   onClick={() => router.push('/carrito')}
-                  className="p-2"
+                  className="p-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 hover:shadow-lg transition-all duration-300 transform hover:scale-105"
                 >
                   <img
                     src="/CARRITO.jpg" 
@@ -110,7 +110,7 @@ function HomePage() {
                 </button>
                 <button 
                   onClick={() => router.push('/login')}
-                  className="p-2"
+                  className="p-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 hover:shadow-lg transition-all duration-300 transform hover:scale-105"
                 >
                   <img
                     src="/usuario.jpg" 
