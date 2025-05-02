@@ -1,13 +1,4 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-	async redirects(){
-		return[
-			{
-				source: '/', destination: '/inventario',permanent: true,
-			}
-		]
-	}
-};
+/* @type {import('next').NextConfig} */
+const nextConfig = {}; // ← Sin redirecciones
 
 export default nextConfig;
-
