@@ -60,7 +60,7 @@ function HomePage() {
 
                 {userLevel >= 1 && (
                   <Link 
-                    href="/citas"
+                    href="/nueva_cita"
                     className="bg-transparent text-white px-6 py-2 rounded-md hover:bg-purple-700 transition duration-300"
                   >
                     CITAS
