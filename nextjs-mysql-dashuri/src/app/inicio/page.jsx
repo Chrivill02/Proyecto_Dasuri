@@ -52,7 +52,7 @@ function HomePage() {
             <div className="flex justify-evenly w-full mt-6">
               <div className="flex justify-around w-full mt-6">
                 <Link 
-                  href="/ventas"
+                  href="/catalogo"
                   className="bg-transparent text-white px-6 py-2 rounded-md hover:bg-purple-700 transition duration-300"
                 >
                   CATALOGO
