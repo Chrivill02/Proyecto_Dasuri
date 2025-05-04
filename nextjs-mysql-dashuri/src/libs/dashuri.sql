@@ -236,6 +236,7 @@ DROP TABLE IF EXISTS `dashuri`.`detalles_compra` ;
 
 CREATE TABLE IF NOT EXISTS `dashuri`.`detalles_compra` (
   `id` INT NOT NULL AUTO_INCREMENT,
+  `fecha` DATE NOT NULL,
   `compra_id` INT NOT NULL,
   `producto_id` INT NOT NULL,
   `cantidad` INT NOT NULL,
