@@ -47,7 +47,7 @@ export default function RegistrarPage() {
       setNivel('0')  // Resetear el nivel al valor por defecto
 
       setTimeout(() => {
-        router.push('/ventas') // Redirigir después de 2 segundos
+        router.push('/inicio') // Redirigir después de 2 segundos
       }, 2000)
     } catch (err) {
       setError(err.message)

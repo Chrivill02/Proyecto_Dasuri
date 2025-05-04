@@ -55,7 +55,7 @@ function HomePage() {
                   href="/ventas"
                   className="bg-transparent text-white px-6 py-2 rounded-md hover:bg-purple-700 transition duration-300"
                 >
-                  MAQUILLAJE
+                  CATALOGO
                 </Link>
 
                 {userLevel >= 1 && (

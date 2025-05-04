@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function LoginPage() {
   const [correo, setCorreo] = useState('')
@@ -25,11 +26,8 @@ export default function LoginPage() {
 
       if (!res.ok) throw new Error(data.message || 'Error de autenticación')
 
-      // Aquí guardas el nivel del usuario después de hacer login
-      localStorage.setItem('usuarioNivel', data.usuario.nivel);  // Guardamos el nivel en localStorage
-
-      // Redirigir al dashboard u otra página
-      router.push('/ventas')
+      localStorage.setItem('usuarioNivel', data.usuario.nivel)
+      router.push('/inicio')
     } catch (err) {
       setError(err.message)
     } finally {
@@ -77,6 +75,14 @@ export default function LoginPage() {
             {loading ? 'Ingresando...' : 'Entrar'}
           </button>
         </form>
+
+        {/* Enlace para registrarse */}
+        <p className="mt-4 text-center text-sm text-gray-600">
+          ¿No tienes una cuenta?{' '}
+          <Link href="/registrar" className="text-blue-600 hover:underline">
+            Regístrate aquí
+          </Link>
+        </p>
       </div>
     </div>
   )
