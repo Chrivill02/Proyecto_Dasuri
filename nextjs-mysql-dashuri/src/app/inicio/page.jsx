@@ -84,6 +84,23 @@ function HomePage() {
                     VENTAS
                   </Link>
                 )}
+
+                {userLevel >= 1 && (
+                  <Link 
+                    href="/inventario"
+                    className="bg-transparent text-white px-6 py-2 rounded-md hover:bg-purple-700 transition duration-300"
+                  >
+                    INVENTARIO
+                  </Link>
+                )}
+                {userLevel >= 1 && (
+                  <Link 
+                    href="/nuevo_servicio"
+                    className="bg-transparent text-white px-6 py-2 rounded-md hover:bg-purple-700 transition duration-300"
+                  >
+                    SERVICIOS
+                  </Link>
+                )}
               </div>
               
               {/* Botones con imágenes en la parte superior derecha */}
