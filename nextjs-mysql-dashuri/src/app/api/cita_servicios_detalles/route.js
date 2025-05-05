@@ -9,7 +9,9 @@ export async function POST(request) {
         const body = await request.json();
         console.log("Datos recibidos en POST:", body);  // 🔍 Diagnóstico
 
-        const { cita_id, id_servicios } = body;
+        // Vamos a aceptar cualquiera de estas formas para mayor flexibilidad
+        const cita_id = body.cita_id || body.id_cita;
+        const id_servicios = body.id_servicios || body.servicios || [];
 
         if (!cita_id || !Array.isArray(id_servicios) || id_servicios.length === 0) {
             return NextResponse.json(
@@ -25,7 +27,7 @@ export async function POST(request) {
         const inserts = id_servicios.map(id_servicio =>
             pool.query("INSERT INTO cita_servicio_detalle SET ?", {
                 cita_id: cita_id,
-                servicio_id: id_servicio,  // <- CORREGIDO AQUÍ
+                servicio_id: id_servicio,  // Aseguramos que use servicio_id según tu esquema de BD
             })
         );
         
@@ -49,7 +51,8 @@ export async function POST(request) {
 export async function GET(request) {
     try {
         const url = new URL(request.url);
-        const cita_id = url.searchParams.get("cita_id");
+        // Aceptamos cualquiera de los dos formatos de parámetro
+        const cita_id = url.searchParams.get("cita_id") || url.searchParams.get("id_cita");
 
         if (!cita_id) {
             return NextResponse.json(
@@ -58,12 +61,22 @@ export async function GET(request) {
             );
         }
 
+        // Modificamos la consulta para obtener información más detallada sobre los servicios
         const [servicios] = await pool.query(
-            `SELECT csd.* 
+            `SELECT csd.cita_id, csd.servicio_id as id_servicio, 
+                    s.nombre_servicio, s.precio, s.descripcion
              FROM cita_servicio_detalle csd
+             LEFT JOIN servicios s ON csd.servicio_id = s.id
              WHERE csd.cita_id = ?`,
             [cita_id]
         );
+
+        if (servicios.length === 0) {
+            return NextResponse.json({ 
+                message: "Sin servicios",
+                servicios: [] 
+            });
+        }
 
         return NextResponse.json(servicios);
     } catch (error) {
