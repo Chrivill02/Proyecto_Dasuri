@@ -21,17 +21,16 @@ export default function CitasFormPage() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-  
+
     setFormulario({
       ...formulario,
       [name]: value
     });
-  
+
     if (name === "id" && value) {
       const cita = citas.find((c) => c.id.toString() === value.toString());
       if (cita) {
         setDetalleCita(cita);
-        // Autocompletar los campos del formulario
         setFormulario({
           id: cita.id.toString(),
           fecha_cita: cita.fecha_cita || "",
@@ -201,7 +200,7 @@ export default function CitasFormPage() {
                 <td className="border p-2">{cita.fecha_cita}</td>
                 <td className="border p-2">{cita.hora_cita}</td>
                 <td className="border p-2">{cita.estado}</td>
-                <td className="border p-2">{cita.costo}</td>
+                <td className="border p-2">${cita.costo}</td>
                 <td className="border p-2">{cita.nombre_cliente}</td>
                 <td className="border p-2">{cita.telefono_cliente}</td>
               </tr>
@@ -218,15 +217,25 @@ export default function CitasFormPage() {
       </button>
 
       {mostrarFormulario && (
-        
         <form ref={form} onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            name="id"
-            placeholder="ID (para editar/eliminar)"
-            onChange={handleChange}
-            className="w-full p-2 bg-[#EDE7F6] border rounded text-purple-800"
-          />
+          <div className="flex flex-col">
+            <label htmlFor="id" className="text-purple-800 mb-1">ID (para editar/eliminar)</label>
+            <select
+              id="id"
+              name="id"
+              onChange={handleChange}
+              value={formulario.id}
+              className="w-full p-2 bg-[#EDE7F6] border rounded text-purple-800"
+            >
+              <option value="">-- Seleccionar ID para editar --</option>
+              {citas.map(c => (
+                <option key={c.id} value={c.id}>
+                  {c.id} - {c.nombre_cliente}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <input
             type="date"
             name="fecha_cita"
