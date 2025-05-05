@@ -1,52 +1,33 @@
 'use client';
 import { useEffect, useState } from 'react';
-import ProductCard from '@/components/ProductCard';
-import { useCart } from '@/context/CartContext';
 
-export default function Catalogo() {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const { totalItems } = useCart();
+export default function CatalogoPage() {
+  const [productos, setProductos] = useState([]);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch('/api/products');
-        const data = await response.json();
-        setProducts(data);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
+    fetch('/api/productos')
+      .then(res => res.json())
+      .then(data => setProductos(data))
+      .catch(err => console.error('Error al cargar productos:', err));
   }, []);
 
-  if (loading) {
-    return <div className="text-center py-8">Cargando productos...</div>;
-  }
-
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Catálogo de Productos</h1>
-        <div className="relative">
-          <a href="/carrito" className="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">
-              {totalItems}
-            </span>
-          </a>
-        </div>
-      </div>
+    <div className="min-h-screen bg-gray-100 py-10 px-6">
+      <h1 className="text-3xl font-bold text-center mb-10 text-purple-700">
+        Catálogo de Productos
+      </h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {products.map(product => (
-          <ProductCard key={product.id} product={product} />
+        {productos.map(producto => (
+          <div
+            key={producto.id}
+            className="bg-white rounded-2xl shadow-md p-5 transform hover:scale-105 hover:shadow-xl transition-all duration-300"
+          >
+            <div className="h-32 bg-gradient-to-r from-purple-200 to-purple-100 rounded-xl mb-4"></div>
+            <h2 className="text-xl font-semibold text-gray-800">{producto.nombre}</h2>
+            <p className="text-purple-700 font-bold text-lg">Q{producto.precio}</p>
+            <p className="text-sm text-gray-500">Stock: {producto.stock}</p>
+          </div>
         ))}
       </div>
     </div>

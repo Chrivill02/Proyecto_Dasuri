@@ -37,7 +37,10 @@ function HomePage() {
         <div className="absolute left-1/2 top-full transform -translate-x-1/2 -translate-y-1/2 w-3/5 h-48 bg-white opacity-90 p-12 text-center shadow-2xl flex flex-col justify-center">
           <h2 className="text-2xl font-bold text-black">Maquillaje Facial</h2>
           <p className="text-black mt-4">
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laboriosam temporibus laudantium lorem Lorem ipsum dolor sit amet consectetur, adipisicing elit. Numquam quas possimus tenetur hic neque incidunt praesentium culpa facere similique, alias sit! Fugit nihil minus quia, nulla ullam quibusdam dicta ex?
+          ¡Bienvenida a tu lugar favorito de belleza!
+Descubre nuestro catálogo exclusivo de maquillaje, cuidado personal y accesorios.
+Explora las mejores marcas, tonos irresistibles y productos únicos que resaltan tu estilo.
+Reserva tus favoritos hoy mismo y luce espectacular todos los días.
           </p>
         </div>
 
@@ -99,6 +102,14 @@ function HomePage() {
                     className="bg-transparent text-white px-6 py-2 rounded-md hover:bg-purple-700 transition duration-300"
                   >
                     SERVICIOS
+                  </Link>
+                )}
+                {userLevel >= 1 && (
+                  <Link 
+                    href="/categoria"
+                    className="bg-transparent text-white px-6 py-2 rounded-md hover:bg-purple-700 transition duration-300"
+                  >
+                    CATEGORIAS
                   </Link>
                 )}
               </div>
