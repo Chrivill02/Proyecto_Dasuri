@@ -1,11 +1,11 @@
-//src\app\api\nueva_cita\route.js
+// src/app/api/nueva_cita/route.js
 import { NextResponse } from "next/server";
-import { pool } from "@/libs/mysql";
+import { pool } from "@/libs/mysql"; // debe estar configurado con mysql2/promise
 
 // GET - Obtener todas las citas de servicio
 export async function GET() {
-    const results = await pool.query("SELECT * FROM cita_servicio");
-    return NextResponse.json(results);
+    const [rows] = await pool.query("SELECT * FROM cita_servicio");
+    return NextResponse.json(rows);
 }
 
 // POST - Crear una nueva cita de servicio
@@ -20,16 +20,12 @@ export async function POST(request) {
             telefono_cliente 
         } = await request.json();
 
-        const result = await pool.query("INSERT INTO cita_servicio SET ?", {
-            fecha_cita,
-            hora_cita,
-            estado,
-            costo,
-            nombre_cliente,
-            telefono_cliente
-        });
-
-        console.log(result);
+        const [result] = await pool.query(
+            `INSERT INTO cita_servicio 
+            (fecha_cita, hora_cita, estado, costo, nombre_cliente, telefono_cliente) 
+            VALUES (?, ?, ?, ?, ?, ?)`,
+            [fecha_cita, hora_cita, estado, costo, nombre_cliente, telefono_cliente]
+        );
 
         return NextResponse.json({
             id: result.insertId,
@@ -42,15 +38,8 @@ export async function POST(request) {
         });
 
     } catch (error) {
-        console.log(error);
-        return NextResponse.json(
-            {
-                message: error.message,
-            },
-            {
-                status: 500,
-            }
-        );
+        console.error(error);
+        return NextResponse.json({ message: error.message }, { status: 500 });
     }
 }
 
@@ -67,16 +56,15 @@ export async function PUT(request) {
             telefono_cliente 
         } = await request.json();
 
-        const result = await pool.query(
-            "UPDATE cita_servicio SET fecha_cita = ?, hora_cita = ?, estado = ?, costo = ?, nombre_cliente = ?, telefono_cliente = ? WHERE id = ?",
+        const [result] = await pool.query(
+            `UPDATE cita_servicio 
+             SET fecha_cita = ?, hora_cita = ?, estado = ?, costo = ?, nombre_cliente = ?, telefono_cliente = ? 
+             WHERE id = ?`,
             [fecha_cita, hora_cita, estado, costo, nombre_cliente, telefono_cliente, id]
         );
 
         if (result.affectedRows === 0) {
-            return NextResponse.json(
-                { message: "Cita no encontrada" },
-                { status: 404 }
-            );
+            return NextResponse.json({ message: "Cita no encontrada" }, { status: 404 });
         }
 
         return NextResponse.json({
@@ -90,11 +78,8 @@ export async function PUT(request) {
         });
 
     } catch (error) {
-        console.log(error);
-        return NextResponse.json(
-            { message: error.message },
-            { status: 500 }
-        );
+        console.error(error);
+        return NextResponse.json({ message: error.message }, { status: 500 });
     }
 }
 
@@ -103,25 +88,19 @@ export async function DELETE(request) {
     try {
         const { id } = await request.json();
 
-        const result = await pool.query(
+        const [result] = await pool.query(
             "DELETE FROM cita_servicio WHERE id = ?",
             [id]
         );
 
         if (result.affectedRows === 0) {
-            return NextResponse.json(
-                { message: "Cita no encontrada" },
-                { status: 404 }
-            );
+            return NextResponse.json({ message: "Cita no encontrada" }, { status: 404 });
         }
 
         return NextResponse.json({ message: "Cita eliminada correctamente" });
 
     } catch (error) {
-        console.log(error);
-        return NextResponse.json(
-            { message: error.message },
-            { status: 500 }
-        );
+        console.error(error);
+        return NextResponse.json({ message: error.message }, { status: 500 });
     }
 }
