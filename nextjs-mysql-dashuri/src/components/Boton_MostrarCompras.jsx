@@ -16,7 +16,7 @@ function botonMostrarCompras() {
         borderRadius: '30px',
         backgroundColor: activo ? '#A74BE3' : '#9365A9', //a057cf
         position: 'absolute',
-        top: '340px',   // posición vertical
+        top: '540px',   // posición vertical
         left: '1250px',   // posición horizontal
         cursor: 'pointer',
         transition: 'background-color 0.3s ease',

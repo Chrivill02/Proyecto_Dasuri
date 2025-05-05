@@ -5,11 +5,15 @@ import { useRef, useState, useEffect } from "react";
 
 function comprasform() {
 
+
+
     const [compra, setCompras] = useState({
             fecha: "",
             total: 0,
             proveedor_id: "",  
         });
+    
+    const [idEliminar, setIdEliminar] = useState(""); // nuevo estado para ID a eliminar
     const form = useRef(null);
 
 
@@ -23,22 +27,50 @@ function comprasform() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const res = await axios.post("/api/factura", compra)
-        console.log(res)
-        form.current.reset();
-        setCompras({
-            fecha: "",
-            total: 0,
-            proveedor_id: "",
-        });
-    }    
+    
+        if (!compra.fecha || !compra.proveedor_id) {
+            alert("Debes completar todos los campos para registrar la factura.");
+            return;
+        }
+    
+        try {
+            const res = await axios.post("/api/factura", compra);
+            console.log(res);
+    
+            form.current.reset();
+            setCompras({
+                fecha: "",
+                total: 0,
+                proveedor_id: "",
+            });
+            alert("Factura registrada exitosamente");
+        } catch (error) {
+            console.error("Error al registrar factura:", error);
+            alert("Error al registrar la factura :c");
+        }
+    };
 
+    const handleDelete = async () => {
+        if (!idEliminar) {
+            alert("Por favor, ingresa un ID para eliminar.");
+            return;
+        }
 
+        try {
+            const res = await axios.delete(`/api/factura/${idEliminar}`);
+            alert(`Factura con ID ${idEliminar} eliminado correctamente.`);
+            setIdEliminar(""); // limpiar el input
+        } catch (error) {
+            console.error(error);
+            alert("Error al eliminar la factura :(");
+        }
+    };
+    
 
 
     return (
         <form 
-        className="absolute bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4 w-[300px] h-[300px] top-[10px] left-[10px]" //x máx 1195
+        className="absolute bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4 w-[300px] h-[330px] top-[10px] left-[10px]" //x máx 1195
         onSubmit={handleSubmit}
         ref={form}
         >
@@ -119,8 +151,47 @@ function comprasform() {
             borderRadius: '12px' // Bordes redondeados
             }}>
                 Agregar Factura
-
             </button>
+
+            {/* Input para ingresar el ID a eliminar */}
+<input 
+    type="text" 
+    placeholder="ID a eliminar" 
+    value={idEliminar}
+    onChange={(e) => setIdEliminar(e.target.value)} 
+    style={{
+        position: 'absolute',
+        top: '290px',
+        left: '30px',
+        width: '70px',
+        height: '30px',
+        paddingLeft: '5px',
+        border: '1px solid #ccc',
+        borderRadius: '6px'
+    }}
+/>
+
+{/* Botón para eliminar factura */}
+<button 
+    type="button"
+    onClick={handleDelete}
+    style={{
+        position: 'absolute',
+        top: '290px',
+        left: '120px',
+        width: '160px',
+        height: '30px',
+        backgroundColor: "red",
+        color: '#fff',
+        borderRadius: '6px',
+        fontSize: '14px'
+    }}
+>
+    🗑 Eliminar Factura
+</button>
+
+
+
 
         </form>
 
