@@ -2,15 +2,16 @@
 import axios from "axios";
 import { useRef, useState, useEffect } from "react";
 
+
 function comprasform() {
-    const [options, setOptions] = useState([]);
 
     const [compra, setCompras] = useState({
             fecha: "",
-            total: "",
+            total: 0,
             proveedor_id: "",  
         });
     const form = useRef(null);
+
 
     const handleChange = ( e ) => {
         setCompras({
@@ -19,29 +20,20 @@ function comprasform() {
         })
 	}
 
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const res = await axios.post("/api/solicitud", compra)
+        const res = await axios.post("/api/factura", compra)
         console.log(res)
         form.current.reset();
         setCompras({
             fecha: "",
-            total: "",
+            total: 0,
             proveedor_id: "",
         });
-    }
+    }    
 
-    useEffect(() => {
-        const fetchData = async () => {
 
-            const response = await fetch('api/ComprasProveedor');
-            const data = await response.json();
-
-            setOptions(data);
-          };
-      
-          fetchData();
-        }, []);
 
 
     return (
@@ -50,7 +42,37 @@ function comprasform() {
         onSubmit={handleSubmit}
         ref={form}
         >
+
+            <label 
+            htmlFor="dcompra"
+            style={{
+                position: 'absolute',
+                top: '15px',       // posición en Y
+                left: '200px',      // posición en X
+                color: '#000',
+                }}
+            >
+               FACTURA 
+            </label>
             
+
+
+            <label 
+            htmlFor=""
+            className="block text-gray-700 text-sm font-bold mb-2"
+            >
+                ID de factura: 
+            </label>
+            <label 
+            htmlFor=""
+            className="block text-gray-700 text-sm font-bold mb-2"
+            >
+                #Cargando...
+            </label>
+
+
+
+
             <label 
             htmlFor="fecha"
             className="block text-gray-700 text-sm font-bold mb-2"
@@ -61,17 +83,7 @@ function comprasform() {
             type="date"
             onChange={handleChange}
             className="border border-gray-300 rounded-md p-2"
-            name="fecha" 
-            
-                
-            />
-
-            <label htmlFor="total"
-            className="block text-gray-700 text-sm font-bold mb-2"
-            >
-                Total: 
-            </label><input name="total" type="text" placeholder="Total"  onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3"
+            name="fecha"  
             />
             
 
@@ -82,10 +94,7 @@ function comprasform() {
                 ID del proveedor: 
             </label>
             
-            <select
-            value={compra.proveedor_id}
-            onChange={handleChange}
-            name="proveedor_id"
+            <input name="proveedor_id" type="text" placeholder="-->ID<--" onChange={handleChange} 
             style={{
                 position: 'absolute',
                 top: '190px',       // posición en Y
@@ -96,14 +105,7 @@ function comprasform() {
                 color: '#fff',
                 borderRadius: '12px' // Bordes redondeados
                 }}
-            >
-                <option value="">-- ID --</option>
-                {options.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.id}
-                </option>
-              ))}
-            </select>
+            ></input>
 
 
             <button style={{
@@ -116,7 +118,7 @@ function comprasform() {
             color: '#fff',
             borderRadius: '12px' // Bordes redondeados
             }}>
-                Agregar Solicitud
+                Agregar Factura
 
             </button>
 

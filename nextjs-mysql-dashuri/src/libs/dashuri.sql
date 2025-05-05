@@ -193,7 +193,7 @@ DROP TABLE IF EXISTS `dashuri`.`compra` ;
 CREATE TABLE IF NOT EXISTS `dashuri`.`compra` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `fecha` DATE NOT NULL,
-  `total` DECIMAL(10,2) NOT NULL,
+  `total` DECIMAL(10,2) NOT NULL DEFAULT 0,
   `proveedor_id` INT NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `proveedor_id` (`proveedor_id` ASC) VISIBLE,
