@@ -6,6 +6,6 @@ export const pool = mysql({
 		port: 3306,
     user: "root",
     password: "8905BD",
-    database: "dashuri"
+    database: "dashuri2.0"
 	}
 })
