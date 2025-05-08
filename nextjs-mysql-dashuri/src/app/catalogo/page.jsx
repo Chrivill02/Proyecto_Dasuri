@@ -5,7 +5,7 @@ export default function CatalogoPage() {
   const [productos, setProductos] = useState([]);
 
   useEffect(() => {
-    fetch('/api/productos')
+    fetch('/api/catalogo')
       .then(res => res.json())
       .then(data => setProductos(data))
       .catch(err => console.error('Error al cargar productos:', err));
@@ -21,9 +21,15 @@ export default function CatalogoPage() {
         {productos.map(producto => (
           <div
             key={producto.id}
+          
             className="bg-white rounded-2xl shadow-md p-5 transform hover:scale-105 hover:shadow-xl transition-all duration-300"
           >
-            <div className="h-32 bg-gradient-to-r from-purple-200 to-purple-100 rounded-xl mb-4"></div>
+            <img
+            src={producto.imagen_url || 'https://placehold.co/300x160?text=Sin+Imagen'}
+            alt={producto.nombre}
+            className="w-full h-40 object-contain rounded-xl mb-4 bg-white"
+          />
+
             <h2 className="text-xl font-semibold text-gray-800">{producto.nombre}</h2>
             <p className="text-purple-700 font-bold text-lg">Q{producto.precio}</p>
             <p className="text-sm text-gray-500">Stock: {producto.stock}</p>
