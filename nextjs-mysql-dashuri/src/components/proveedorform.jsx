@@ -44,7 +44,7 @@ function proveedorform() {
 
     return (
         <form
-            className="absolute bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4 w-[300px] h-[390px] top-[10px] left-[1185px]"
+            className="absolute bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4 w-[300px] h-[390px] top-[150px] left-[70px]"
             onSubmit={handleSubmit}
             ref={form}
         >

@@ -1,11 +1,9 @@
-import proveedorform from "@/components/ProveedorForm.jsx";
 import mostrartablas from "@/components/MostrarTablas";
 import comprarAproveedor from "@/components/ComprarAProveedor";
 import botonMostrarCompras from "@/components/Boton_MostrarCompras";
 import botonMostrarProveedor from "@/components/Boton_MostrarProveedor";
 import comprasform from "@/components/CompraFactura";
 
-const Forms = proveedorform
 const Form2 = mostrartablas
 const Form3 = comprarAproveedor
 const Form4 = comprasform
@@ -23,7 +21,6 @@ function compraproveedor() {
 			padding: '20px',
 			backgroundColor: '#CCA9DD',
 		}}> 
-			<Forms />
 			<Form2 />
 			<Form3 />
 			<Form4 />
