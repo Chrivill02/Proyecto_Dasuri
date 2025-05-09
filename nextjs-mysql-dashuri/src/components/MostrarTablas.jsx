@@ -18,7 +18,7 @@ function mostrartablas() {
 
     return (
         <form 
-        className="absolute bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4 w-[1000px] h-[350px] top-[350px] left-[170px]" //x máx 1195 y máx 441
+        className="absolute bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4 w-[1000px] h-[400px] top-[145px] left-[400px]" //x máx 1195 y máx 441
         ><div style={{ padding: '20px' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>

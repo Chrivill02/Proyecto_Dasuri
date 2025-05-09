@@ -1,6 +1,8 @@
 import proveedorform from "@/components/ProveedorForm.jsx";
+import mostrartablas from "@/components/MostrarTablas";
 
 const Forms = proveedorform
+const Form2 = mostrartablas
 
 
 function compraproveedorproveedor() {
@@ -14,6 +16,7 @@ function compraproveedorproveedor() {
 			backgroundColor: '#CCA9DD',
 		}}> 
 			<Forms />
+			<Form2 />
 			 
 		</div>
 	);
