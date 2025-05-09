@@ -110,7 +110,7 @@ CREATE TABLE `detalles_compra` (
   PRIMARY KEY (`id`),
   KEY `proveedor_id` (`proveedor_id`),
   KEY `producto_id` (`producto_id`),
-  CONSTRAINT `detalles_compra_ibfk_2` FOREIGN KEY (`proveedor_id`) REFERENCES `proveedor` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `detalles_compra_ibfk_1` FOREIGN KEY (`proveedor_id`) REFERENCES `proveedor` (`id`) ON DELETE CASCADE,
   CONSTRAINT `detalles_compra_ibfk_2` FOREIGN KEY (`producto_id`) REFERENCES `producto` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -140,9 +140,7 @@ CREATE TABLE `detalles_reserva_producto` (
   `estado` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `venta_id` (`venta_id`),
-  KEY `producto_id` (`producto_id`),
-  CONSTRAINT `detalles_reserva_producto_ibfk_1` FOREIGN KEY (`venta_id`) REFERENCES `venta` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `detalles_reserva_producto_ibfk_2` FOREIGN KEY (`producto_id`) REFERENCES `producto` (`id`) ON DELETE CASCADE
+  CONSTRAINT `detalles_reserva_producto_ibfk_1` FOREIGN KEY (`venta_id`) REFERENCES `venta` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

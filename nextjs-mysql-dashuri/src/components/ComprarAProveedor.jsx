@@ -1,307 +1,111 @@
 "use client"
 import axios from "axios";
 import { useRef, useState } from "react";
-
+import { useRouter } from "next/navigation";
 
 function comprarAproveedor() {
-    const [detallecompra, setDetalleCompra] = useState({
-            compra_id: "",
-            producto_id: "",
-            cantidad: "",
-            precio_unitario: "",
-            sub_total: "",
-            detalles: "",  
-        });
+    const [compraProveedor, setCompraProveedor] = useState({
+        producto: "",
+        cantidad: "",
+        proveedor_id: "",
+        fecha_vencimiento: ""
+    });
+
     const form = useRef(null);
+    const router = useRouter();
 
-
-    const handleChange = async (e) => {
+    const handleChange = (e) => {
         const { name, value } = e.target;
-    
-        // Copia actual del estado
-        let newDetalle = {
-            ...detallecompra,
-            [name]: value
-        };
-    
-        // Si el campo cambiado es "producto_id", obtener precio desde API
-        if (name === "producto_id") {
-            try {
-                const res = await fetch(`/api/producto/${value}`);
-                const data = await res.json();
-    
-                if (data.precio) {
-                    newDetalle.precio_unitario = data.precio;
-                }
-            } catch (error) {
-                console.error("Error obteniendo el precio:", error);
-            }
-        }
-    
-        // Si se ingresan cantidad o precio, calcular sub_total
-        if ((name === "cantidad" || name === "precio_unitario") && (newDetalle.cantidad && newDetalle.precio_unitario)) {
-            newDetalle.sub_total = parseFloat(newDetalle.cantidad) * parseFloat(newDetalle.precio_unitario);
-        }
-    
-        setDetalleCompra(newDetalle);
+        setCompraProveedor(prev => ({ ...prev, [name]: value }));
     };
-    
-        
-    const guardarDetalleCompra = async () => {
+
+    const agregarCompra = async () => {
         try {
-            await axios.post("/api/inventario", detallecompra);
-            alert("Detalle de compra guardado.");
+            const response = await axios.post(`/api/inventario/${compraProveedor}`); // 🚀 Enviamos los datos a la API
+            alert("Compra agregada con éxito.");
+            console.log("Respuesta del servidor:", response.data);
+
+            // Limpiar el formulario después de agregar la compra
             form.current.reset();
-            setDetalleCompra({
-                compra_id: "",
-                producto_id: "",
+            setCompraProveedor({
+                producto: "",
                 cantidad: "",
-                precio_unitario: "",
-                sub_total: "",
-                detalles: "",
+                proveedor_id: "",
+                fecha_vencimiento: ""
             });
         } catch (error) {
-            console.error("Error al guardar detalle:", error);
+            console.error("Error al agregar la compra:", error);
+            alert("Hubo un error al agregar la compra.");
         }
     };
-    
-    const terminarCompra = async () => {
-        try {
-            const response = await axios.get(`/api/factura/${detallecompra.compra_id}`);
-            const compraActual = response.data;
-    
-            const nuevoTotal = Number(compraActual.total) + Number(detallecompra.sub_total);
-    
-            await axios.put(`/api/factura/${detallecompra.compra_id}`, {
-                ...compraActual,
-                total: nuevoTotal,
-            });
-    
-            alert("Compra finalizada. Total actualizado.");
-        } catch (error) {
-            console.error("Error al actualizar la compra:", error);
-        }
+
+    const irAgregarProveedor = () => {
+        router.push("/agregarproveedor");
     };
-    
+
     return (
-        <form 
-        className="absolute bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4 w-[850px] h-[300px] top-[10px] left-[323px]" //x máx 1195 y máx 441
-        ref={form}
-        >   
-
-            <label 
-            style={{
-                position: 'absolute',
-                top: '20px',       // posición en Y
-                left: '20px',      // posición en X
-                color: '#000',
-                }}
-            >
-                # de Factura: 
+        <form
+            className="absolute bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4 w-[850px] h-[300px] top-[10px] left-[323px]"
+            ref={form}
+        >
+            <label style={{ position: 'absolute', top: '20px', left: '20px', color: '#000' }}>
+                Producto:
             </label>
             <input
-            onChange={handleChange}
-            name="compra_id"
-            type="text"
-            placeholder="-->ID<--"
-            style={{
-                position: 'absolute',
-                top: '50px',       // posición en Y
-                left: '20px',      // posición en X
-                width: '70px',     // ancho
-                height: '40px',      // alto
-                backgroundColor: "#6600A1",
-                color: '#000',
-                borderRadius: '12px' // Bordes redondeados
-                }}
-            
+                onChange={handleChange}
+                name="producto"
+                type="text"
+                placeholder="Nombre del producto"
+                style={{ position: 'absolute', top: '50px', left: '20px', width: '200px', height: '40px', backgroundColor: "#6600A1", color: '#000', borderRadius: '12px' }}
             />
 
-
-            <label 
-            style={{
-                position: 'absolute',
-                top: '110px',       // posición en Y
-                left: '20px',      // posición en X
-                //width: '150px',     // ancho
-                //height: '40px',      // alto
-                //  backgroundColor: "#6600A1",
-                color: '#000',
-                //borderRadius: '12px' // Bordes redondeados
-                }}
-            >
-                ID del producto: 
+            <label style={{ position: 'absolute', top: '110px', left: '20px', color: '#000' }}>
+                Cantidad:
             </label>
             <input
-            type="text"
-            placeholder="-->ID<--"
-            onChange={handleChange}
-            name="producto_id"
-            style={{
-                position: 'absolute',
-                top: '140px',       // posición en Y
-                left: '20px',      // posición en X
-                width: '70px',     // ancho
-                height: '40px',      // alto
-                backgroundColor: "#6600A1",
-                color: '#000',
-                borderRadius: '12px' // Bordes redondeados
-            }}
-
+                type="text"
+                placeholder="Cantidad"
+                onChange={handleChange}
+                name="cantidad"
+                style={{ position: 'absolute', top: '140px', left: '20px', width: '100px', height: '40px', backgroundColor: "#6600A1", color: '#000', borderRadius: '12px' }}
             />
 
-
-            <label 
-            htmlFor="cantidad"
-            style={{
-                position: 'absolute',
-                top: '210px',       // posición en Y
-                left: '20px',      // posición en X
-                //width: '150px',     // ancho
-                //height: '40px',      // alto
-                //  backgroundColor: "#6600A1",
-                color: '#000',
-                //borderRadius: '12px' // Bordes redondeados
-                }}
-            >
-                Cantidad: 
+            <label htmlFor="proveedor_id" style={{ position: 'absolute', top: '20px', left: '300px', color: '#000' }}>
+                ID del Proveedor:
             </label>
-            <input name="cantidad" type="text" placeholder="Cantidad" onChange={handleChange} 
-                style={{
-                    position: 'absolute',
-                    top: '240px',       // posición en Y
-                    left: '20px',      // posición en X
-                    width: '110px',     // ancho
-                    height: '40px',      // alto
-                    backgroundColor: "#6600A1",
-                    color: '#000',
-                    borderRadius: '12px' // Bordes redondeados
-                    }}
+            <input
+                name="proveedor_id"
+                type="text"
+                placeholder="ID del proveedor"
+                onChange={handleChange}
+                style={{ position: 'absolute', top: '50px', left: '300px', width: '150px', height: '40px', backgroundColor: "#6600A1", color: '#000', borderRadius: '12px' }}
             />
 
-
-            <label 
-            htmlFor="preciounitario"
-            style={{
-                position: 'absolute',
-                top: '20px',       // posición en Y
-                left: '190px',      // posición en X
-                //width: '150px',     // ancho
-                //height: '40px',      // alto
-                //  backgroundColor: "#6600A1",
-                color: '#000',
-                //borderRadius: '12px' // Bordes redondeados
-                }}
-            >
-                Precio unitario: 
+            <label htmlFor="fecha_vencimiento" style={{ position: 'absolute', top: '110px', left: '300px', color: '#000' }}>
+                Fecha de vencimiento:
             </label>
-            <input name="preciounitario" type="text" placeholder="Precio Unitario" value={detallecompra.precio_unitario} readOnly
-                style={{
-                    position: 'absolute',
-                    top: '50px',       // posición en Y
-                    left: '190px',      // posición en X
-                    width: '110px',     // ancho
-                    height: '40px',      // alto
-                    backgroundColor: "#6600A1",
-                    color: '#000',
-                    borderRadius: '12px' // Bordes redondeados
-                    }}
+            <input
+                name="fecha_vencimiento"
+                type="date"
+                onChange={handleChange}
+                style={{ position: 'absolute', top: '140px', left: '300px', width: '180px', height: '40px', backgroundColor: "#6600A1", color: '#000', borderRadius: '12px' }}
             />
 
-
-
-            <label 
-            htmlFor="subtotal"
-            style={{
-                position: 'absolute',
-                top: '110px',       // posición en Y
-                left: '190px',      // posición en X
-                //width: '150px',     // ancho
-                //height: '40px',      // alto
-                //  backgroundColor: "#6600A1",
-                color: '#000',
-                //borderRadius: '12px' // Bordes redondeados
-                }}
+            <button
+                onClick={agregarCompra}
+                type="button"
+                style={{ position: 'absolute', top: '240px', left: '650px', width: '150px', height: '40px', backgroundColor: "#a74be3", color: '#000', borderRadius: '12px' }}
             >
-                Sub-total: 
-            </label>
-            <input name="subtotal" type="text" placeholder="subtotal" value={detallecompra.sub_total} readOnly
-                style={{
-                    position: 'absolute',
-                    top: '140px',       // posición en Y
-                    left: '190px',      // posición en X
-                    width: '110px',     // ancho
-                    height: '40px',      // alto
-                    backgroundColor: "#6600A1",
-                    color: '#000',
-                    borderRadius: '12px' // Bordes redondeados
-                    }}
-            />
-            
-            <button 
-            onClick={guardarDetalleCompra}
-            style={{
-            position: 'absolute',
-            top: '240px',       // posición en Y
-            left: '190px',      // posición en X
-            width: '100px',     // ancho
-            height: '40px',      // alto
-            backgroundColor: "#a74be3",
-            color: '#000',
-            borderRadius: '12px' // Bordes redondeados
-            }}>
-                aceptar
-
+                Agregar Compra
             </button>
 
-
-            <button 
-            onClick={terminarCompra}
-            style={{
-            position: 'absolute',
-            top: '240px',       // posición en Y
-            left: '650px',      // posición en X
-            width: '150px',     // ancho
-            height: '40px',      // alto
-            backgroundColor: "#a74be3",
-            color: '#000',
-            borderRadius: '12px' // Bordes redondeados
-            }}>
-                Terminar compra
-
-            </button>
-
-
-
-            <label 
-            htmlFor="dcompra"
-            style={{
-                position: 'absolute',
-                top: '20px',       // posición en Y
-                left: '350px',      // posición en X
-                //width: '150px',     // ancho
-                //height: '40px',      // alto
-                //  backgroundColor: "#6600A1",
-                color: '#000',
-                //borderRadius: '12px' // Bordes redondeados
-                }}
+            <button
+                onClick={irAgregarProveedor}
+                type="button"
+                style={{ position: 'absolute', top: '240px', left: '490px', width: '150px', height: '40px', backgroundColor: "#4CAF50", color: '#fff', borderRadius: '12px', border: 'none' }}
             >
-                Detalles de la compra: 
-            </label>
-            <textarea name="dcompra" type="text" placeholder="Detalles de la compra" onChange={handleChange} 
-                style={{
-                    position: 'absolute',
-                    top: '50px',       // posición en Y
-                    left: '350px',      // posición en X
-                    width: '450px',     // ancho
-                    height: '150px',      // alto
-                    backgroundColor: "#6600A1",
-                    color: '#000',
-                    resize: 'none',
-                    borderRadius: '12px' // Bordes redondeados
-                    }}
-            />
-
+                Agregar Proveedor
+            </button>
         </form>
     );
 }

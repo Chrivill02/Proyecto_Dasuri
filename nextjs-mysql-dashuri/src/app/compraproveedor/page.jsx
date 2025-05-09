@@ -1,8 +1,6 @@
 import comprarAproveedor from "@/components/ComprarAProveedor";
-import comprasform from "@/components/CompraFactura";
 
-const Form3 = comprarAproveedor
-const Form4 = comprasform
+const Form2 = comprarAproveedor
 
 
 function compraproveedor() {
@@ -15,8 +13,7 @@ function compraproveedor() {
 			padding: '20px',
 			backgroundColor: '#CCA9DD',
 		}}> 
-			<Form3 />
-			<Form4 />
+			<Form2 />
 		</div>
 	);
 }
