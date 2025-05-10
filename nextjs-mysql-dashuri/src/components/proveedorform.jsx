@@ -120,7 +120,7 @@ function proveedorform() {
                     borderRadius: "12px",
                 }}
             >
-                Eliminar
+                🗑️ Eliminar
             </button>
         </form>
     );

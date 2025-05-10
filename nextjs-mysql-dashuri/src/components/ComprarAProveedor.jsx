@@ -82,7 +82,7 @@ const eliminarCompra = async () => {
 
     return (
         <form
-            className="absolute bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4 w-[850px] h-[300px] top-[10px] left-[323px]"
+            className="absolute bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4 w-[655px] h-[400px] top-[450px] left-[400px]"
             ref={form}
             onSubmit={handleSubmit}
         >
@@ -131,35 +131,36 @@ const eliminarCompra = async () => {
 
             <button
                 type="submit"
-                style={{ position: 'absolute', top: '240px', left: '650px', width: '150px', height: '40px', backgroundColor: "#a74be3", color: '#000', borderRadius: '12px' }}
+                style={{ position: 'absolute', top: '240px', left: '170px', width: '150px', height: '40px', backgroundColor: "#a74be3", color: '#000', borderRadius: '12px' }}
             >
-                Agregar Compra
+                Realizar Compra
             </button>
 
             <button
                 onClick={irAgregarProveedor}
                 type="button"
-                style={{ position: 'absolute', top: '240px', left: '490px', width: '150px', height: '40px', backgroundColor: "#4CAF50", color: '#fff', borderRadius: '12px', border: 'none' }}
+                style={{ position: 'absolute', top: '30px', left: '530px', width: '110px', height: '50px', backgroundColor: "#6600A1", color: '#fff', borderRadius: '12px', border: 'none' }}
             >
-                Agregar Proveedor
+                 ➡️ Registrar proveedor
             </button>
 
-            <label style={{ position: 'absolute', top: '190px', left: '550px', color: '#000' }}>
-            ID o Nombre a eliminar:
+            <label style={{ position: 'absolute', top: '300px', left: '100px', color: '#000' }}>
+            ID a eliminar:
         </label>
         <input
             type="text"
+            placeholder=" -> ID <-"
             value={eliminarIdONombre}
             onChange={(e) => setEliminarIdONombre(e.target.value)}
-            style={{ position: 'absolute', top: '220px', left: '550px', width: '200px', height: '40px', backgroundColor: "#FFE5EC", color: '#000', borderRadius: '12px' }}
-        />
+            style={{ position: 'absolute', top: '330px', left: '110px', width: '70px', height: '40px', backgroundColor: "#6600A1", color: '#000', borderRadius: '12px' }}
+            />
 
         <button
             onClick={eliminarCompra}
             type="button"
-            style={{ position: 'absolute', top: '270px', left: '550px', width: '200px', height: '40px', backgroundColor: "#FF4B4B", color: '#fff', borderRadius: '12px', border: 'none' }}
+            style={{ position: 'absolute', top: '330px', left: '230px', width: '170px', height: '40px', backgroundColor: "#A10000", color: '#fff', borderRadius: '12px', border: 'none' }}
         >
-            Eliminar Compra
+            🗑️ Eliminar Compra
         </button>
 
 
