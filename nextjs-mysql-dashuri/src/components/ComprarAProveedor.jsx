@@ -1,10 +1,10 @@
-"use client"
+"use client";
 import axios from "axios";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 function comprarAproveedor() {
-    const [compraProveedor, setCompraProveedor] = useState({
+    const [compra, setCompra] = useState({
         producto: "",
         cantidad: "",
         proveedor_id: "",
@@ -15,27 +15,44 @@ function comprarAproveedor() {
     const router = useRouter();
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setCompraProveedor(prev => ({ ...prev, [name]: value }));
+        setCompra({
+            ...compra,
+            [e.target.name]: e.target.value,
+        });
     };
 
-    const agregarCompra = async () => {
-        try {
-            const response = await axios.post(`/api/inventario/${compraProveedor}`); // 🚀 Enviamos los datos a la API
-            alert("Compra agregada con éxito.");
-            console.log("Respuesta del servidor:", response.data);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-            // Limpiar el formulario después de agregar la compra
+        const { producto, cantidad, proveedor_id, fecha_vencimiento } = compra;
+
+        // Validación: todos los campos deben estar llenos
+        if (!producto || !cantidad || !proveedor_id || !fecha_vencimiento) {
+            alert("Debe llenar todos los campos.");
+            return;
+        }
+
+        try {
+            const res = await axios.post("/api/inventario", compra);
+            alert("Compra registrada exitosamente.");
+            console.log("Respuesta:", res.data);
+
             form.current.reset();
-            setCompraProveedor({
+            setCompra({
                 producto: "",
                 cantidad: "",
                 proveedor_id: "",
                 fecha_vencimiento: ""
             });
         } catch (error) {
-            console.error("Error al agregar la compra:", error);
-            alert("Hubo un error al agregar la compra.");
+            console.error("Error al registrar la compra:", error);
+
+            // Suponiendo que el backend responde con un 404 si el proveedor no existe
+            if (error.response && error.response.status === 404) {
+                alert("Ese proveedor no existe, intente con otro.");
+            } else {
+                alert("Error al guardar la compra.");
+            }
         }
     };
 
@@ -43,10 +60,31 @@ function comprarAproveedor() {
         router.push("/agregarproveedor");
     };
 
+    const [eliminarIdONombre, setEliminarIdONombre] = useState("");
+
+const eliminarCompra = async () => {
+    if (!eliminarIdONombre || isNaN(eliminarIdONombre)) {
+        alert("Debe ingresar un ID numérico para eliminar.");
+        return;
+    }
+
+    try {
+        const res = await axios.delete(`/api/inventario/${eliminarIdONombre}`);
+        alert(res.data.message);
+        setEliminarIdONombre("");
+    } catch (error) {
+        console.error("Error al eliminar la compra:", error);
+        alert("Error al eliminar la compra.");
+    }
+};
+
+
+
     return (
         <form
             className="absolute bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4 w-[850px] h-[300px] top-[10px] left-[323px]"
             ref={form}
+            onSubmit={handleSubmit}
         >
             <label style={{ position: 'absolute', top: '20px', left: '20px', color: '#000' }}>
                 Producto:
@@ -92,8 +130,7 @@ function comprarAproveedor() {
             />
 
             <button
-                onClick={agregarCompra}
-                type="button"
+                type="submit"
                 style={{ position: 'absolute', top: '240px', left: '650px', width: '150px', height: '40px', backgroundColor: "#a74be3", color: '#000', borderRadius: '12px' }}
             >
                 Agregar Compra
@@ -106,6 +143,28 @@ function comprarAproveedor() {
             >
                 Agregar Proveedor
             </button>
+
+            <label style={{ position: 'absolute', top: '190px', left: '550px', color: '#000' }}>
+            ID o Nombre a eliminar:
+        </label>
+        <input
+            type="text"
+            value={eliminarIdONombre}
+            onChange={(e) => setEliminarIdONombre(e.target.value)}
+            style={{ position: 'absolute', top: '220px', left: '550px', width: '200px', height: '40px', backgroundColor: "#FFE5EC", color: '#000', borderRadius: '12px' }}
+        />
+
+        <button
+            onClick={eliminarCompra}
+            type="button"
+            style={{ position: 'absolute', top: '270px', left: '550px', width: '200px', height: '40px', backgroundColor: "#FF4B4B", color: '#fff', borderRadius: '12px', border: 'none' }}
+        >
+            Eliminar Compra
+        </button>
+
+
+
+            
         </form>
     );
 }

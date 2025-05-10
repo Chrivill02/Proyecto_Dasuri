@@ -9,27 +9,23 @@ export async function GET(){
 export async function POST(request){
 	try {
 
-		const {compra_id, producto_id, cantidad, precio_unitario, sub_total, detalles} = await request.json()
+		const {producto, cantidad, proveedor_id, fecha_vencimiento} = await request.json()
 
 		const result = await pool.query("INSERT INTO detalles_compra SET?",{
-			compra_id,
-			producto_id,
-			cantidad,
-			precio_unitario,
-			sub_total,
-			detalles
+        producto,
+        cantidad,
+        proveedor_id,
+        fecha_vencimiento
 		});
 
 		console.log(result);
 		
 		return NextResponse.json({
 			//id: result.insertidcompra,
-			compra_id,
-			producto_id,
-			cantidad,
-			precio_unitario,
-			sub_total,
-			detalles
+        producto,
+        cantidad,
+        proveedor_id,
+        fecha_vencimiento
 		});
 
 
