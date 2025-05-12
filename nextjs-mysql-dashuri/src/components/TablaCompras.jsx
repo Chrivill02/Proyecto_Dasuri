@@ -6,7 +6,7 @@ function MostrarTablas() {
   const [busqueda, setBusqueda] = useState("");
 
   const fetchDatos = async () => {
-    const response = await fetch("/api/ComprasProveedor");
+    const response = await fetch("/api/inventario");
     const data = await response.json();
     setDatos(data);
   };
@@ -17,19 +17,19 @@ function MostrarTablas() {
 
   // Filtrar datos según la búsqueda
   const datosFiltrados = datos.filter((dato) =>
-    dato.nombre.toLowerCase().includes(busqueda.toLowerCase())
+    dato.producto.toLowerCase().includes(busqueda.toLowerCase())
   );
 
   return (
     <form
-      className="absolute bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4 w-[1000px] h-[400px] top-[145px] left-[400px]"
+      className="absolute bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4 w-[1000px] h-[400px] top-[20px] left-[250px]"
     >
       {/* Búsqueda y botón de actualizar */}
       <div className="flex justify-between items-center mb-4">
         {/* Input de búsqueda */}
         <input
           type="text"
-          placeholder="Buscar proveedor..."
+          placeholder="Buscar producto..."
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
           style={{
@@ -65,9 +65,10 @@ function MostrarTablas() {
           <thead>
             <tr style={{ backgroundColor: "#A74BE3", color: "white" }}>
               <th style={{ border: "1px solid #ddd", padding: "8px" }}>Id</th>
-              <th style={{ border: "1px solid #ddd", padding: "8px" }}>Nombre</th>
-              <th style={{ border: "1px solid #ddd", padding: "8px" }}>Teléfono</th>
-              <th style={{ border: "1px solid #ddd", padding: "8px" }}>Correo</th>
+              <th style={{ border: "1px solid #ddd", padding: "8px" }}>Producto</th>
+              <th style={{ border: "1px solid #ddd", padding: "8px" }}>Cantidad</th>
+              <th style={{ border: "1px solid #ddd", padding: "8px" }}>Proveedor</th>
+              <th style={{ border: "1px solid #ddd", padding: "8px" }}>Fecha de vencimiento</th>
             </tr>
           </thead>
           <tbody>
@@ -82,13 +83,16 @@ function MostrarTablas() {
                   {dato.id}
                 </td>
                 <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                  {dato.nombre}
+                  {dato.producto}
                 </td>
                 <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                  {dato.telefono}
+                  {dato.cantidad}
                 </td>
                 <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                  {dato.correo}
+                  {dato.proveedor_id}
+                </td>
+                <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                  {dato.fecha_vencimiento}
                 </td>
               </tr>
             ))}

@@ -95,33 +95,6 @@ LOCK TABLES `cita_servicio_detalle` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `compra`
---
-
-DROP TABLE IF EXISTS `compra`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `compra` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `fecha` date NOT NULL,
-  `total` decimal(10,2) NOT NULL,
-  `proveedor_id` int NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `proveedor_id` (`proveedor_id`),
-  CONSTRAINT `compra_ibfk_1` FOREIGN KEY (`proveedor_id`) REFERENCES `proveedor` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `compra`
---
-
-LOCK TABLES `compra` WRITE;
-/*!40000 ALTER TABLE `compra` DISABLE KEYS */;
-/*!40000 ALTER TABLE `compra` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `detalles_compra`
 --
 
@@ -130,17 +103,14 @@ DROP TABLE IF EXISTS `detalles_compra`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `detalles_compra` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `compra_id` int NOT NULL,
-  `producto_id` int NOT NULL,
+  `producto` varchar(150) NOT NULL,
   `cantidad` int NOT NULL,
-  `precio_unitario` decimal(10,2) NOT NULL,
-  `sub_total` decimal(10,2) NOT NULL,
-  `detalles` text,
-  `fecha_compra` datetime DEFAULT NULL,
+  `proveedor_id` int NOT NULL,
+  `fecha_vencimiento` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `compra_id` (`compra_id`),
+  KEY `proveedor_id` (`proveedor_id`),
   KEY `producto_id` (`producto_id`),
-  CONSTRAINT `detalles_compra_ibfk_1` FOREIGN KEY (`compra_id`) REFERENCES `compra` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `detalles_compra_ibfk_1` FOREIGN KEY (`proveedor_id`) REFERENCES `proveedor` (`id`) ON DELETE CASCADE,
   CONSTRAINT `detalles_compra_ibfk_2` FOREIGN KEY (`producto_id`) REFERENCES `producto` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -170,9 +140,7 @@ CREATE TABLE `detalles_reserva_producto` (
   `estado` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `venta_id` (`venta_id`),
-  KEY `producto_id` (`producto_id`),
-  CONSTRAINT `detalles_reserva_producto_ibfk_1` FOREIGN KEY (`venta_id`) REFERENCES `venta` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `detalles_reserva_producto_ibfk_2` FOREIGN KEY (`producto_id`) REFERENCES `producto` (`id`) ON DELETE CASCADE
+  CONSTRAINT `detalles_reserva_producto_ibfk_1` FOREIGN KEY (`venta_id`) REFERENCES `venta` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

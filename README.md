@@ -12,7 +12,7 @@ npm install
 # PASO 3: Importar base de datos MySQL
 # Asegúrate de tener MySQL Server en ejecución
 #Ejecuta esto en tu terminal que nos permite crear la base de datos que se va a usar
-mysql -u root -p -e "CREATE DATABASE dashuri;"
+mysql -u root -p -e "CREATE DATABASE dashuri"
 #fijarse que se encuentren en la ruta /Proyecto_Dasuri/nextjs-mysql-dashuri y si se mira el path asi en su terminal ejecutar el comando:
 
 mysql -u root -p dashuri < src/libs/dashuri.sql
