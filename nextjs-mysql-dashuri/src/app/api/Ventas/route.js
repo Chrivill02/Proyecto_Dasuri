@@ -98,3 +98,39 @@ export async function DELETE(req) {
         if (connection) connection.release();
     }
 }
+
+export async function POST(req) {
+    const { usuario_id, total, descripcion } = await req.json();
+    let connection;
+  
+    if (!usuario_id || !total) {
+      return NextResponse.json({
+        success: false,
+        message: "Datos incompletos para crear la venta"
+      }, { status: 400 });
+    }
+  
+    try {
+      connection = await pool.getConnection();
+      
+      const [result] = await connection.query(
+        "INSERT INTO venta (usuario_id, total, descripcion) VALUES (?, ?, ?)",
+        [usuario_id, total, descripcion]
+      );
+  
+      return NextResponse.json({
+        success: true,
+        message: "Venta creada exitosamente",
+        id: result.insertId
+      });
+    } catch (error) {
+      console.error("Error al crear venta:", error);
+      return NextResponse.json({
+        success: false,
+        message: "Error al crear la venta",
+        details: process.env.NODE_ENV === 'development' ? error.message : null
+      }, { status: 500 });
+    } finally {
+      if (connection) connection.release();
+    }
+  }

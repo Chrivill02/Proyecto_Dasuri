@@ -26,7 +26,10 @@ export default function LoginPage() {
 
       if (!res.ok) throw new Error(data.message || 'Error de autenticación')
 
-      localStorage.setItem('usuarioNivel', data.usuario.nivel)
+        localStorage.setItem('usuarioId', data.usuario.id)
+        localStorage.setItem('usuarioNivel', data.usuario.nivel)
+        localStorage.setItem('usuarioNombre', data.usuario.nombre)
+        localStorage.setItem('usuarioCorreo', data.usuario.correo)
       router.push('/inicio')
     } catch (err) {
       setError(err.message)

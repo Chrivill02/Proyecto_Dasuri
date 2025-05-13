@@ -104,6 +104,7 @@ DROP TABLE IF EXISTS `detalles_compra`;
 CREATE TABLE `detalles_compra` (
   `id` int NOT NULL AUTO_INCREMENT,
   `producto` varchar(150) NOT NULL,
+  `producto_id` int NOT NULL,
   `cantidad` int NOT NULL,
   `proveedor_id` int NOT NULL,
   `fecha_vencimiento` datetime DEFAULT NULL,
