@@ -4,11 +4,20 @@ import { useEffect, useState } from "react";
 function MostrarTablas() {
   const [datos, setDatos] = useState([]);
   const [busqueda, setBusqueda] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const fetchDatos = async () => {
-    const response = await fetch("/api/inventario");
-    const data = await response.json();
-    setDatos(data);
+    try {
+      setLoading(true);
+      const response = await fetch("/api/inventario");
+      const data = await response.json();
+      setDatos(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setDatos([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -16,17 +25,19 @@ function MostrarTablas() {
   }, []);
 
   // Filtrar datos según la búsqueda
-  const datosFiltrados = datos.filter((dato) =>
-    dato.producto.toLowerCase().includes(busqueda.toLowerCase())
-  );
+  const datosFiltrados = datos.filter((dato) => {
+    if (!dato || !dato.nombre) return false;
+    return dato.nombre.toLowerCase().includes(busqueda.toLowerCase());
+  });
+
+  if (loading) {
+    return <div>Cargando...</div>;
+  }
 
   return (
-    <form
-      className="absolute bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4 w-[1000px] h-[400px] top-[20px] left-[250px]"
-    >
+    <form className="absolute bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4 w-[1000px] h-[400px] top-[20px] left-[250px]">
       {/* Búsqueda y botón de actualizar */}
       <div className="flex justify-between items-center mb-4">
-        {/* Input de búsqueda */}
         <input
           type="text"
           placeholder="Buscar producto..."
@@ -40,7 +51,6 @@ function MostrarTablas() {
           }}
         />
 
-        {/* Botón de recarga */}
         <button
           type="button"
           onClick={fetchDatos}
@@ -66,9 +76,9 @@ function MostrarTablas() {
             <tr style={{ backgroundColor: "#A74BE3", color: "white" }}>
               <th style={{ border: "1px solid #ddd", padding: "8px" }}>Id</th>
               <th style={{ border: "1px solid #ddd", padding: "8px" }}>Producto</th>
-              <th style={{ border: "1px solid #ddd", padding: "8px" }}>Cantidad</th>
-              <th style={{ border: "1px solid #ddd", padding: "8px" }}>Proveedor</th>
-              <th style={{ border: "1px solid #ddd", padding: "8px" }}>Fecha de vencimiento</th>
+              <th style={{ border: "1px solid #ddd", padding: "8px" }}>Stock</th>
+              <th style={{ border: "1px solid #ddd", padding: "8px" }}>Categoría</th>
+              <th style={{ border: "1px solid #ddd", padding: "8px" }}>Fecha de expiración</th>
             </tr>
           </thead>
           <tbody>
@@ -83,16 +93,16 @@ function MostrarTablas() {
                   {dato.id}
                 </td>
                 <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                  {dato.producto}
+                  {dato.nombre}
                 </td>
                 <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                  {dato.cantidad}
+                  {dato.stock}
                 </td>
                 <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                  {dato.proveedor_id}
+                  {dato.categoria_nombre}
                 </td>
                 <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                  {dato.fecha_vencimiento}
+                  {dato.fecha_exp}
                 </td>
               </tr>
             ))}
