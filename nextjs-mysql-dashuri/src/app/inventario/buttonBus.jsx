@@ -9,6 +9,7 @@ function ButtonBusqueda() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("Todo"); // Inicializar como "Todo"
   const [categorias, setCategorias] = useState([]);
+  const [searchText, setSearchText] = useState("");
 
   const obtenerSoloFecha = (fechaCompleta) => {
     console.log("Fecha completa:", fechaCompleta); // Verifica qué está recibiendo
@@ -16,19 +17,19 @@ function ButtonBusqueda() {
       console.error("Fecha no disponible");
       return "Fecha no disponible"; // Devolver un mensaje en caso de que la fecha no esté disponible
     }
-  
+
     const fecha = new Date(fechaCompleta);
-    
+
     // Verificamos si la fecha es válida
     if (isNaN(fecha.getTime())) {
       console.error("Fecha inválida:", fechaCompleta);
       return "Fecha inválida"; // Si la fecha es inválida, devolvemos un mensaje
     }
-  
+
     const año = fecha.getFullYear();
     const mes = String(fecha.getMonth() + 1).padStart(2, "0");
     const dia = String(fecha.getDate()).padStart(2, "0");
-  
+
     return `${año}-${mes}-${dia}`;
   };
 
@@ -41,7 +42,7 @@ function ButtonBusqueda() {
       if (selectedOption && !selectedOption.toLowerCase().includes("todo")) {
         url = `http://localhost:3000/api/categoria/${selectedOption.toLowerCase()}`;
       }
-  
+
       const { data } = await axios.get(url);
       // Verificar que data es un array
       if (Array.isArray(data)) {
@@ -95,13 +96,79 @@ function ButtonBusqueda() {
     const normalizedOption = option === "Todo" ? option : option.toLowerCase();
     setSelectedOption(option); // Mostrar el nombre original
     setIsOpen(false);
-    
+
     // Pasar el nombre normalizado a cargaDatos
     cargaDatos(normalizedOption);
   };
 
+  const handleSearch = async (e) => {
+    e.preventDefault();
+
+    try {
+      let url = "http://localhost:3000/api/inventario";
+      if (selectedOption && !selectedOption.toLowerCase().includes("todo")) {
+        url = `http://localhost:3000/api/categoria/${selectedOption.toLowerCase()}`;
+      }
+
+      const { data } = await axios.get(url);
+
+      if (Array.isArray(data)) {
+        const productosFiltrados = data.filter((producto) =>
+          producto.nombre.toLowerCase().includes(searchText.toLowerCase())
+        );
+        setProducts(productosFiltrados);
+      }
+    } catch (error) {
+      console.error("Error al filtrar productos:", error);
+      setProducts([]);
+    }
+  };
+
   return (
     <div className="relative overflow-x-auto p-9 bg-white mt-9">
+      <form onSubmit={handleSearch} className="max-w-md mx-auto">
+        <label
+          htmlFor="default-search"
+          className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+        >
+          Search
+        </label>
+        <div className="relative">
+          <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+            <svg
+              className="w-4 h-4 text-gray-500 dark:text-gray-400"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 20 20"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+              />
+            </svg>
+          </div>
+          <input
+            required
+            type="search"
+            id="default-search"
+            className="block w-full p-4 ps-10 text-sm text-black border border-gray-300 rounded-lg bg-white focus:ring-indigo-500 focus:border-indigo-500"
+            placeholder="Buscar producto"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+          />
+          <button
+            type="submit"
+            className="text-white absolute end-2.5 bottom-2.5 bg-indigo-600 font-medium rounded-lg text-sm px-4 py-2 hover:bg-indigo-700 transition-colors duration-300"
+          >
+            Buscar
+          </button>
+        </div>
+      </form>
+
       <div className="relative inline-flex">
         <button
           type="button"
@@ -110,7 +177,9 @@ function ButtonBusqueda() {
         >
           {selectedOption || "Todo"}
           <svg
-            className={`w-2.5 h-2.5 text-white transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+            className={`w-2.5 h-2.5 text-white transition-transform duration-300 ${
+              isOpen ? "rotate-180" : ""
+            }`}
             width="16"
             height="16"
             viewBox="0 0 16 16"
@@ -136,12 +205,16 @@ function ButtonBusqueda() {
                       onClick={() => handleSelect(cat.nombre)}
                       className="block px-6 py-2 hover:bg-gray-100 text-gray-900 font-medium cursor-pointer"
                     >
-                      {cat.nombre && cat.nombre.charAt(0).toUpperCase() + cat.nombre.slice(1)}
+                      {cat.nombre &&
+                        cat.nombre.charAt(0).toUpperCase() +
+                          cat.nombre.slice(1)}
                     </a>
                   </li>
                 ))
               ) : (
-                <li className="px-6 py-2 text-gray-500">Cargando categorías...</li>
+                <li className="px-6 py-2 text-gray-500">
+                  Cargando categorías...
+                </li>
               )}
               <li>
                 <a
@@ -159,23 +232,40 @@ function ButtonBusqueda() {
       <table className="w-full text-sm text-left text-black border border-gray-400 mt-5">
         <thead className="text-xs uppercase bg-white text-black border-b border-gray-400">
           <tr>
-            <th scope="col" className="px-6 py-3">Nombre</th>
-            <th scope="col" className="px-6 py-3">Stock</th>
-            <th scope="col" className="px-6 py-3">Precio</th>
-            <th scope="col" className="px-6 py-3">Fecha de expiración</th>
-            <th scope="col" className="px-6 py-3">Categoría</th>
-            <th scope="col" className="px-6 py-3">Acciones</th>
+            <th scope="col" className="px-6 py-3">
+              Nombre
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Stock
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Precio
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Fecha de expiración
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Categoría
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Acciones
+            </th>
           </tr>
         </thead>
         <tbody>
           {Array.isArray(products) &&
             products.map((product) => (
-              <tr key={product.id} className="bg-white border-b border-gray-400">
+              <tr
+                key={product.id}
+                className="bg-white border-b border-gray-400"
+              >
                 <th
                   scope="row"
                   className="px-6 py-4 font-medium text-black whitespace-nowrap"
                 >
-                  {product.nombre && product.nombre.charAt(0).toUpperCase() + product.nombre.slice(1)}
+                  {product.nombre &&
+                    product.nombre.charAt(0).toUpperCase() +
+                      product.nombre.slice(1)}
                 </th>
                 <td className="px-6 py-4">{product.stock}</td>
                 <td className="px-6 py-4">{product.precio}</td>
@@ -183,7 +273,9 @@ function ButtonBusqueda() {
                   {obtenerSoloFecha(product.fecha_exp)}
                 </td>
                 <td className="px-6 py-4">
-                  {product.categoria_nombre && product.categoria_nombre.charAt(0).toUpperCase() + product.categoria_nombre.slice(1)}
+                  {product.categoria_nombre &&
+                    product.categoria_nombre.charAt(0).toUpperCase() +
+                      product.categoria_nombre.slice(1)}
                 </td>
                 <Buttons productId={product.id} />
               </tr>
