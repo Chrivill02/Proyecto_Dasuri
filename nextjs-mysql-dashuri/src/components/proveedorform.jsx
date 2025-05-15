@@ -1,6 +1,6 @@
 "use client";
 import axios from "axios";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 function proveedorform() {
     const [proveedor, setProveedor] = useState({
@@ -9,7 +9,10 @@ function proveedorform() {
         correo: "",
     });
 
-    const [idEliminar, setIdEliminar] = useState(""); // nuevo estado para ID a eliminar
+    const [idEliminar, setIdEliminar] = useState("");
+    const [mostrarModificar, setMostrarModificar] = useState(false);
+    const [idModificar, setIdModificar] = useState("");
+
     const form = useRef(null);
 
     const handleChange = (e) => {
@@ -35,16 +38,61 @@ function proveedorform() {
         try {
             const res = await axios.delete(`/api/ComprasProveedor/${idEliminar}`);
             alert(`Proveedor con ID ${idEliminar} eliminado correctamente.`);
-            setIdEliminar(""); // limpiar el input
+            setIdEliminar("");
         } catch (error) {
             console.error(error);
             alert("Error al eliminar proveedor :(");
         }
     };
 
+    const handleUpdate = async () => {
+        if (!idModificar) {
+            alert("Por favor, ingresa un ID para modificar.");
+            return;
+        }
+
+        try {
+            const res = await axios.put(`/api/ComprasProveedor/${idModificar}`, proveedor);
+            alert(`Proveedor con ID ${idModificar} actualizado correctamente.`);
+            setIdModificar("");
+            form.current.reset();
+        } catch (error) {
+            console.error(error);
+            alert("Error al actualizar proveedor :(");
+        }
+    };
+ 
+
+useEffect(() => {
+  const obtenerProveedorPorId = async () => {
+    if (!idModificar) return;
+
+    try {
+      const res = await axios.get(`/api/ComprasProveedor/${idModificar}`);
+      const data = res.data;
+
+      setProveedor({
+        nombre: data.nombre,
+        telefono: data.telefono,
+        correo: data.correo,
+      });
+    } catch (error) {
+      console.error("Error al obtener proveedor:", error);
+      setProveedor({
+        nombre: "",
+        telefono: "",
+        correo: "",
+      });
+    }
+  };
+
+  obtenerProveedorPorId();
+}, [idModificar]);
+
+
     return (
         <form
-            className="absolute bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4 w-[300px] h-[390px] top-[150px] left-[70px]"
+            className="absolute bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4 w-[300px] h-[470px] top-[115px] left-[70px]"
             onSubmit={handleSubmit}
             ref={form}
         >
@@ -55,6 +103,7 @@ function proveedorform() {
                 name="nombre"
                 type="text"
                 placeholder="nombre"
+                value={proveedor.nombre}
                 onChange={handleChange}
                 className="shadow appearance-none border rounded w-full py-2 px-3"
             />
@@ -66,6 +115,7 @@ function proveedorform() {
                 name="telefono"
                 type="text"
                 placeholder="telefono"
+                value={proveedor.telefono}
                 onChange={handleChange}
                 className="shadow appearance-none border rounded w-full py-2 px-3"
             />
@@ -77,6 +127,7 @@ function proveedorform() {
                 name="correo"
                 type="text"
                 placeholder="correo"
+                value={proveedor.correo}
                 onChange={handleChange}
                 className="shadow appearance-none border rounded w-full py-2 px-3"
             />
@@ -86,7 +137,7 @@ function proveedorform() {
                 style={{
                     position: "absolute",
                     top: "245px",
-                    left: "15px",
+                    left: "85px",
                     width: "120px",
                     height: "40px",
                     backgroundColor: "#6600A1",
@@ -122,6 +173,58 @@ function proveedorform() {
             >
                 🗑️ Eliminar
             </button>
+
+            {/* Botón Modificar */}
+            <button
+                type="button"
+                onClick={() => setMostrarModificar(!mostrarModificar)}
+                style={{
+                    position: "absolute",
+                    top: "345px",
+                    left: "15px",
+                    width: "255px",
+                    height: "40px",
+                    backgroundColor: "#000000",
+                    color: "#fff",
+                    borderRadius: "4px",
+                }}
+            >
+                Modificar ⌵
+            </button>
+
+            {/* Formulario desplegable de modificación */}
+            {mostrarModificar && (
+                <div
+                    className="flex items-center space-x-2"
+                    style={{
+                        position: "absolute",
+                        top: "395px",
+                        left: "15px",
+                        width: "255px",
+                    }}
+                >
+                    <input
+                        type="number"
+                        placeholder="Elegir"
+                        value={idModificar}
+                        onChange={(e) => setIdModificar(e.target.value)}
+                        className="w-[120px] py-2 px-3 border rounded"
+                    />
+                    <button
+                        type="button"
+                        onClick={handleUpdate}
+                        style={{
+                            backgroundColor: "#b68e0c",
+                            color: "#000",
+                            width: "120px",
+                            height: "40px",
+                            borderRadius: "8px",
+                        }}
+                    >
+                        🔄 Actualizar
+                    </button>
+                </div>
+            )}
         </form>
     );
 }
