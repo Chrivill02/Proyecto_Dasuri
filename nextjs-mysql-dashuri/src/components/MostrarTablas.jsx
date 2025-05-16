@@ -22,7 +22,7 @@ function MostrarTablas() {
 
   return (
     <form
-      className="absolute bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4 w-[1000px] h-[400px] top-[145px] left-[400px]"
+      className="absolute bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4 w-[1000px] h-[400px] top-[145px] left-[480px]"
     >
       {/* Búsqueda y botón de actualizar */}
       <div className="flex justify-between items-center mb-4">
