@@ -196,7 +196,7 @@ DROP TABLE IF EXISTS `solicitudes`;
 CREATE TABLE `solicitudes` (
   `id` int NOT NULL AUTO_INCREMENT,
   `compra_id` int NOT NULL,
-  `estado` varchar,
+  `estado` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `compra_id` (`compra_id`),
   CONSTRAINT `producto_proveedor_ibfk_1` FOREIGN KEY (`compra_id`) REFERENCES `detalles_compra` (`id`) ON DELETE CASCADE
