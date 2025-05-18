@@ -1,21 +1,19 @@
 import { NextResponse } from "next/server";
 import { pool } from "@/libs/mysql";
 
-export async function GET(request, props) {
-  const params = await props.params;
+export async function GET(request, { params }) {
+  const id = params?.id;
+
+  if (!id) {
+    return NextResponse.json(
+      { message: "ID no proporcionado" },
+      { status: 400 }
+    );
+  }
+
   try {
-    
-    const id =await params?.id;
-    console.log(id);
+    const [result] = await pool.query("SELECT * FROM producto WHERE id = ?", [id]);
 
-    if (!id) {
-      return NextResponse.json(
-        { message: "ID no proporcionado" },
-        { status: 400 }
-      );
-    }
-
-    const result = await pool.query("SELECT * FROM producto WHERE id = ?", [id]);
     if (result.length === 0) {
       return NextResponse.json({ message: "Producto no encontrado" }, { status: 404 });
     }
