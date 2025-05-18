@@ -9,11 +9,39 @@ function ComprarAProveedor() {
         stock: "",
         categoria_id: "",
         fecha_exp: "",
-        precio: ""
+        precio: "",
+        proveedor_id: ""
     });
 
+    const [productos, setProductos] = useState([]);
+    const [categorias, setCategorias] = useState([]);
+    const [proveedores, setProveedores] = useState([]);
+    const [eliminarIdONombre, setEliminarIdONombre] = useState("");
+    
     const form = useRef(null);
     const router = useRouter();
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [productosRes, categoriasRes, proveedoresRes] = await Promise.all([
+                    fetch('/api/inventario'),
+                    fetch('/api/categoria'),
+                    fetch('/api/ComprasProveedor')
+                ]);
+                const productosData = await productosRes.json();
+                const categoriasData = await categoriasRes.json();
+                const proveedoresData = await proveedoresRes.json();
+
+                setProductos(productosData);
+                setCategorias(categoriasData);
+                setProveedores(proveedoresData);
+            } catch (error) {
+                console.error("Error al cargar datos", error);
+            }
+        };
+        fetchData();
+    }, []);
 
     const handleChange = (e) => {
         setCompra({
@@ -25,9 +53,9 @@ function ComprarAProveedor() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const { nombre, stock, categoria_id, fecha_exp, precio } = compra;
+        const { nombre, stock, categoria_id, fecha_exp, precio, proveedor_id } = compra;
 
-        if (!nombre || !stock || !categoria_id || !fecha_exp || !precio) {
+        if (!nombre || !stock || !categoria_id || !fecha_exp || !precio || !proveedor_id) {
             alert("Debe llenar todos los campos.");
             return;
         }
@@ -38,36 +66,27 @@ function ComprarAProveedor() {
                 stock: Number(stock),
                 categoria_id: Number(categoria_id),
                 fecha_exp,
-                precio: Number(precio)
+                precio: Number(precio),
+                proveedor_id: Number(proveedor_id)
             };
 
-            const res = await axios.post("/api/inventario", datosParaAPI);
+            await axios.post("/api/inventario", datosParaAPI);
             alert("Producto registrado exitosamente.");
-            
+
             form.current.reset();
             setCompra({
                 nombre: "",
                 stock: "",
                 categoria_id: "",
                 fecha_exp: "",
-                precio: ""
+                precio: "",
+                proveedor_id: ""
             });
-            
         } catch (error) {
             console.error("Error al registrar:", error);
-            if (error.response) {
-                alert(`Error: ${error.response.data.message || 'Verifica los datos'}`);
-            } else {
-                alert("Error de conexión con el servidor");
-            }
+            alert("Error al registrar la compra.");
         }
     };
-
-    const irAgregarProveedor = () => {
-        router.push("/agregarproveedor");
-    };
-
-    const [eliminarIdONombre, setEliminarIdONombre] = useState("");
 
     const eliminarCompra = async () => {
         if (!eliminarIdONombre || isNaN(eliminarIdONombre)) {
@@ -85,126 +104,163 @@ function ComprarAProveedor() {
         }
     };
 
-    const [categorias, setCategorias] = useState([]);
+    const irAgregarProveedor = () => {
+        router.push("/agregarproveedor");
+    };
 
-    useEffect(() => {
-        const fetchCategorias = async () => {
-            try {
-                const res = await fetch('/api/categoria');
-                const data = await res.json();
-                setCategorias(data);
-            } catch (error) {
-                console.error('Error al cargar categorías', error);
-            }
-        };
-
-        fetchCategorias();
-    }, []);
+    const irFacturas = () => {
+        router.push("/facturasenviadas");
+    };
 
     return (
-        <form
-            className="absolute bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4 w-[655px] h-[480px] top-[450px] left-[400px]"
-            ref={form}
-            onSubmit={handleSubmit}
-        >
-            <label style={{ position: 'absolute', top: '20px', left: '20px', color: '#000' }}>
-                Producto:
-            </label>
-            <input
-                onChange={handleChange}
-                name="nombre"
-                type="text"
-                placeholder="Nombre del producto"
-                value={compra.nombre}
-                style={{ position: 'absolute', top: '50px', left: '20px', width: '200px', height: '40px', backgroundColor: "#6600A1", color: '#000', borderRadius: '12px' }}
-            />
-
-            <label style={{ position: 'absolute', top: '110px', left: '20px', color: '#000' }}>
-                Cantidad:
-            </label>
-            <input
-                type="number"
-                placeholder="Cantidad"
-                onChange={handleChange}
-                name="stock"
-                value={compra.stock}
-                style={{ position: 'absolute', top: '140px', left: '20px', width: '100px', height: '40px', backgroundColor: "#6600A1", color: '#000', borderRadius: '12px' }}
-            />
-
-            <label style={{ position: 'absolute', top: '200px', left: '20px', color: '#000' }}>
-                Precio:
-            </label>
-            <input
-                type="number"
-                placeholder="Precio"
-                name="precio"
-                onChange={handleChange}
-                value={compra.precio}
-                style={{ position: 'absolute', top: '230px', left: '20px', width: '100px', height: '40px', backgroundColor: "#6600A1", color: '#000', borderRadius: '12px' }}
-            />
-
-            <label htmlFor="fecha_exp" style={{ position: 'absolute', top: '110px', left: '300px', color: '#000' }}>
-                Fecha de vencimiento:
-            </label>
-            <input
-                name="fecha_exp"
-                type="date"
-                onChange={handleChange}
-                value={compra.fecha_exp}
-                style={{ position: 'absolute', top: '140px', left: '300px', width: '180px', height: '40px', backgroundColor: "#6600A1", color: '#000', borderRadius: '12px' }}
-            />
-
-            <label style={{ position: 'absolute', top: '200px', left: '300px', color: '#000' }}>
-                Categoría:
-            </label>
-            <select
-                name="categoria_id"
-                onChange={handleChange}
-                value={compra.categoria_id}
-                style={{ position: 'absolute', top: '230px', left: '300px', width: '180px', height: '40px', backgroundColor: "#6600A1", color: '#123', borderRadius: '12px' }}
+        <div className="absolute top-[450px] left-[400px] w-[720px]">
+            <form
+                ref={form}
+                onSubmit={handleSubmit}
+                className="bg-white shadow-lg rounded-2xl px-10 py-8 space-y-5"
             >
-                <option value="">Seleccione categoría</option>
-                {categorias.map((categoria) => (
-                    <option key={categoria.id} value={categoria.id}>
-                        {categoria.nombre}
-                    </option>
-                ))}
-            </select>
+                <div className="flex space-x-5">
+  {/* Select de producto */}
+  <div className="flex-1">
+    <label className="text-black block mb-1">Producto:</label>
+    <select
+      name="nombre"
+      value={compra.nombre}
+      onChange={handleChange}
+      className="w-full h-10 rounded-xl px-3 bg-purple-200 text-black"
+    >
+      <option value="">Seleccione un producto</option>
+      {productos.map((producto) => (
+        <option key={producto.id} value={producto.nombre}>
+          {producto.nombre}
+        </option>
+      ))}
+    </select>
+  </div>
 
-            <button
-                type="submit"
-                style={{ position: 'absolute', top: '300px', left: '170px', width: '150px', height: '40px', backgroundColor: "#a74be3", color: '#000', borderRadius: '12px' }}
-            >
-                Realizar Compra
-            </button>
+  {/* Select de proveedor */}
+  <div className="flex-1">
+    <label className="text-black block mb-1">Proveedor:</label>
+    <select
+      name="proveedor_id"
+      value={compra.proveedor_id}
+      onChange={handleChange}
+      className="w-full h-10 rounded-xl px-3 bg-purple-200 text-black"
+    >
+      <option value="">Seleccione un proveedor</option>
+      {proveedores.map((proveedor) => (
+        <option key={proveedor.id} value={proveedor.id}>
+          {proveedor.nombre}
+        </option>
+      ))}
+    </select>
+  </div>
+</div>
 
-            <button
-                onClick={irAgregarProveedor}
-                type="button"
-                style={{ position: 'absolute', top: '30px', left: '530px', width: '110px', height: '50px', backgroundColor: "#6600A1", color: '#fff', borderRadius: '12px', border: 'none' }}
-            >
-                ➡️ Registrar proveedor
-            </button>
 
-            <label style={{ position: 'absolute', top: '360px', left: '100px', color: '#000' }}>
-                ID a eliminar:
-            </label>
-            <input
-                type="text"
-                placeholder=" -> ID <-"
-                value={eliminarIdONombre}
-                onChange={(e) => setEliminarIdONombre(e.target.value)}
-                style={{ position: 'absolute', top: '390px', left: '110px', width: '70px', height: '40px', backgroundColor: "#6600A1", color: '#000', borderRadius: '12px' }}
-            />
 
-            <button
-                onClick={eliminarCompra}
-                type="button"
-                style={{ position: 'absolute', top: '390px', left: '230px', width: '170px', height: '40px', backgroundColor: "#A10000", color: '#fff', borderRadius: '12px', border: 'none' }}
-            >
-                🗑️ Eliminar Compra
-            </button>
-        </form>
+                {/* Cantidad y Precio */}
+                <div className="flex space-x-5">
+                    <div className="flex-1">
+                        <label className="text-black block mb-1">Cantidad:</label>
+                        <input
+                            type="number"
+                            name="stock"
+                            value={compra.stock}
+                            onChange={handleChange}
+                            placeholder="Cantidad"
+                            className="w-full h-10 rounded-xl px-3 bg-purple-200 text-black"
+                        />
+                    </div>
+                    <div className="flex-1">
+                        <label className="text-black block mb-1">Precio:</label>
+                        <input
+                            type="number"
+                            name="precio"
+                            value={compra.precio}
+                            onChange={handleChange}
+                            placeholder="Precio"
+                            className="w-full h-10 rounded-xl px-3 bg-purple-200 text-black"
+                        />
+                    </div>
+                </div>
+
+                {/* Fecha y Categoría */}
+                <div className="flex space-x-5">
+                    <div className="flex-1">
+                        <label className="text-black block mb-1">Fecha de vencimiento:</label>
+                        <input
+                            type="date"
+                            name="fecha_exp"
+                            value={compra.fecha_exp}
+                            onChange={handleChange}
+                            className="w-full h-10 rounded-xl px-3 bg-purple-200 text-black"
+                        />
+                    </div>
+                    <div className="flex-1">
+                        <label className="text-black block mb-1">Categoría:</label>
+                        <select
+                            name="categoria_id"
+                            value={compra.categoria_id}
+                            onChange={handleChange}
+                            className="w-full h-10 rounded-xl px-3 bg-purple-200 text-black"
+                        >
+                            <option value="">Seleccione categoría</option>
+                            {categorias.map((categoria) => (
+                                <option key={categoria.id} value={categoria.id}>
+                                    {categoria.nombre}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+
+                {/* Botones */}
+                <div className="flex flex-wrap justify-between items-center mt-4 space-y-3">
+                    <button
+                        type="submit"
+                        className="bg-green-600 hover:bg-green-600 text-white px-6 py-2 rounded-xl"
+                    >
+                        ✅ Realizar Compra
+                    </button>
+
+                    <button
+                        onClick={irAgregarProveedor}
+                        type="button"
+                        className="bg-orange-500 hover:bg-orange-500 text-black px-5 py-2 rounded-xl border border-orange-500"
+                    >
+                        ➕ Registrar proveedor
+                    </button>
+
+                    <button
+                        onClick={irFacturas}
+                        type="button"
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-xl"
+                    >
+                        📄 Ver facturas
+                    </button>
+                </div>
+
+                {/* Eliminar por ID */}
+                <div className="mt-6 flex items-center space-x-4">
+                    <label className="text-black">ID a eliminar:</label>
+                    <input
+                        type="text"
+                        value={eliminarIdONombre}
+                        onChange={(e) => setEliminarIdONombre(e.target.value)}
+                        placeholder="ID"
+                        className="w-24 h-10 rounded-xl px-3 bg-purple-200 text-black"
+                    />
+                    <button
+                        onClick={eliminarCompra}
+                        type="button"
+                        className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-xl"
+                    >
+                        🗑️ Eliminar Compra
+                    </button>
+                </div>
+            </form>
+        </div>
     );
 }
 
