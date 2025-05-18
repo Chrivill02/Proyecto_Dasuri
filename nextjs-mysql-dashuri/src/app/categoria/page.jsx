@@ -38,7 +38,7 @@ export default function ViewInventario() {
   return (
     <div className="relative overflow-x-auto p-9 bg-white mt-9">
       <button
-        className="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-3 rounded mr-4"
+        className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-3 px-3 rounded mr-4"
         onClick={() => {
           router.push("categoria/add");
         }}

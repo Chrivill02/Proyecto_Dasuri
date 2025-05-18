@@ -4,7 +4,7 @@ export const pool = createPool({
   host: "localhost",
   user: "root",
   database: "dashuri",
-  password: "fernando8923",
+  password: "bd1234",
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0

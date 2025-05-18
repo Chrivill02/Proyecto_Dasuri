@@ -155,14 +155,14 @@ function ButtonBusqueda() {
             required
             type="search"
             id="default-search"
-            className="block w-full p-4 ps-10 text-sm text-black border border-gray-300 rounded-lg bg-white focus:ring-indigo-500 focus:border-indigo-500"
+            className="block w-full p-4 ps-10 text-sm text-black border border-gray-300 rounded-lg bg-white focus:ring-purple-700 focus:border-purple-800"
             placeholder="Buscar producto"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
           />
           <button
             type="submit"
-            className="text-white absolute end-2.5 bottom-2.5 bg-indigo-600 font-medium rounded-lg text-sm px-4 py-2 hover:bg-indigo-700 transition-colors duration-300"
+            className="text-white absolute end-2.5 bottom-2.5 bg-purple-700 font-medium rounded-lg text-sm px-4 py-2 hover:bg-purple-700 transition-colors duration-300"
           >
             Buscar
           </button>
@@ -173,7 +173,7 @@ function ButtonBusqueda() {
         <button
           type="button"
           onClick={toggleDropdown}
-          className="inline-flex justify-center items-center gap-2 py-3 px-6 text-sm bg-indigo-600 text-white rounded-full cursor-pointer font-semibold text-center shadow-xs transition-all duration-500 hover:bg-indigo-700"
+          className="inline-flex justify-center items-center gap-2 py-3 px-6 text-sm bg-purple-700 text-white rounded-full cursor-pointer font-semibold text-center shadow-xs transition-all duration-500 hover:bg-purple-800"
         >
           {selectedOption || "Todo"}
           <svg

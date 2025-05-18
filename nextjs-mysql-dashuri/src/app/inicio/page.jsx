@@ -7,9 +7,9 @@ function HomePage() {
   const router = useRouter();
   const [userLevel, setUserLevel] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
-    // Obtener el nivel del usuario desde localStorage
     const nivel = localStorage.getItem('usuarioNivel');
     setUserLevel(nivel ? parseInt(nivel) : 0);
     setLoading(false);
@@ -37,10 +37,9 @@ function HomePage() {
         <div className="absolute left-1/2 top-full transform -translate-x-1/2 -translate-y-1/2 w-3/5 h-48 bg-white opacity-90 p-12 text-center shadow-2xl flex flex-col justify-center">
           <h2 className="text-2xl font-bold text-black">Maquillaje Facial</h2>
           <p className="text-black mt-4">
-          ¡Bienvenida a tu lugar favorito de belleza!
-Descubre nuestro catálogo exclusivo de maquillaje, cuidado personal y accesorios.
-Explora las mejores marcas, tonos irresistibles y productos únicos que resaltan tu estilo.
-Reserva tus favoritos hoy mismo y luce espectacular todos los días.
+            ¡Bienvenida a tu lugar favorito de belleza! Descubre nuestro catálogo exclusivo de maquillaje, cuidado personal y accesorios.
+            Explora las mejores marcas, tonos irresistibles y productos únicos que resaltan tu estilo.
+            Reserva tus favoritos hoy mismo y luce espectacular todos los días.
           </p>
         </div>
 
@@ -96,22 +95,7 @@ Reserva tus favoritos hoy mismo y luce espectacular todos los días.
                     INVENTARIO
                   </Link>
                 )}
-                {userLevel >= 1 && (
-                  <Link 
-                    href="/nuevo_servicio"
-                    className="bg-transparent text-white px-6 py-2 rounded-md hover:bg-purple-700 transition duration-300"
-                  >
-                    SERVICIOS
-                  </Link>
-                )}
-                {userLevel >= 1 && (
-                  <Link 
-                    href="/categoria"
-                    className="bg-transparent text-white px-6 py-2 rounded-md hover:bg-purple-700 transition duration-300"
-                  >
-                    CATEGORIAS
-                  </Link>
-                )}
+              
               </div>
               
               {/* Botones con imágenes en la parte superior derecha */}
@@ -126,16 +110,44 @@ Reserva tus favoritos hoy mismo y luce espectacular todos los días.
                     className="w-10 h-10 object-contain"
                   />
                 </button>
-                <button 
-                  onClick={() => router.push('/carrito')}
-                  className="p-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 hover:shadow-lg transition-all duration-300 transform hover:scale-105"
-                >
-                  <img
-                    src="/CARRITO.jpg" 
-                    alt="Carrito"
-                    className="w-10 h-10 object-contain"
-                  />
-                </button>
+                
+                {/* Botón de Configuración con Dropdown */}
+                <div className="relative">
+                  <button 
+                    onClick={() => setShowSettings(!showSettings)}
+                    className="p-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+                  >
+                    <img
+                      src="/config.png"
+                      alt="Configuración"
+                      className="w-10 h-10 object-contain"
+                    />
+                  </button>
+                  
+                  {showSettings && (
+                    <div className="absolute right-0 top-12 bg-white text-black rounded-lg shadow-lg py-2 w-48 z-50">
+                      {userLevel >= 1 && (
+                        <Link
+                          href="/nuevo_servicio"
+                          className="block px-4 py-2 hover:bg-gray-100"
+                          onClick={() => setShowSettings(false)}
+                        >
+                          Servicios
+                        </Link>
+                      )}
+                      {userLevel >= 1 && (
+                        <Link
+                          href="/categoria"
+                          className="block px-4 py-2 hover:bg-gray-100"
+                          onClick={() => setShowSettings(false)}
+                        >
+                          Categorías
+                        </Link>
+                      )}
+                    </div>
+                  )}
+                </div>
+
                 <button 
                   onClick={() => router.push('/login')}
                   className="p-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 hover:shadow-lg transition-all duration-300 transform hover:scale-105"
@@ -152,7 +164,7 @@ Reserva tus favoritos hoy mismo y luce espectacular todos los días.
         </div>
       </section>
 
-      {/* catálogo - Manteniendo EXACTAMENTE los mismos productos que tenías */}
+      {/* catálogo */}
       <section id="productos" className="w-full text-center py-16 bg-white text-black">
         <h2 className="text-4xl mb-8 mt-24 font-bold">Nuestros productos</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
