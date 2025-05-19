@@ -27,6 +27,21 @@ function MostrarTablas() {
     fetchDatos();
   }, []);
 
+  function isoToMysqlDatetime(isoString) {
+  if (!isoString) return null;
+  // Crea un objeto Date con la fecha ISO
+  const date = new Date(isoString);
+  
+  // Obtiene los componentes con ceros a la izquierda
+  const pad = (n) => n.toString().padStart(2, '0');
+
+  // Construye la cadena en formato 'YYYY-MM-DD HH:MM:SS'
+  const mysqlDatetime = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  
+  return mysqlDatetime;
+}
+
+
   const handleEstadoChange = async (id, newEstado, compraData) => {
     try {
       // Actualizar el estado de la solicitud
@@ -37,6 +52,7 @@ function MostrarTablas() {
         // Obtener ID de categoría desde su nombre
         const res = await axios.get(`/api/obtenerIDcategoria/${encodeURIComponent(compraData.categoria_nombre)}`);
         const categoriaid = res.data.id;
+        const fechaMysql = isoToMysqlDatetime(compraData.fecha_vencimiento);
 
         // Enviar los detalles de la compra a la base de datos de inventario
         await axios.post("/api/inventario", {
@@ -44,7 +60,7 @@ function MostrarTablas() {
           stock: compraData.cantidad,
           precio: compraData.precio,
           categoria_id: categoriaid,
-          fecha_exp: compraData.fecha_vencimiento,
+          fecha_exp: fechaMysql,
         });
 
         alert("Estado actualizado a Recibido y producto agregado al inventario");
