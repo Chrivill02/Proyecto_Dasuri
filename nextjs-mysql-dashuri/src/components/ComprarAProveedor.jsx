@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 
 function ComprarAProveedor() {
     const [compra, setCompra] = useState({
-        nombre: "",
-        stock: "",
+        producto: "",
+        cantidad: "",
         categoria_id: "",
-        fecha_exp: "",
+        fecha_vencimiento: "",
         precio: "",
         proveedor_id: ""
     });
@@ -53,56 +53,61 @@ function ComprarAProveedor() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const { nombre, stock, categoria_id, fecha_exp, precio, proveedor_id } = compra;
+        const { producto, cantidad, precio, categoria_id, proveedor_id, fecha_vencimiento } = compra;
 
-        if (!nombre || !stock || !categoria_id || !fecha_exp || !precio || !proveedor_id) {
+        if (!producto || !cantidad || !precio ||!categoria_id || !proveedor_id || !fecha_vencimiento ) {
             alert("Debe llenar todos los campos.");
             return;
         }
 
         try {
             const datosParaAPI = {
-                nombre,
-                stock: Number(stock),
+                producto,
+                cantidad: Number(cantidad),
                 categoria_id: Number(categoria_id),
-                fecha_exp,
+                fecha_vencimiento,
                 precio: Number(precio),
                 proveedor_id: Number(proveedor_id)
             };
 
-            await axios.post("/api/inventario", datosParaAPI);
+            await axios.post("/api/solicitud", datosParaAPI);
             alert("Producto registrado exitosamente.");
 
             form.current.reset();
             setCompra({
-                nombre: "",
-                stock: "",
-                categoria_id: "",
-                fecha_exp: "",
+                producto: "",
+                cantidad: "",
                 precio: "",
-                proveedor_id: ""
+                categoria_id: "",
+                proveedor_id: "",
+                fecha_vencimiento: "",
             });
         } catch (error) {
             console.error("Error al registrar:", error);
-            alert("Error al registrar la compra.");
+            alert("Error al registrar la solicitud.");
         }
     };
 
     const eliminarCompra = async () => {
-        if (!eliminarIdONombre || isNaN(eliminarIdONombre)) {
-            alert("Debe ingresar un ID numérico para eliminar.");
-            return;
-        }
+    if (!eliminarIdONombre || isNaN(eliminarIdONombre)) {
+        alert("Debe ingresar un ID numérico para eliminar.");
+        return;
+    }
 
-        try {
-            const res = await axios.delete(`/api/inventario/${eliminarIdONombre}`);
-            alert(res.data.message);
-            setEliminarIdONombre("");
-        } catch (error) {
-            console.error("Error al eliminar la compra:", error);
-            alert("Error al eliminar la compra.");
-        }
-    };
+    try {
+        const res = await axios.delete(`/api/solicitud/${eliminarIdONombre}`);
+        alert(res.data.message);
+        setEliminarIdONombre("");
+
+        // Opcional: actualizar estados locales si tienes datos cargados
+        setProductos(prev => prev.filter(p => p.id !== Number(eliminarIdONombre)));
+        setProveedores(prev => prev.filter(p => p.id !== Number(eliminarIdONombre)));
+        // Ajusta según qué datos sean afectados por la eliminación
+    } catch (error) {
+        console.error("Error al eliminar la compra:", error);
+        alert("Error al eliminar la compra.");
+    }
+};
 
     const irAgregarProveedor = () => {
         router.push("/agregarproveedor");
@@ -120,42 +125,42 @@ function ComprarAProveedor() {
                 className="bg-white shadow-lg rounded-2xl px-10 py-8 space-y-5"
             >
                 <div className="flex space-x-5">
-  {/* Select de producto */}
-  <div className="flex-1">
-    <label className="text-black block mb-1">Producto:</label>
-    <select
-      name="nombre"
-      value={compra.nombre}
-      onChange={handleChange}
-      className="w-full h-10 rounded-xl px-3 bg-purple-200 text-black"
-    >
-      <option value="">Seleccione un producto</option>
-      {productos.map((producto) => (
-        <option key={producto.id} value={producto.nombre}>
-          {producto.nombre}
-        </option>
-      ))}
-    </select>
-  </div>
+                {/* Select de producto */}
+                <div className="flex-1">
+                    <label className="text-black block mb-1">Producto:</label>
+                    <select
+                    name="producto"
+                    value={compra.producto}
+                    onChange={handleChange}
+                    className="w-full h-10 rounded-xl px-3 bg-purple-200 text-black"
+                    >
+                    <option value="">Seleccione un producto</option>
+                    {productos.map((producto) => (
+                        <option key={producto.id} value={producto.nombre}>
+                        {producto.nombre}
+                        </option>
+                    ))}
+                    </select>
+                </div>
 
-  {/* Select de proveedor */}
-  <div className="flex-1">
-    <label className="text-black block mb-1">Proveedor:</label>
-    <select
-      name="proveedor_id"
-      value={compra.proveedor_id}
-      onChange={handleChange}
-      className="w-full h-10 rounded-xl px-3 bg-purple-200 text-black"
-    >
-      <option value="">Seleccione un proveedor</option>
-      {proveedores.map((proveedor) => (
-        <option key={proveedor.id} value={proveedor.id}>
-          {proveedor.nombre}
-        </option>
-      ))}
-    </select>
-  </div>
-</div>
+                {/* Select de proveedor */}
+                <div className="flex-1">
+                    <label className="text-black block mb-1">Proveedor:</label>
+                    <select
+                    name="proveedor_id"
+                    value={compra.proveedor_id}
+                    onChange={handleChange}
+                    className="w-full h-10 rounded-xl px-3 bg-purple-200 text-black"
+                    >
+                    <option value="">Seleccione un proveedor</option>
+                    {proveedores.map((proveedor) => (
+                        <option key={proveedor.id} value={proveedor.id}>
+                        {proveedor.nombre}
+                        </option>
+                    ))}
+                    </select>
+                </div>
+                </div>
 
 
 
@@ -165,8 +170,8 @@ function ComprarAProveedor() {
                         <label className="text-black block mb-1">Cantidad:</label>
                         <input
                             type="number"
-                            name="stock"
-                            value={compra.stock}
+                            name="cantidad"
+                            value={compra.cantidad}
                             onChange={handleChange}
                             placeholder="Cantidad"
                             className="w-full h-10 rounded-xl px-3 bg-purple-200 text-black"
@@ -191,8 +196,8 @@ function ComprarAProveedor() {
                         <label className="text-black block mb-1">Fecha de vencimiento:</label>
                         <input
                             type="date"
-                            name="fecha_exp"
-                            value={compra.fecha_exp}
+                            name="fecha_vencimiento"
+                            value={compra.fecha_vencimiento}
                             onChange={handleChange}
                             className="w-full h-10 rounded-xl px-3 bg-purple-200 text-black"
                         />
@@ -256,7 +261,7 @@ function ComprarAProveedor() {
                         type="button"
                         className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-xl"
                     >
-                        🗑️ Eliminar Compra
+                        🗑️ Eliminar Solicitud
                     </button>
                 </div>
             </form>
