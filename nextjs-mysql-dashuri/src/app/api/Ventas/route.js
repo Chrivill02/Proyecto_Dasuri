@@ -9,17 +9,16 @@ export async function GET() {
         connection = await pool.getConnection();
         console.log("Conexión establecida correctamente");
 
-        // 2. Ejecutar consulta de prueba
+        // 2. Ejecutar consulta de prueba (opcional)
         const [testResult] = await connection.query("SELECT 1+1 AS test");
         console.log("Resultado de prueba:", testResult);
 
-        // 3. Consulta real con manejo de errores explícito
-        const [ventas] = await connection.query(`
-            SELECT v.*, u.nombre as usuario_nombre 
-            FROM venta v
-            LEFT JOIN usuario u ON v.usuario_id = u.id
-            LIMIT 10
-        `);
+        // 3. Llamar al procedimiento almacenado
+        const [results] = await connection.query("CALL p_obtener_ventas(?, ?)", [50, 0]);
+        
+        // Los procedimientos almacenados devuelven un array de resultados
+        // El primer elemento es el conjunto de filas que necesitamos
+        const ventas = results[0];
 
         return NextResponse.json({
             success: true,
@@ -46,7 +45,6 @@ export async function GET() {
         if (connection) connection.release();
     }
 }
-
 export async function DELETE(req) {
     const { id } = await req.json();
     let connection;
