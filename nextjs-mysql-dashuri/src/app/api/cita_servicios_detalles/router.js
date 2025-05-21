@@ -1,40 +1,73 @@
-// src/app/api/cita_servicio_detalle/route.js
 import { NextResponse } from "next/server";
-import { pool } from "@/libs/mysql";
+import { pool } from "@/config/db";
 
-// POST - Asocia servicios a una cita
+export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const citaId = searchParams.get("cita_id");
+
+  if (!citaId) {
+    return NextResponse.json(
+      { error: "Se requiere un ID de cita" },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const [rows] = await pool.query(
+      `
+      SELECT csd.cita_id, csd.servicio_id as id_servicio, s.nombre_servicio, s.precio 
+      FROM cita_servicio_detalle csd
+      JOIN servicios s ON csd.servicio_id = s.id
+      WHERE csd.cita_id = ?
+      `,
+      [citaId]
+    );
+
+    return NextResponse.json(rows);
+  } catch (error) {
+    console.error("Error al obtener servicios de la cita:", error);
+    return NextResponse.json(
+      { error: "Error al obtener servicios" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(request) {
-    try {
-        const { id_cita, id_servicios } = await request.json();
+  try {
+    const data = await request.json();
+    const { id_cita, id_servicios } = data;
 
-        if (!id_cita || !Array.isArray(id_servicios) || id_servicios.length === 0) {
-            return NextResponse.json(
-                { message: "Datos incompletos o incorrectos" },
-                { status: 400 }
-            );
-        }
-
-        // Insertar cada servicio para la cita
-        const inserts = id_servicios.map(id_servicio =>
-            pool.query("INSERT INTO cita_servicio_detalle SET ?", {
-                id_cita,
-                id_servicio,
-            })
-        );
-
-        await Promise.all(inserts);
-
-        return NextResponse.json({
-            message: "Servicios asociados correctamente a la cita",
-            id_cita,
-            servicios_asociados: id_servicios
-        });
-
-    } catch (error) {
-        console.log(error);
-        return NextResponse.json(
-            { message: error.message },
-            { status: 500 }
-        );
+    if (!id_cita || !id_servicios || !Array.isArray(id_servicios)) {
+      return NextResponse.json(
+        { error: "Datos incompletos o incorrectos" },
+        { status: 400 }
+      );
     }
+
+    // Primero eliminamos todas las relaciones existentes para esta cita
+    await pool.query(
+      "DELETE FROM cita_servicio_detalle WHERE cita_id = ?",
+      [id_cita]
+    );
+
+    // Luego insertamos las nuevas relaciones
+    if (id_servicios.length > 0) {
+      const values = id_servicios.map(servicio_id => [id_cita, servicio_id]);
+      
+      // Insertamos todos los servicios de una vez
+      await pool.query(
+        "INSERT INTO cita_servicio_detalle (cita_id, servicio_id) VALUES ?",
+        [values]
+      );
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error al asociar servicios a la cita:", error);
+    return NextResponse.json(
+      { error: "Error al asociar servicios", details: error.message },
+      { status: 500 }
+    );
+  }
 }

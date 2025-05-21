@@ -10,6 +10,9 @@ export default function CitasFormPage() {
   const [serviciosSeleccionados, setServiciosSeleccionados] = useState([]);
   const [citaActual, setCitaActual] = useState(null);
   const [citasConServicios, setCitasConServicios] = useState({});
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [citaParaServicios, setCitaParaServicios] = useState(null);
+  const [serviciosParaModal, setServiciosParaModal] = useState([]);
   
   const [formulario, setFormulario] = useState({
     id: "",
@@ -88,8 +91,10 @@ export default function CitasFormPage() {
       setServiciosSeleccionados([]);
       setCitaActual(null);
       fetchCitas();
+      alert("Cita guardada con éxito");
     } catch (error) {
       console.error("Error al enviar el formulario:", error);
+      alert("Error al guardar la cita");
     }
   };
 
@@ -112,8 +117,10 @@ export default function CitasFormPage() {
       setServiciosSeleccionados([]);
       setCitaActual(null);
       fetchCitas();
+      alert("Cita eliminada con éxito");
     } catch (error) {
       console.error("Error al eliminar cita:", error);
+      alert("Error al eliminar la cita");
     }
   };
 
@@ -187,6 +194,41 @@ export default function CitasFormPage() {
     }
   };
 
+  const handleServicioModalClick = (servicioId) => {
+    // Si ya está seleccionado, lo quitamos; si no, lo añadimos
+    if (serviciosParaModal.includes(servicioId)) {
+      setServiciosParaModal(prev => prev.filter(id => id !== servicioId));
+    } else {
+      setServiciosParaModal(prev => [...prev, servicioId]);
+    }
+  };
+
+  const abrirModalServicios = (idCita) => {
+    setCitaParaServicios(idCita);
+    
+    // Cargar los servicios ya asociados a esta cita
+    const serviciosDeCita = citasConServicios[idCita] || [];
+    const idsServicios = serviciosDeCita.map(s => s.id_servicio);
+    setServiciosParaModal(idsServicios);
+    
+    setMostrarModal(true);
+  };
+
+  const guardarServiciosModal = async () => {
+    if (!citaParaServicios) return;
+    
+    try {
+      await asociarServiciosACita(citaParaServicios, serviciosParaModal);
+      setMostrarModal(false);
+      setCitaParaServicios(null);
+      fetchCitas(); // Actualizar los datos de las citas
+      alert("Servicios actualizados correctamente");
+    } catch (error) {
+      console.error("Error al guardar servicios:", error);
+      alert("Error al actualizar los servicios");
+    }
+  };
+
   const obtenerNombresServicios = (idCita) => {
     if (!citasConServicios[idCita] || !servicios.length) return "Sin servicios";
     
@@ -197,13 +239,23 @@ export default function CitasFormPage() {
     }).join(", ");
   };
 
+  const calcularTotalServicios = (idCita) => {
+    if (!citasConServicios[idCita] || !servicios.length) return 0;
+    
+    const serviciosDeCita = citasConServicios[idCita];
+    return serviciosDeCita.reduce((total, servicioCita) => {
+      const servicio = servicios.find(s => s.id === servicioCita.id_servicio);
+      return total + (servicio ? parseFloat(servicio.precio) : 0);
+    }, 0).toFixed(2);
+  };
+
   useEffect(() => {
     fetchCitas();
     fetchServicios();
   }, []);
 
   return (
-    <div className="p-6 max-w-3xl mx-auto bg-white min-h-screen">
+    <div className="p-6 max-w-5xl mx-auto bg-white min-h-screen">
       <h1 className="text-3xl font-bold text-center mb-6 text-purple-800">Gestión de Citas de Servicio</h1>
 
       <div className="flex flex-row gap-6">
@@ -224,6 +276,8 @@ export default function CitasFormPage() {
                     <th className="border p-2">Nombre</th>
                     <th className="border p-2">Teléfono</th>
                     <th className="border p-2">Servicios</th>
+                    <th className="border p-2">Total</th>
+                    <th className="border p-2">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -236,7 +290,22 @@ export default function CitasFormPage() {
                       <td className="border p-2">Q{cita.costo}</td>
                       <td className="border p-2">{cita.nombre_cliente}</td>
                       <td className="border p-2">{cita.telefono_cliente}</td>
-                      <td className="border p-2">{obtenerNombresServicios(cita.id)}</td>
+                      <td className="border p-2">
+                        <div className="max-w-xs overflow-hidden text-sm">
+                          {obtenerNombresServicios(cita.id)}
+                        </div>
+                      </td>
+                      <td className="border p-2 text-green-600 font-bold">
+                        Q{calcularTotalServicios(cita.id)}
+                      </td>
+                      <td className="border p-2">
+                        <button 
+                          onClick={() => abrirModalServicios(cita.id)}
+                          className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-sm"
+                        >
+                          Agregar Servicios
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -249,7 +318,7 @@ export default function CitasFormPage() {
         <div className="w-64">
           <div className="bg-[#E1BEE7] p-4 rounded-lg border border-purple-300 shadow-md">
             <h3 className="font-bold text-purple-800 mb-3">Servicios Disponibles</h3>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 max-h-80 overflow-y-auto">
               {servicios.map((servicio) => (
                 <button
                   key={servicio.id}
@@ -411,6 +480,77 @@ export default function CitasFormPage() {
               )}
             </div>
           </form>
+        </div>
+      )}
+
+      {/* Modal para seleccionar servicios */}
+      {mostrarModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96 max-w-lg">
+            <h2 className="text-xl font-bold text-purple-800 mb-4">Seleccionar Servicios</h2>
+            
+            <div className="max-h-96 overflow-y-auto">
+              <div className="grid gap-2">
+                {servicios.map((servicio) => (
+                  <div 
+                    key={servicio.id}
+                    className={`p-3 rounded border flex justify-between items-center cursor-pointer ${
+                      serviciosParaModal.includes(servicio.id)
+                        ? "bg-purple-100 border-purple-500"
+                        : "bg-gray-50 border-gray-300 hover:bg-gray-100"
+                    }`}
+                    onClick={() => handleServicioModalClick(servicio.id)}
+                  >
+                    <div>
+                      <div className="font-medium">{servicio.nombre_servicio}</div>
+                      <div className="text-sm text-green-600">Q{servicio.precio}</div>
+                    </div>
+                    <div>
+                      {serviciosParaModal.includes(servicio.id) && (
+                        <svg className="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div className="mt-6 flex justify-between">
+              <div className="text-sm">
+                <span className="font-bold">Total seleccionado: </span>
+                <span className="text-green-600 font-bold">
+                  Q{serviciosParaModal.reduce((total, id) => {
+                    const servicio = servicios.find(s => s.id === id);
+                    return total + (servicio ? parseFloat(servicio.precio) : 0);
+                  }, 0).toFixed(2)}
+                </span>
+              </div>
+              <div className="text-sm">
+                <span className="font-bold">Cantidad: </span>
+                <span className="text-purple-600 font-bold">{serviciosParaModal.length} servicios</span>
+              </div>
+            </div>
+            
+            <div className="mt-4 flex justify-end gap-3">
+              <button
+                onClick={() => {
+                  setMostrarModal(false);
+                  setCitaParaServicios(null);
+                }}
+                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={guardarServiciosModal}
+                className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+              >
+                Guardar Servicios
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
