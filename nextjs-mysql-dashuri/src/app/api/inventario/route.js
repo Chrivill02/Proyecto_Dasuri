@@ -26,58 +26,23 @@ export async function POST(request) {
       return NextResponse.json({ message: "Todos los campos son requeridos" }, { status: 400 });
     }
 
-    // Buscar si ya existe un producto con ese nombre
-    const [existingRows] = await pool.query('SELECT * FROM producto WHERE nombre = ?', [nombre]);
+    // Llamar al procedimiento almacenado que hace toda la lógica de insertar o actualizar
+    await pool.query('CALL sp_guardar_producto(?, ?, ?, ?, ?)', [
+      nombre,
+      stock,
+      precio,
+      categoria_id,
+      fecha_exp
+    ]);
 
-    if (existingRows.length > 0) {
-      const productoExistente = existingRows[0];
-      const stockAnterior = productoExistente.stock;
-      const precioAnterior = productoExistente.precio;
-
-      const nuevoStock = stockAnterior + stock;
-      const nuevoPrecio = ((precioAnterior * stockAnterior) + (precio * stock)) / nuevoStock;
-
-      // Tomar la fecha de vencimiento más reciente
-      const nuevaFecha = new Date(fecha_exp) > new Date(productoExistente.fecha_exp)
-        ? fecha_exp
-        : productoExistente.fecha_exp;
-
-      await pool.query('UPDATE producto SET stock = ?, precio = ?, fecha_exp = ? WHERE id = ?', [
-        nuevoStock,
-        nuevoPrecio,
-        nuevaFecha,
-        productoExistente.id
-      ]);
-
-      return NextResponse.json({
-        message: "Producto actualizado exitosamente",
-        id: productoExistente.id,
-        nombre,
-        stock: nuevoStock,
-        precio: nuevoPrecio,
-        categoria_id,
-        fecha_exp: nuevaFecha
-      });
-    } else {
-      // Insertar nuevo producto
-      const [result] = await pool.query('INSERT INTO producto SET ?', {
-        nombre,
-        stock,
-        precio,
-        categoria_id,
-        fecha_exp
-      });
-
-      return NextResponse.json({
-        message: "Producto creado exitosamente",
-        id: result.insertId,
-        nombre,
-        stock,
-        precio,
-        categoria_id,
-        fecha_exp
-      });
-    }
+    return NextResponse.json({
+      message: "Producto guardado correctamente",
+      nombre,
+      stock,
+      precio,
+      categoria_id,
+      fecha_exp
+    });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ message: error.message }, { status: 500 });
