@@ -98,37 +98,67 @@ export async function DELETE(req) {
 }
 
 export async function POST(req) {
-    const { usuario_id, total, descripcion } = await req.json();
-    let connection;
-  
-    if (!usuario_id || !total) {
+  const { usuario_id, total, descripcion, producto_id, cantidad } = await req.json();
+  let connection;
+
+console.log("Datos recibidos en POST:", { usuario_id, total, descripcion, producto_id, cantidad });
+
+  // Validación de datos
+  if (!usuario_id || !total || !producto_id || !cantidad || cantidad <= 0) {
+    return NextResponse.json({
+      success: false,
+      message: "Datos incompletos o inválidos para crear la venta"
+    }, { status: 400 });
+  }
+
+  try {
+    connection = await pool.getConnection();
+    await connection.beginTransaction(); // 🔐 Inicia transacción
+
+    // Verificar stock disponible
+    const [productoRows] = await connection.query(
+      "SELECT stock FROM producto WHERE id = ?",
+      [producto_id]
+    );
+
+    const producto = productoRows[0];
+    if (!producto || producto.stock < cantidad) {
+      await connection.rollback();
       return NextResponse.json({
         success: false,
-        message: "Datos incompletos para crear la venta"
+        message: "Stock insuficiente para la venta"
       }, { status: 400 });
     }
-  
-    try {
-      connection = await pool.getConnection();
-      
-      const [result] = await connection.query(
-        "INSERT INTO venta (usuario_id, total, descripcion) VALUES (?, ?, ?)",
-        [usuario_id, total, descripcion]
-      );
-  
-      return NextResponse.json({
-        success: true,
-        message: "Venta creada exitosamente",
-        id: result.insertId
-      });
-    } catch (error) {
-      console.error("Error al crear venta:", error);
-      return NextResponse.json({
-        success: false,
-        message: "Error al crear la venta",
-        details: process.env.NODE_ENV === 'development' ? error.message : null
-      }, { status: 500 });
-    } finally {
-      if (connection) connection.release();
-    }
+
+    // Registrar la venta
+    const [ventaResult] = await connection.query(
+      "INSERT INTO venta (usuario_id, total, descripcion) VALUES (?, ?, ?)",
+      [usuario_id, total, descripcion]
+    );
+
+    // Actualizar stock del producto
+    await connection.query(
+      "UPDATE producto SET stock = stock - ? WHERE id = ?",
+      [cantidad, producto_id]
+    );
+
+    await connection.commit(); // ✅ Confirmar transacción
+
+    return NextResponse.json({
+      success: true,
+      message: "Venta registrada y stock actualizado",
+      id: ventaResult.insertId
+    });
+
+  } catch (error) {
+    if (connection) await connection.rollback(); // ❌ Deshacer en caso de error
+    console.error("Error al crear venta:", error);
+    return NextResponse.json({
+      success: false,
+      message: "Error al crear la venta",
+      details: process.env.NODE_ENV === 'development' ? error.message : null
+    }, { status: 500 });
+  } finally {
+    if (connection) connection.release();
   }
+}

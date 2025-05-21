@@ -65,16 +65,19 @@ export default function CatalogoPage() {
       const total = producto.precio * cantidad;
 
       const response = await fetch('/api/Ventas', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          usuario_id: usuarioId,
-          total: total,
-          descripcion: descripcion
-        }),
-      });
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    usuario_id: usuarioId,
+    total: total,
+    descripcion: descripcion,
+    producto_id: productoId,
+    cantidad: cantidad
+  }),
+});
+
 
       const data = await response.json();
 
