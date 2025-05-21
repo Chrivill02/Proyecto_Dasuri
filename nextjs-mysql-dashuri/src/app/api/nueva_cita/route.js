@@ -1,5 +1,4 @@
 // src/app/api/nueva_cita/route.js
-ab9858d4 (Respaldo)
 import { NextResponse } from "next/server";
 import { pool } from "@/libs/mysql"; // debe estar configurado con mysql2/promise
 
