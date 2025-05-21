@@ -1,11 +1,8 @@
-import { NextResponse } from "next/server";
-import { pool } from "@/libs/mysql";
-
 // GET - Obtener todos los servicios
 export async function GET() {
     try {
-        const [rows] = await pool.query("SELECT * FROM servicios");
-        return NextResponse.json(rows);
+        const [rows] = await pool.query("CALL ObtenerServicios()");
+        return NextResponse.json(rows[0]); // ¡Ojo! CALL devuelve un array de arrays
     } catch (error) {
         console.error(error);
         return NextResponse.json({ message: error.message }, { status: 500 });
@@ -17,13 +14,16 @@ export async function POST(request) {
     try {
         const { nombre_servicio, precio } = await request.json();
 
-        const [result] = await pool.query(
-            "INSERT INTO servicios (nombre_servicio, precio) VALUES (?, ?)",
-            [nombre_servicio, precio]
-        );
+        const [result] = await pool.query("CALL CrearServicio(?, ?)", [
+            nombre_servicio,
+            precio
+        ]);
+
+        // Asumimos que el procedimiento devuelve el nuevo ID como SELECT LAST_INSERT_ID();
+        const insertId = result[0]?.[0]?.id || null;
 
         return NextResponse.json({
-            id: result.insertId,
+            id: insertId,
             nombre_servicio,
             precio
         });
@@ -39,14 +39,11 @@ export async function PUT(request) {
     try {
         const { id, nombre_servicio, precio } = await request.json();
 
-        const [result] = await pool.query(
-            "UPDATE servicios SET nombre_servicio = ?, precio = ? WHERE id = ?",
-            [nombre_servicio, precio, id]
-        );
-
-        if (result.affectedRows === 0) {
-            return NextResponse.json({ message: "Servicio no encontrado" }, { status: 404 });
-        }
+        const [result] = await pool.query("CALL ActualizarServicio(?, ?, ?)", [
+            id,
+            nombre_servicio,
+            precio
+        ]);
 
         return NextResponse.json({
             id,
@@ -65,14 +62,7 @@ export async function DELETE(request) {
     try {
         const { id } = await request.json();
 
-        const [result] = await pool.query(
-            "DELETE FROM servicios WHERE id = ?",
-            [id]
-        );
-
-        if (result.affectedRows === 0) {
-            return NextResponse.json({ message: "Servicio no encontrado" }, { status: 404 });
-        }
+        const [result] = await pool.query("CALL EliminarServicio(?)", [id]);
 
         return NextResponse.json({ message: "Servicio eliminado correctamente" });
 

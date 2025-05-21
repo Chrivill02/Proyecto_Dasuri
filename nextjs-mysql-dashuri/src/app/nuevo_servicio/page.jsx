@@ -1,4 +1,3 @@
-// src\app\nuevo_servicio\page.jsx
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -21,24 +20,37 @@ export default function NuevoServicioPage() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
-    setFormulario({
-      ...formulario,
-      [name]: value
-    });
 
-    if (name === "id" && value) {
-      const servicio = servicios.find((s) => s.id.toString() === value.toString());
-      if (servicio) {
-        setDetalleServicio(servicio);
-        // Autocompletar los campos cuando se selecciona un ID
-        setFormulario({
-          id: servicio.id.toString(),
-          nombre_servicio: servicio.nombre_servicio || "",
-          precio: servicio.precio ? servicio.precio.toString() : ""
-        });
+    setFormulario((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+
+    if (name === "id") {
+      if (value) {
+        const servicio = servicios.find((s) => s.id.toString() === value.toString());
+        if (servicio) {
+          setDetalleServicio(servicio);
+          setFormulario({
+            id: servicio.id.toString(),
+            nombre_servicio: servicio.nombre_servicio || "",
+            precio: servicio.precio ? servicio.precio.toString() : ""
+          });
+        } else {
+          setDetalleServicio(null);
+          setFormulario({
+            id: "",
+            nombre_servicio: "",
+            precio: ""
+          });
+        }
       } else {
         setDetalleServicio(null);
+        setFormulario((prev) => ({
+          ...prev,
+          nombre_servicio: "",
+          precio: ""
+        }));
       }
     }
   };
@@ -48,26 +60,24 @@ export default function NuevoServicioPage() {
     setError(null);
     setMensajeExito("");
     setCargando(true);
-    
+
     try {
-      // Validaciones básicas
       if (!formulario.nombre_servicio.trim()) {
         throw new Error("El nombre del servicio es obligatorio");
       }
-      
+
       if (!formulario.precio.trim() || isNaN(Number(formulario.precio))) {
         throw new Error("El precio debe ser un número válido");
       }
-      
+
       let res;
       const datos = {
         ...formulario,
-        precio: Number(formulario.precio) // Asegurar que sea numérico
+        precio: Number(formulario.precio)
       };
-      
-      // Verificar si es una actualización o creación
+
       if (formulario.id) {
-        datos.id = Number(formulario.id); // Asegurar que el ID sea numérico
+        datos.id = Number(formulario.id);
         res = await axios.put("/api/servicios", datos);
         setMensajeExito("Servicio actualizado correctamente");
       } else {
@@ -75,7 +85,6 @@ export default function NuevoServicioPage() {
         setMensajeExito("Servicio creado correctamente");
       }
 
-      // Resetear formulario
       form.current.reset();
       setFormulario({
         id: "",
@@ -83,8 +92,7 @@ export default function NuevoServicioPage() {
         precio: ""
       });
       setDetalleServicio(null);
-      
-      // Recargar la lista de servicios
+
       await fetchServicios();
     } catch (error) {
       console.error("Error al enviar el formulario:", error);
@@ -99,19 +107,18 @@ export default function NuevoServicioPage() {
       setError("Debe seleccionar un servicio para eliminar");
       return;
     }
-    
+
     setError(null);
     setMensajeExito("");
     setCargando(true);
-    
+
     try {
       const res = await axios.delete("/api/servicios", {
         data: { id: Number(formulario.id) }
       });
-      
+
       setMensajeExito("Servicio eliminado correctamente");
-      
-      // Resetear formulario
+
       form.current.reset();
       setFormulario({
         id: "",
@@ -119,8 +126,7 @@ export default function NuevoServicioPage() {
         precio: ""
       });
       setDetalleServicio(null);
-      
-      // Recargar la lista de servicios
+
       await fetchServicios();
     } catch (error) {
       console.error("Error al eliminar servicio:", error);
@@ -133,11 +139,10 @@ export default function NuevoServicioPage() {
   const fetchServicios = async () => {
     setCargando(true);
     setError(null);
-    
+
     try {
       const res = await axios.get("/api/servicios");
-      
-      // Verificar si la respuesta es un array
+
       if (Array.isArray(res.data)) {
         setServicios(res.data);
       } else {
@@ -157,6 +162,13 @@ export default function NuevoServicioPage() {
     fetchServicios();
   }, []);
 
+  useEffect(() => {
+    if (!mostrarFormulario) {
+      setError(null);
+      setMensajeExito("");
+    }
+  }, [mostrarFormulario]);
+
   return (
     <div className="p-6 max-w-3xl mx-auto bg-white min-h-screen">
       <h1 className="text-3xl font-bold text-center mb-6 text-purple-800">Gestión de Servicios</h1>
@@ -175,19 +187,19 @@ export default function NuevoServicioPage() {
         </div>
       )}
 
-      <div className="bg-[#F3E5F5] border-[3px] border-yellow-500 rounded-lg p-4 shadow-lg mb-6">
+      <div className="bg-[#F3E5F5] border-[3px] border-yellow-500 rounded-lg p-4 shadow-lg mb-6 max-h-[240px] overflow-y-auto">
         <h2 className="text-xl font-semibold text-purple-800 mb-4">📓 Servicios Disponibles</h2>
         {cargando && <p className="text-purple-600">Cargando servicios...</p>}
-        
+
         {!cargando && servicios.length === 0 ? (
           <p className="text-purple-600">No hay servicios disponibles.</p>
         ) : (
           <table className="w-full table-auto border-collapse">
             <thead>
-              <tr className="bg-purple-100 text-purple-800">
-                <th className="border p-2">ID</th>
-                <th className="border p-2">Nombre</th>
-                <th className="border p-2">Precio</th>
+              <tr className="bg-purple-100 text-purple-800 sticky top-0">
+                <th className="border p-2 bg-purple-100">ID</th>
+                <th className="border p-2 bg-purple-100">Nombre</th>
+                <th className="border p-2 bg-purple-100">Precio</th>
               </tr>
             </thead>
             <tbody>
@@ -204,7 +216,12 @@ export default function NuevoServicioPage() {
       </div>
 
       <button
-        onClick={() => setMostrarFormulario(!mostrarFormulario)}
+        onClick={() => {
+          setMostrarFormulario(!mostrarFormulario);
+          setTimeout(() => {
+            form.current?.scrollIntoView({ behavior: "smooth" });
+          }, 100);
+        }}
         className="bg-purple-600 text-white px-4 py-2 rounded mb-4"
       >
         {mostrarFormulario ? "Ocultar Formulario" : "➕ Nuevo Servicio"}
@@ -227,7 +244,7 @@ export default function NuevoServicioPage() {
               ))}
             </select>
           </div>
-          
+
           <div className="flex flex-col">
             <label htmlFor="nombre_servicio" className="text-purple-800 mb-1">Nombre del Servicio *</label>
             <input
@@ -241,14 +258,14 @@ export default function NuevoServicioPage() {
               className="w-full p-2 bg-[#EDE7F6] border rounded text-purple-800"
             />
           </div>
-          
+
           <div className="flex flex-col">
             <label htmlFor="precio" className="text-purple-800 mb-1">Precio *</label>
             <input
               type="number"
               id="precio"
               name="precio"
-              placeholder="Precio"
+              placeholder="Precio en Quetzales"
               onChange={handleChange}
               value={formulario.precio}
               min="0"
@@ -259,19 +276,19 @@ export default function NuevoServicioPage() {
           </div>
 
           <div className="flex gap-4">
-            <button 
-              type="submit" 
-              className="bg-purple-700 text-white p-2 rounded flex-1"
+            <button
               disabled={cargando}
+              type="submit"
+              className="bg-purple-700 hover:bg-purple-900 text-white px-4 py-2 rounded flex-1"
             >
-              {cargando ? "Guardando..." : "Guardar Servicio"}
+              {cargando ? "Guardando..." : formulario.id ? "Actualizar Servicio" : "Guardar Servicio"}
             </button>
 
             <button
+              disabled={cargando || !formulario.id}
               type="button"
               onClick={handleDelete}
-              className="bg-red-600 text-white p-2 rounded flex-1"
-              disabled={cargando || !formulario.id}
+              className="bg-red-600 hover:bg-red-800 text-white px-4 py-2 rounded flex-1 disabled:opacity-50"
             >
               {cargando ? "Eliminando..." : "Eliminar Servicio"}
             </button>
@@ -280,11 +297,11 @@ export default function NuevoServicioPage() {
       )}
 
       {detalleServicio && (
-        <div className="mt-6 p-4 border rounded bg-purple-50 text-purple-800">
-          <h2 className="font-bold mb-2">Detalle del servicio</h2>
+        <div className="mt-6 p-4 border border-purple-300 rounded bg-purple-50 text-purple-700 max-w-xl mx-auto">
+          <h3 className="text-lg font-bold mb-2">Detalle del Servicio</h3>
           <p><strong>ID:</strong> {detalleServicio.id}</p>
           <p><strong>Nombre:</strong> {detalleServicio.nombre_servicio}</p>
-          <p><strong>Precio:</strong> ${detalleServicio.precio}</p>
+          <p><strong>Precio:</strong> Q{detalleServicio.precio}</p>
         </div>
       )}
     </div>

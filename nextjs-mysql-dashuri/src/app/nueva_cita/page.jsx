@@ -6,7 +6,6 @@ import axios from "axios";
 export default function CitasFormPage() {
   const [citas, setCitas] = useState([]);
   const [servicios, setServicios] = useState([]);
-  const [detalleCita, setDetalleCita] = useState(null);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [serviciosSeleccionados, setServiciosSeleccionados] = useState([]);
   const [citaActual, setCitaActual] = useState(null);
@@ -35,7 +34,6 @@ export default function CitasFormPage() {
     if (name === "id" && value) {
       const cita = citas.find((c) => c.id.toString() === value.toString());
       if (cita) {
-        setDetalleCita(cita);
         setCitaActual(cita.id);
         // Autocompletar los campos del formulario
         setFormulario({
@@ -51,7 +49,6 @@ export default function CitasFormPage() {
         // Cargar los servicios de esta cita
         fetchServiciosPorCita(cita.id);
       } else {
-        setDetalleCita(null);
         setCitaActual(null);
         setServiciosSeleccionados([]);
       }
@@ -112,7 +109,6 @@ export default function CitasFormPage() {
         nombre_cliente: "",
         telefono_cliente: ""
       });
-      setDetalleCita(null);
       setServiciosSeleccionados([]);
       setCitaActual(null);
       fetchCitas();
@@ -182,14 +178,12 @@ export default function CitasFormPage() {
     }
   };
 
-  const handleServicioChange = (e) => {
-    const servicioId = parseInt(e.target.value);
-    const isChecked = e.target.checked;
-    
-    if (isChecked) {
-      setServiciosSeleccionados(prev => [...prev, servicioId]);
-    } else {
+  const handleServicioClick = (servicioId) => {
+    // Si ya está seleccionado, lo quitamos; si no, lo añadimos
+    if (serviciosSeleccionados.includes(servicioId)) {
       setServiciosSeleccionados(prev => prev.filter(id => id !== servicioId));
+    } else {
+      setServiciosSeleccionados(prev => [...prev, servicioId]);
     }
   };
 
@@ -212,39 +206,72 @@ export default function CitasFormPage() {
     <div className="p-6 max-w-3xl mx-auto bg-white min-h-screen">
       <h1 className="text-3xl font-bold text-center mb-6 text-purple-800">Gestión de Citas de Servicio</h1>
 
-      <div className="bg-[#F3E5F5] border-[3px] border-yellow-500 rounded-lg p-4 shadow-lg mb-6">
-        <h2 className="text-xl font-semibold text-purple-800 mb-4">📓 Libreta de Citas</h2>
-        <table className="w-full table-auto border-collapse">
-          <thead>
-            <tr className="bg-purple-100 text-purple-800">
-              <th className="border p-2">ID</th>
-              <th className="border p-2">Fecha</th>
-              <th className="border p-2">Hora</th>
-              <th className="border p-2">Estado</th>
-              <th className="border p-2">Costo</th>
-              <th className="border p-2">Nombre</th>
-              <th className="border p-2">Teléfono</th>
-              <th className="border p-2">Servicios</th>
-            </tr>
-          </thead>
-          <tbody>
-            {citas.map((cita) => (
-              <tr key={cita.id} className="text-purple-700 hover:bg-purple-50">
-                <td className="border p-2">{cita.id}</td>
-                <td className="border p-2">{cita.fecha_cita}</td>
-                <td className="border p-2">{cita.hora_cita}</td>
-                <td className="border p-2">{cita.estado}</td>
-                <td className="border p-2">Q{cita.costo}</td>
-                <td className="border p-2">{cita.nombre_cliente}</td>
-                <td className="border p-2">{cita.telefono_cliente}</td>
-                <td className="border p-2">{obtenerNombresServicios(cita.id)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="flex flex-row gap-6">
+        {/* Sección de la tabla de citas (izquierda) */}
+        <div className="flex-grow">
+          <div className="bg-[#F3E5F5] border-[3px] border-yellow-500 rounded-lg p-4 shadow-lg mb-6">
+            <h2 className="text-xl font-semibold text-purple-800 mb-4">📓 Libreta de Citas</h2>
+            {/* Contenedor con altura fija y scroll */}
+            <div className="max-h-80 overflow-y-auto">
+              <table className="w-full table-auto border-collapse">
+                <thead className="sticky top-0 bg-purple-100">
+                  <tr className="bg-purple-100 text-purple-800">
+                    <th className="border p-2">ID</th>
+                    <th className="border p-2">Fecha</th>
+                    <th className="border p-2">Hora</th>
+                    <th className="border p-2">Estado</th>
+                    <th className="border p-2">Costo</th>
+                    <th className="border p-2">Nombre</th>
+                    <th className="border p-2">Teléfono</th>
+                    <th className="border p-2">Servicios</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {citas.map((cita) => (
+                    <tr key={cita.id} className="text-purple-700 hover:bg-purple-50">
+                      <td className="border p-2">{cita.id}</td>
+                      <td className="border p-2">{cita.fecha_cita}</td>
+                      <td className="border p-2">{cita.hora_cita}</td>
+                      <td className="border p-2">{cita.estado}</td>
+                      <td className="border p-2">Q{cita.costo}</td>
+                      <td className="border p-2">{cita.nombre_cliente}</td>
+                      <td className="border p-2">{cita.telefono_cliente}</td>
+                      <td className="border p-2">{obtenerNombresServicios(cita.id)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        
+        {/* Sección de servicios (derecha) */}
+        <div className="w-64">
+          <div className="bg-[#E1BEE7] p-4 rounded-lg border border-purple-300 shadow-md">
+            <h3 className="font-bold text-purple-800 mb-3">Servicios Disponibles</h3>
+            <div className="flex flex-col gap-2">
+              {servicios.map((servicio) => (
+                <button
+                  key={servicio.id}
+                  onClick={() => handleServicioClick(servicio.id)}
+                  className={`p-2 rounded text-left ${
+                    serviciosSeleccionados.includes(servicio.id)
+                      ? "bg-purple-600 text-white"
+                      : "bg-purple-100 text-purple-800 hover:bg-purple-200"
+                  }`}
+                >
+                  {servicio.nombre_servicio}
+                  <div className="text-xs mt-1">
+                    {serviciosSeleccionados.includes(servicio.id) ? "✓ Seleccionado" : `Q${servicio.precio}`}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="flex gap-4 mb-4">
+      <div className="flex gap-4 mb-4 mt-4">
         <button
           onClick={() => setMostrarFormulario(!mostrarFormulario)}
           className="bg-purple-600 text-white px-4 py-2 rounded"
@@ -265,7 +292,6 @@ export default function CitasFormPage() {
             });
             setServiciosSeleccionados([]);
             setCitaActual(null);
-            setDetalleCita(null);
             setMostrarFormulario(true);
           }}
           className="bg-green-600 text-white px-4 py-2 rounded"
@@ -334,23 +360,20 @@ export default function CitasFormPage() {
             />
 
             <div className="bg-[#E1BEE7] p-4 rounded-lg border border-purple-300">
-              <h3 className="font-bold text-purple-800 mb-2">Servicios para esta cita</h3>
-              <div className="grid grid-cols-2 gap-2">
-                {servicios.map((servicio) => (
-                  <div key={servicio.id} className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id={`servicio-${servicio.id}`}
-                      value={servicio.id}
-                      checked={serviciosSeleccionados.includes(servicio.id)}
-                      onChange={handleServicioChange}
-                      className="text-purple-600"
-                    />
-                    <label htmlFor={`servicio-${servicio.id}`} className="text-purple-800">
-                      {servicio.nombre_servicio} - Q{servicio.precio}
-                    </label>
-                  </div>
-                ))}
+              <h3 className="font-bold text-purple-800 mb-2">Servicios seleccionados para esta cita:</h3>
+              <div className="flex flex-wrap gap-2">
+                {serviciosSeleccionados.length > 0 ? (
+                  serviciosSeleccionados.map((servicioId) => {
+                    const servicio = servicios.find(s => s.id === servicioId);
+                    return servicio ? (
+                      <span key={servicioId} className="bg-purple-600 text-white px-2 py-1 rounded text-sm">
+                        {servicio.nombre_servicio} (Q{servicio.precio})
+                      </span>
+                    ) : null;
+                  })
+                ) : (
+                  <span className="text-purple-800">No hay servicios seleccionados</span>
+                )}
               </div>
             </div>
 
@@ -388,29 +411,6 @@ export default function CitasFormPage() {
               )}
             </div>
           </form>
-        </div>
-      )}
-
-      {detalleCita && (
-        <div className="mt-6 p-4 border rounded bg-purple-50 text-purple-800">
-          <h2 className="font-bold mb-2">Detalle de la cita</h2>
-          <pre>{JSON.stringify(detalleCita, null, 2)}</pre>
-          
-          {citasConServicios[detalleCita.id] && (
-            <div className="mt-2">
-              <h3 className="font-bold">Servicios asociados:</h3>
-              <ul className="list-disc pl-5">
-                {citasConServicios[detalleCita.id].map((servicioCita) => {
-                  const servicio = servicios.find(s => s.id === servicioCita.id_servicio);
-                  return (
-                    <li key={servicioCita.id_servicio}>
-                      {servicio ? `${servicio.nombre_servicio} - Q${servicio.precio}` : `Servicio #${servicioCita.id_servicio}`}
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          )}
         </div>
       )}
     </div>

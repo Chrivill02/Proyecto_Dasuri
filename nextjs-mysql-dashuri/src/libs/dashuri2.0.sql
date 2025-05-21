@@ -40,33 +40,99 @@ INSERT INTO `categoria_producto` VALUES (1,'Pelo'),(2,'Uñas');
 UNLOCK TABLES;
 
 --
--- Table structure for table `cita_servicio`
---
-
+-- -----------------------------------------------------
+-- Tabla: cita_servicio
+-- -----------------------------------------------------
 DROP TABLE IF EXISTS `cita_servicio`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `cita_servicio` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `fecha_cita` date NOT NULL,
-  `hora_cita` time NOT NULL,
-  `estado` varchar(50) NOT NULL,
-  `costo` decimal(10,2) NOT NULL,
-  `nombre_cliente` varchar(100) NOT NULL,
-  `telefono_cliente` varchar(20) DEFAULT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `fecha_cita` DATE NOT NULL,
+  `hora_cita` TIME NOT NULL,
+  `estado` VARCHAR(50) NOT NULL,
+  `costo` DECIMAL(10,2) NOT NULL,
+  `nombre_cliente` VARCHAR(100) NOT NULL,
+  `telefono_cliente` VARCHAR(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Dumping data for table `cita_servicio`
---
-
+-- -----------------------------------------------------
+-- Datos iniciales
+-- -----------------------------------------------------
 LOCK TABLES `cita_servicio` WRITE;
 /*!40000 ALTER TABLE `cita_servicio` DISABLE KEYS */;
-INSERT INTO `cita_servicio` VALUES (4,'2025-05-23','11:01:00','Pendiente',400.00,'Mauri','2312'),(5,'2025-05-07','10:30:00','Confirmada',222.00,'Chris','12341'),(6,'2025-05-15','10:30:00','Confirmada',222.00,'Chrisa','12341');
+INSERT INTO `cita_servicio` (`id`, `fecha_cita`, `hora_cita`, `estado`, `costo`, `nombre_cliente`, `telefono_cliente`) VALUES
+(4,'2025-05-23','11:01:00','Pendiente',400.00,'Mauri','2312'),
+(5,'2025-05-07','10:30:00','Confirmada',222.00,'Chris','12341'),
+(6,'2025-05-15','10:30:00','Confirmada',222.00,'Chrisa','12341');
 /*!40000 ALTER TABLE `cita_servicio` ENABLE KEYS */;
 UNLOCK TABLES;
+
+-- -----------------------------------------------------
+-- Procedimientos almacenados
+-- -----------------------------------------------------
+
+-- Obtener todas las citas
+DROP PROCEDURE IF EXISTS obtener_citas;
+DELIMITER //
+CREATE PROCEDURE obtener_citas()
+BEGIN
+    SELECT * FROM cita_servicio;
+END;
+//
+DELIMITER ;
+
+-- Crear nueva cita
+DROP PROCEDURE IF EXISTS crear_cita;
+DELIMITER //
+CREATE PROCEDURE crear_cita(
+    IN p_fecha DATE,
+    IN p_hora TIME,
+    IN p_estado VARCHAR(50),
+    IN p_costo DECIMAL(10,2),
+    IN p_nombre_cliente VARCHAR(100),
+    IN p_telefono_cliente VARCHAR(20)
+)
+BEGIN
+    INSERT INTO cita_servicio (fecha_cita, hora_cita, estado, costo, nombre_cliente, telefono_cliente)
+    VALUES (p_fecha, p_hora, p_estado, p_costo, p_nombre_cliente, p_telefono_cliente);
+END;
+//
+DELIMITER ;
+
+-- Actualizar cita existente
+DROP PROCEDURE IF EXISTS actualizar_cita;
+DELIMITER //
+CREATE PROCEDURE actualizar_cita(
+    IN p_id INT,
+    IN p_fecha DATE,
+    IN p_hora TIME,
+    IN p_estado VARCHAR(50),
+    IN p_costo DECIMAL(10,2),
+    IN p_nombre_cliente VARCHAR(100),
+    IN p_telefono_cliente VARCHAR(20)
+)
+BEGIN
+    UPDATE cita_servicio
+    SET fecha_cita = p_fecha,
+        hora_cita = p_hora,
+        estado = p_estado,
+        costo = p_costo,
+        nombre_cliente = p_nombre_cliente,
+        telefono_cliente = p_telefono_cliente
+    WHERE id = p_id;
+END;
+//
+DELIMITER ;
+
+-- Eliminar cita
+DROP PROCEDURE IF EXISTS eliminar_cita;
+DELIMITER //
+CREATE PROCEDURE eliminar_cita(IN p_id INT)
+BEGIN
+    DELETE FROM cita_servicio WHERE id = p_id;
+END;
+//
+DELIMITER ;
 
 --
 -- Table structure for table `cita_servicio_detalle`
@@ -264,24 +330,82 @@ LOCK TABLES `registro_cliente` WRITE;
 /*!40000 ALTER TABLE `registro_cliente` ENABLE KEYS */;
 UNLOCK TABLES;
 
---
--- Table structure for table `servicios`
---
-
+-- ----------------------------
+-- Tabla: servicios
+-- ----------------------------
 DROP TABLE IF EXISTS `servicios`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
+
 CREATE TABLE `servicios` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nombre_servicio` varchar(100) NOT NULL,
   `precio` decimal(10,2) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `servicios`
---
+-- ----------------------------
+-- Datos iniciales de servicios
+-- ----------------------------
+LOCK TABLES `servicios` WRITE;
+/*!40000 ALTER TABLE `servicios` DISABLE KEYS */;
+INSERT INTO `servicios` VALUES 
+(1,'Tinte a pelo',200.00),
+(2,'Manicure',200.00),
+(3,'Corte de pelo',120.00);
+/*!40000 ALTER TABLE `servicios` ENABLE KEYS */;
+UNLOCK TABLES;
+
+-- ----------------------------
+-- Procedimientos para servicios
+-- ----------------------------
+DELIMITER $$
+
+CREATE PROCEDURE CrearServicio(
+  IN p_nombre_servicio VARCHAR(100),
+  IN p_precio DECIMAL(10,2)
+)
+BEGIN
+  INSERT INTO servicios (nombre_servicio, precio)
+  VALUES (p_nombre_servicio, p_precio);
+END $$
+
+CREATE PROCEDURE ObtenerServicios()
+BEGIN
+  SELECT * FROM servicios;
+END $$
+
+CREATE PROCEDURE ObtenerServicioPorId(
+  IN p_id INT
+)
+BEGIN
+  SELECT * FROM servicios WHERE id = p_id;
+END $$
+
+CREATE PROCEDURE ActualizarServicio(
+  IN p_id INT,
+  IN p_nombre_servicio VARCHAR(100),
+  IN p_precio DECIMAL(10,2)
+)
+BEGIN
+  UPDATE servicios
+  SET nombre_servicio = p_nombre_servicio,
+      precio = p_precio
+  WHERE id = p_id;
+END $$
+
+CREATE PROCEDURE EliminarServicio(
+  IN p_id INT
+)
+BEGIN
+  DELETE FROM servicios WHERE id = p_id;
+END $$
+
+DELIMITER ;
+
+-- Fin del script
 
 LOCK TABLES `servicios` WRITE;
 /*!40000 ALTER TABLE `servicios` DISABLE KEYS */;
