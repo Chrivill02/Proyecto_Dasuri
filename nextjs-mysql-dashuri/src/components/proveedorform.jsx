@@ -94,7 +94,7 @@ function ProveedorForm({ onUpdate }) {
             onChange={(e) =>
               setFormData({ ...formData, nombre: e.target.value })
             }
-            placeholder="Ej: Distribuidora López"
+            placeholder="Nombre"
             className="w-full p-2 border rounded"
             disabled={loading}
             required
@@ -109,7 +109,7 @@ function ProveedorForm({ onUpdate }) {
             onChange={(e) =>
               setFormData({ ...formData, telefono: e.target.value })
             }
-            placeholder="Ej: 5551234567"
+            placeholder="telefono"
             className="w-full p-2 border rounded"
             disabled={loading}
             required
@@ -124,7 +124,7 @@ function ProveedorForm({ onUpdate }) {
             onChange={(e) =>
               setFormData({ ...formData, correo: e.target.value })
             }
-            placeholder="Ej: contacto@proveedor.com"
+            placeholder="correo"
             className="w-full p-2 border rounded"
             disabled={loading}
             required
@@ -139,7 +139,7 @@ function ProveedorForm({ onUpdate }) {
               type="text"
               value={idEliminar}
               onChange={(e) => setIdEliminar(e.target.value)}
-              placeholder="Ingresa el ID a eliminar"
+              placeholder="Ingrese el ID del proveedor a eliminar"
               className="flex-1 p-2 border rounded-l"
               disabled={loading}
             />

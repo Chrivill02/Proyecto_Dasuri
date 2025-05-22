@@ -43,6 +43,22 @@ function ComprarAProveedor() {
         fetchData();
     }, []);
 
+    useEffect(() => {
+    const productoSeleccionado = productos.find(p => p.nombre === compra.producto);
+    
+    if (productoSeleccionado) {
+        setCompra(prev => ({
+            ...prev,
+            cantidad: productoSeleccionado.cantidad?.toString() || "",
+            precio: productoSeleccionado.precio?.toString() || "",
+            categoria_id: productoSeleccionado.categoria_id?.toString() || "",
+            proveedor_id: productoSeleccionado.proveedor_id?.toString() || "",
+            fecha_vencimiento: productoSeleccionado.fecha_vencimiento?.split("T")[0] || ""
+        }));
+    }
+}, [compra.producto, productos]);
+
+
     const handleChange = (e) => {
         setCompra({
             ...compra,
@@ -93,6 +109,7 @@ function ComprarAProveedor() {
         alert("Debe ingresar un ID numérico para eliminar.");
         return;
     }
+    
 
     try {
         const res = await axios.delete(`/api/solicitud/${eliminarIdONombre}`);
@@ -117,6 +134,11 @@ function ComprarAProveedor() {
         router.push("/facturasenviadas");
     };
 
+    const irInventario = () => {
+    router.push("/inventario");
+    };
+
+
     return (
         <div className="absolute top-[450px] left-[400px] w-[720px]">
             <form
@@ -131,14 +153,12 @@ function ComprarAProveedor() {
                     <select
                     name="producto"
                     value={compra.producto}
-                    onChange={handleChange}
+                    onChange={(e) => setCompra({ ...compra, producto: e.target.value })}
                     className="w-full h-10 rounded-xl px-3 bg-purple-200 text-black"
                     >
                     <option value="">Seleccione un producto</option>
-                    {productos.map((producto) => (
-                        <option key={producto.id} value={producto.nombre}>
-                        {producto.nombre}
-                        </option>
+                    {productos.map((p) => (
+                        <option key={p.id} value={p.nombre}>{p.nombre}</option>
                     ))}
                     </select>
                 </div>
@@ -149,14 +169,12 @@ function ComprarAProveedor() {
                     <select
                     name="proveedor_id"
                     value={compra.proveedor_id}
-                    onChange={handleChange}
+                    onChange={(e) => setCompra({ ...compra, proveedor_id: e.target.value })}
                     className="w-full h-10 rounded-xl px-3 bg-purple-200 text-black"
                     >
                     <option value="">Seleccione un proveedor</option>
-                    {proveedores.map((proveedor) => (
-                        <option key={proveedor.id} value={proveedor.id}>
-                        {proveedor.nombre}
-                        </option>
+                    {proveedores.map((prov) => (
+                        <option key={prov.id} value={prov.id}>{prov.nombre}</option>
                     ))}
                     </select>
                 </div>
@@ -207,14 +225,12 @@ function ComprarAProveedor() {
                         <select
                             name="categoria_id"
                             value={compra.categoria_id}
-                            onChange={handleChange}
+                            onChange={(e) => setCompra({ ...compra, categoria_id: e.target.value })}
                             className="w-full h-10 rounded-xl px-3 bg-purple-200 text-black"
                         >
                             <option value="">Seleccione categoría</option>
-                            {categorias.map((categoria) => (
-                                <option key={categoria.id} value={categoria.id}>
-                                    {categoria.nombre}
-                                </option>
+                            {categorias.map((cat) => (
+                                <option key={cat.id} value={cat.id}>{cat.nombre}</option>
                             ))}
                         </select>
                     </div>
@@ -232,7 +248,7 @@ function ComprarAProveedor() {
                     <button
                         onClick={irAgregarProveedor}
                         type="button"
-                        className="bg-orange-500 hover:bg-orange-500 text-black px-5 py-2 rounded-xl border border-orange-500"
+                        className="bg-orange-500 hover:bg-orange-500 text-black px-5 py-2 rounded-xl"
                     >
                         ➕ Registrar proveedor
                     </button>
@@ -253,7 +269,7 @@ function ComprarAProveedor() {
                         type="text"
                         value={eliminarIdONombre}
                         onChange={(e) => setEliminarIdONombre(e.target.value)}
-                        placeholder="ID"
+                        placeholder="ID compra"
                         className="w-24 h-10 rounded-xl px-3 bg-purple-200 text-black"
                     />
                     <button
@@ -262,6 +278,14 @@ function ComprarAProveedor() {
                         className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-xl"
                     >
                         🗑️ Eliminar Solicitud
+                    </button>
+
+                                        <button
+                        onClick={irInventario}
+                        type="button"
+                        className="bg-violet-600 hover:bg-violet-700 text-white px-6 py-2 rounded-xl"
+                    >
+                        ➕ Nuevo producto
                     </button>
                 </div>
             </form>
