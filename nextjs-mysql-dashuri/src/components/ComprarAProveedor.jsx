@@ -135,7 +135,7 @@ function ComprarAProveedor() {
     };
 
     const irInventario = () => {
-    router.push("/inventario");
+    router.push("/addInventario");
     };
 
 
