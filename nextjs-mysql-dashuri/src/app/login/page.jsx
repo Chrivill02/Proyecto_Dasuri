@@ -43,6 +43,12 @@ export default function LoginPage() {
       <div className="max-w-md w-full bg-white p-8 rounded shadow-md">
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Iniciar sesión</h2>
 
+            <Link href="/">
+              <button className="fixed top-4 left-4 inline-flex items-center px-3 py-2 border border-indigo-600 shadow-sm text-sm font-medium rounded-md text-white bg-purple-700 hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            ← Inicio
+        </button>
+    </Link>
+
         {error && (
           <div className="bg-red-100 text-red-700 px-4 py-2 mb-4 rounded">{error}</div>
         )}
