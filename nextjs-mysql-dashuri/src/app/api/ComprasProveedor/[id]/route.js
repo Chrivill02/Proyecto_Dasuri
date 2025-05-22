@@ -36,7 +36,7 @@ export async function DELETE(request, { params }) {
 
 export async function PUT(request, params){
 	const data = await request.json()
-	const resultado = await pool.query("UPDATE product SET ? WHERE id = ?", [data, params.id])
+	const resultado = await pool.query("UPDATE proveedor SET ? WHERE id = ?", [data, params.id])
 
 
 	if (resultado.affectedRows == 0) {
@@ -52,3 +52,4 @@ export async function PUT(request, params){
 	return NextResponse.json(proveedor_actualizado[0]);
 
 }
+

@@ -104,15 +104,16 @@ DROP TABLE IF EXISTS `detalles_compra`;
 CREATE TABLE `detalles_compra` (
   `id` int NOT NULL AUTO_INCREMENT,
   `producto` varchar(150) NOT NULL,
-  `producto_id` int NOT NULL,
   `cantidad` int NOT NULL,
+  `precio` decimal(10,2),
+  `categoria_id` int NOT NULL,
   `proveedor_id` int NOT NULL,
   `fecha_vencimiento` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `proveedor_id` (`proveedor_id`),
-  KEY `producto_id` (`producto_id`),
+  KEY `categoria_id` (`categoria_id`),
   CONSTRAINT `detalles_compra_ibfk_1` FOREIGN KEY (`proveedor_id`) REFERENCES `proveedor` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `detalles_compra_ibfk_2` FOREIGN KEY (`producto_id`) REFERENCES `producto` (`id`) ON DELETE CASCADE
+  CONSTRAINT `detalles_compra_ibfk_2` FOREIGN KEY (`categoria_id`) REFERENCES `categoria_producto` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -186,29 +187,29 @@ INSERT INTO `producto` VALUES (1,'Tinte de pelo',5,100.00,1,'2025-04-03 00:00:00
 UNLOCK TABLES;
 
 --
--- Table structure for table `producto_proveedor`
+-- Table structure for table `solicitudes`
 --
 
-DROP TABLE IF EXISTS `producto_proveedor`;
+DROP TABLE IF EXISTS `solicitudes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `producto_proveedor` (
-  `producto_id` int NOT NULL,
-  `proveedor_id` int NOT NULL,
-  PRIMARY KEY (`producto_id`,`proveedor_id`),
-  KEY `proveedor_id` (`proveedor_id`),
-  CONSTRAINT `producto_proveedor_ibfk_1` FOREIGN KEY (`producto_id`) REFERENCES `producto` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `producto_proveedor_ibfk_2` FOREIGN KEY (`proveedor_id`) REFERENCES `proveedor` (`id`) ON DELETE CASCADE
+CREATE TABLE `solicitudes` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `compra_id` int NOT NULL,
+  `estado` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `compra_id` (`compra_id`),
+  CONSTRAINT `producto_proveedor_ibfk_1` FOREIGN KEY (`compra_id`) REFERENCES `detalles_compra` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `producto_proveedor`
+-- Dumping data for table `solicitudes`
 --
 
-LOCK TABLES `producto_proveedor` WRITE;
-/*!40000 ALTER TABLE `producto_proveedor` DISABLE KEYS */;
-/*!40000 ALTER TABLE `producto_proveedor` ENABLE KEYS */;
+LOCK TABLES `solicitudes` WRITE;
+/*!40000 ALTER TABLE `solicitudes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `solicitudes` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
