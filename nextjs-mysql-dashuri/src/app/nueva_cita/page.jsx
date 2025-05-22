@@ -212,6 +212,10 @@ export default function CitasFormPage() {
     <div className="p-6 max-w-3xl mx-auto bg-white min-h-screen">
       <h1 className="text-3xl font-bold text-center mb-6 text-purple-800">Gestión de Citas de Servicio</h1>
 
+              <button className="inline-flex items-center px-3 py-2 border border-indigo-600 shadow-sm text-sm font-medium rounded-md text-white bg-purple-700 hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            ← Inicio
+        </button>
+
       <div className="bg-[#F3E5F5] border-[3px] border-yellow-500 rounded-lg p-4 shadow-lg mb-6">
         <h2 className="text-xl font-semibold text-purple-800 mb-4">📓 Libreta de Citas</h2>
         <table className="w-full table-auto border-collapse">
