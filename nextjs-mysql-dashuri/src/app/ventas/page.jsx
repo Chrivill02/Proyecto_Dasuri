@@ -52,7 +52,7 @@ export default function VentasPage() {
 
     const eliminarVenta = async (id) => {
         try {
-            const response = await fetch('/api/ventas', {
+            const response = await fetch('/api/Ventas', {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
