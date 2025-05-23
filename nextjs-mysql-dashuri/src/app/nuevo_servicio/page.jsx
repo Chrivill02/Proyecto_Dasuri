@@ -3,6 +3,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import Link from 'next/link';
 
 export default function NuevoServicioPage() {
   const [servicios, setServicios] = useState([]);
@@ -158,15 +159,12 @@ export default function NuevoServicioPage() {
   }, []);
 
   return (
-    <div className="p-6 max-w-3xl mx-auto bg-white min-h-screen">
-      <h1 className="text-3xl font-bold text-center mb-6 text-purple-800">Gestión de Servicios</h1>
-            
-      <Link href="/">
-        <button className="fixed top-4 left-4 inline-flex items-center px-3 py-2 border border-indigo-600 shadow-sm text-sm font-medium rounded-md text-white bg-purple-700 hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            ← Inicio
-        </button>
-      </Link>
-
+      <div className="p-6 max-w-3xl mx-auto bg-white min-h-screen">
+    <Link href="/">
+      <button className="inline-flex items-center px-3 py-2 border border-indigo-600 shadow-sm text-sm font-medium rounded-md text-white bg-purple-700 hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mb-4">
+        ← Inicio
+      </button>
+    </Link>
       {error && (
         <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
           <p className="font-bold">Error</p>

@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 export default function CatalogoPage() {
   const [productos, setProductos] = useState([]);
@@ -98,11 +99,11 @@ export default function CatalogoPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-6">
-      <Link href="/">
-        <button className="fixed top-4 left-4 inline-flex items-center px-3 py-2 border border-indigo-600 shadow-sm text-sm font-medium rounded-md text-white bg-purple-700 hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-          ← Inicio
-        </button>
-      </Link>
+    <Link href="/">
+      <button className="inline-flex items-center px-3 py-2 border border-indigo-600 shadow-sm text-sm font-medium rounded-md text-white bg-purple-700 hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mb-4">
+        ← Inicio
+      </button>
+    </Link>
       <h1 className="text-3xl font-bold text-center mb-10 text-purple-700">
         Catálogo de Productos
       </h1>
