@@ -39,57 +39,64 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-    <Link href="/">
-      <button className="inline-flex items-center px-3 py-2 border border-indigo-600 shadow-sm text-sm font-medium rounded-md text-white bg-purple-700 hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mb-4">
-        ← Inicio
-      </button>
-    </Link>
-      <div className="max-w-md w-full bg-white p-8 rounded shadow-md">
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Iniciar sesión</h2>
-        {error && (
-          <div className="bg-red-100 text-red-700 px-4 py-2 mb-4 rounded">{error}</div>
-        )}
-
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
-            <input
-              type="email"
-              className="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={correo}
-              onChange={(e) => setCorreo(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
-            <input
-              type="password"
-              className="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={contraseña}
-              onChange={(e) => setContraseña(e.target.value)}
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition disabled:opacity-50"
-          >
-            {loading ? 'Ingresando...' : 'Entrar'}
+    <div className="min-h-screen bg-gray-100 px-4 relative">
+      {/* Botón de Inicio posicionado en la esquina superior izquierda */}
+      <div className="absolute top-4 left-4">
+        <Link href="/">
+          <button className="inline-flex items-center px-3 py-2 border border-indigo-600 shadow-sm text-sm font-medium rounded-md text-white bg-purple-700 hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            ← Inicio
           </button>
-        </form>
+        </Link>
+      </div>
+      
+      {/* Contenedor del formulario centrado */}
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="max-w-md w-full bg-white p-8 rounded shadow-md">
+          <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Iniciar sesión</h2>
+          {error && (
+            <div className="bg-red-100 text-red-700 px-4 py-2 mb-4 rounded">{error}</div>
+          )}
 
-        {/* Enlace para registrarse */}
-        <p className="mt-4 text-center text-sm text-gray-600">
-          ¿No tienes una cuenta?{' '}
-          <Link href="/registrar" className="text-blue-600 hover:underline">
-            Regístrate aquí
-          </Link>
-        </p>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Correo electrónico</label>
+              <input
+                type="email"
+                className="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={correo}
+                onChange={(e) => setCorreo(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+              <input
+                type="password"
+                className="w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={contraseña}
+                onChange={(e) => setContraseña(e.target.value)}
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition disabled:opacity-50"
+            >
+              {loading ? 'Ingresando...' : 'Entrar'}
+            </button>
+          </form>
+
+          {/* Enlace para registrarse */}
+          <p className="mt-4 text-center text-sm text-gray-600">
+            ¿No tienes una cuenta?{' '}
+            <Link href="/registrar" className="text-blue-600 hover:underline">
+              Regístrate aquí
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   )

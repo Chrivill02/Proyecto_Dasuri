@@ -100,16 +100,7 @@ function HomePage() {
               
               {/* Botones con imágenes en la parte superior derecha */}
               <div className="absolute top-4 right-4 flex gap-4">
-                <button 
-                  onClick={() => router.push('/buscar')}
-                  className="p-2 bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 hover:shadow-lg transition-all duration-300 transform hover:scale-105"
-                >
-                  <img
-                    src="/buscar.png" 
-                    alt="Buscar"
-                    className="w-10 h-10 object-contain"
-                  />
-                </button>
+                
                 
                 {/* Botón de Configuración con Dropdown */}
                 <div className="relative">
