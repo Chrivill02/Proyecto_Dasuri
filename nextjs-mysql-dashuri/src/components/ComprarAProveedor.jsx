@@ -242,7 +242,7 @@ function ComprarAProveedor() {
                         type="submit"
                         className="bg-green-600 hover:bg-green-600 text-white px-6 py-2 rounded-xl"
                     >
-                        ✅ Realizar Compra
+                        ✅ Generar factura
                     </button>
 
                     <button

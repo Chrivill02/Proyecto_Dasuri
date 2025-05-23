@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import Link from 'next/link';
 
 export default function CitasFormPage() {
   const [citas, setCitas] = useState([]);
@@ -256,6 +257,11 @@ export default function CitasFormPage() {
 
   return (
     <div className="p-6 max-w-5xl mx-auto bg-white min-h-screen">
+    <Link href="/">
+      <button className="inline-flex items-center px-3 py-2 border border-indigo-600 shadow-sm text-sm font-medium rounded-md text-white bg-purple-700 hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mb-4">
+        ← Inicio
+      </button>
+    </Link>
       <h1 className="text-3xl font-bold text-center mb-6 text-purple-800">Gestión de Citas de Servicio</h1>
 
       <div className="flex flex-row gap-6">
@@ -272,7 +278,6 @@ export default function CitasFormPage() {
                     <th className="border p-2">Fecha</th>
                     <th className="border p-2">Hora</th>
                     <th className="border p-2">Estado</th>
-                    <th className="border p-2">Costo</th>
                     <th className="border p-2">Nombre</th>
                     <th className="border p-2">Teléfono</th>
                     <th className="border p-2">Servicios</th>
@@ -287,7 +292,7 @@ export default function CitasFormPage() {
                       <td className="border p-2">{cita.fecha_cita}</td>
                       <td className="border p-2">{cita.hora_cita}</td>
                       <td className="border p-2">{cita.estado}</td>
-                      <td className="border p-2">Q{cita.costo}</td>
+
                       <td className="border p-2">{cita.nombre_cliente}</td>
                       <td className="border p-2">{cita.telefono_cliente}</td>
                       <td className="border p-2">
