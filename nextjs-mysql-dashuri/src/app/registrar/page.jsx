@@ -110,7 +110,7 @@ export default function RegistrarPage() {
           </div>
 
           {/* Si el usuario es admin, mostrar el campo de nivel */}
-          {userNivel === 1 && (
+          {userNivel === 0 && (
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">Nivel</label>
               <select
