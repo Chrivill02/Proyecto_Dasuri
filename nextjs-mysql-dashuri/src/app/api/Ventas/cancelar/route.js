@@ -52,7 +52,7 @@ export async function POST(request) {
 
     const ventaId = ventaResult.insertId;
 
-    // 3. Crear detalle de la reserva con estado 'pendiente' (CORREGIDO)
+    // 3. Crear detalle de la reserva con estado 'pendiente'
     const precioUnitario = producto[0].precio;
     await connection.query(
       'INSERT INTO detalles_reserva_producto (venta_id, producto_id, cantidad, precio, estado) VALUES (?, ?, ?, ?, "pendiente")',
