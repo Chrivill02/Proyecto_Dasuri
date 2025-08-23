@@ -10,16 +10,37 @@ export default function CatalogoPage() {
   const [bitacora, setBitacora] = useState([]);
 
   // 🔹 Registrar evento en bitácora
-  const registrarEnBitacora = (accion, detalle) => {
-    const evento = {
-      fecha: new Date().toISOString(),
-      usuarioId,
-      accion,
-      detalle
-    };
-    setBitacora((prev) => [...prev, evento]);
-    console.log("📒 Bitácora:", evento);
+  const registrarEnBitacora = async (accion, detalle, estado = "pendiente") => {
+  const evento = {
+    fecha: new Date().toISOString(),
+    usuarioId,
+    accion,
+    detalle,
+    estado,
   };
+
+  // Guardar localmente
+  setBitacora((prev) => [...prev, evento]);
+  console.log("📒 Bitácora:", evento);
+
+  // Guardar en la BD
+  try {
+    await fetch("/api/bitacora", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        usuario_id: usuarioId,
+        accion,
+        detalle,
+        estado,
+        fecha: evento.fecha,
+      }),
+    });
+  } catch (error) {
+    console.error("❌ Error al registrar en BD:", error);
+  }
+};
+
 
   useEffect(() => {
     // Verificar usuario
@@ -85,7 +106,13 @@ export default function CatalogoPage() {
         productoId,
         cantidad,
         total,
-      });
+      }, "en_proceso");
+
+      registrarEnBitacora("Reserva confirmada", {
+        productoId,
+        cantidad,
+        total,
+      }, "exitoso");
 
       const response = await fetch('/api/Ventas', {
         method: 'POST',
