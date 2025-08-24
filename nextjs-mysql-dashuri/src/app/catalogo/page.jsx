@@ -7,42 +7,26 @@ export default function CatalogoPage() {
   const [cantidades, setCantidades] = useState({});
   const [usuarioId, setUsuarioId] = useState(null);
   const [cargandoUsuario, setCargandoUsuario] = useState(true);
-  const [reservando, setReservando] = useState({});
-  const [mensaje, setMensaje] = useState('');
-  const [reservas, setReservas] = useState([]);
-  const [mostrarReservas, setMostrarReservas] = useState(false);
 
   useEffect(() => {
     // Verificar el usuario en el cliente
-    const verificarUsuario = () => {
-      if (typeof window !== 'undefined') {
-        const id = localStorage.getItem('usuarioId') || 
-                   localStorage.getItem('userId') || 
-                   localStorage.getItem('idUsuario');
-        
-        if (id) {
-          setUsuarioId(Number(id));
-        }
-        setCargandoUsuario(false);
+    if (typeof window !== 'undefined') {
+      // Intentar con varias keys comunes donde podría estar el ID
+      const id = localStorage.getItem('usuarioId') || 
+                 localStorage.getItem('userId') || 
+                 localStorage.getItem('idUsuario');
+      
+      if (id) {
+        setUsuarioId(Number(id));
       }
-    };
-
-    verificarUsuario();
+      setCargandoUsuario(false);
+    }
 
     // Cargar productos
-    const cargarProductos = async () => {
-      try {
-        const response = await fetch('/api/catalogo');
-        if (!response.ok) throw new Error('Error al cargar productos');
-        const data = await response.json();
-        setProductos(data);
-      } catch (error) {
-        console.error('Error al cargar productos:', error);
-        setMensaje('Error al cargar productos');
-      }
-    };
-
-    cargarProductos();
+    fetch('/api/catalogo')
+      .then(res => res.json())
+      .then(data => setProductos(data))
+      .catch(err => console.error('Error al cargar productos:', err));
   }, []);
 
   const cargarReservas = async () => {
@@ -77,10 +61,10 @@ export default function CatalogoPage() {
 
   const handleCantidadChange = (productoId, value) => {
     const cantidad = parseInt(value) || 0;
-    const producto = productos.find(p => p.id === productoId);
-    
+    const producto = productos.find((p) => p.id === productoId);
+
     if (producto && cantidad >= 0 && cantidad <= producto.stock) {
-      setCantidades(prev => ({
+      setCantidades((prev) => ({
         ...prev,
         [productoId]: cantidad
       }));
@@ -94,7 +78,7 @@ export default function CatalogoPage() {
     }
 
     const cantidad = cantidades[productoId] || 0;
-    const producto = productos.find(p => p.id === productoId);
+    const producto = productos.find((p) => p.id === productoId);
 
     if (!producto || cantidad <= 0) {
       setMensaje('Por favor selecciona una cantidad válida');
@@ -107,7 +91,8 @@ export default function CatalogoPage() {
     }
 
     if (!usuarioId) {
-      setMensaje('Debes iniciar sesión para reservar productos');
+      alert('Debes iniciar sesión para reservar productos. Por favor, recarga la página después de iniciar sesión.');
+      console.log('Contenido de localStorage:', { ...localStorage });
       return;
     }
 
@@ -119,38 +104,42 @@ export default function CatalogoPage() {
       const descripcion = `Reserva de ${cantidad} ${producto.nombre}`;
       const total = producto.precio * cantidad;
 
+      // 🔹 Registrar intento (punto de recuperación antes del envío)
+      registrarEnBitacora("Intento de reserva", {
+        productoId,
+        cantidad,
+        total,
+      }, "en_proceso");
+
+      registrarEnBitacora("Reserva confirmada", {
+        productoId,
+        cantidad,
+        total,
+      }, "exitoso");
+
       const response = await fetch('/api/Ventas', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          usuario_id: usuarioId,
-          total: total,
-          descripcion: descripcion,
-          producto_id: productoId,
-          cantidad: cantidad
-        }),
-      });
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    usuario_id: usuarioId,
+    total: total,
+    descripcion: descripcion,
+    producto_id: productoId,
+    cantidad: cantidad
+  }),
+});
+
 
       const data = await response.json();
 
       if (response.ok) {
-        setMensaje('✅ Reserva realizada con éxito. Ve a "Mis Reservas" para confirmar.');
-        
-        // Actualizar stock localmente
+        alert('Reserva realizada con éxito');
         setProductos(prev => prev.map(p => 
           p.id === productoId ? {...p, stock: p.stock - cantidad} : p
         ));
-        
-        // Resetear cantidad
         setCantidades(prev => ({...prev, [productoId]: 0}));
-        
-        // Recargar reservas
-        await cargarReservas();
-        
-        // Limpiar mensaje después de 5 segundos
-        setTimeout(() => setMensaje(''), 5000);
       } else {
         // Mejor manejo del error
         const errorMessage = data.error || 
@@ -160,6 +149,8 @@ export default function CatalogoPage() {
         throw new Error(errorMessage);
       }
     } catch (error) {
+      // 🔹 Registrar error
+      registrarEnBitacora("Error en reserva", { error: error.message });
       console.error('Error al reservar:', error);
       setMensaje(`❌ ${error.message}`);
     } finally {
@@ -211,12 +202,11 @@ export default function CatalogoPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-6">
-      <Link href="/">
-        <button className="inline-flex items-center px-3 py-2 border border-indigo-600 shadow-sm text-sm font-medium rounded-md text-white bg-purple-700 hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mb-4">
-          ← Inicio
-        </button>
-      </Link>
-      
+    <Link href="/">
+      <button className="inline-flex items-center px-3 py-2 border border-indigo-600 shadow-sm text-sm font-medium rounded-md text-white bg-purple-700 hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mb-4">
+        ← Inicio
+      </button>
+    </Link>
       <h1 className="text-3xl font-bold text-center mb-10 text-purple-700">
         Catálogo de Productos
       </h1>
@@ -309,27 +299,27 @@ export default function CatalogoPage() {
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {productos.map(producto => (
+        {productos.map((producto) => (
           <div
             key={producto.id}
             className="bg-white rounded-2xl shadow-md p-5 transform hover:scale-105 hover:shadow-xl transition-all duration-300"
           >
             <img
-              src={producto.imagen_url || 'https://placehold.co/300x160?text=Sin+Imagen'}
+              src={
+                producto.imagen_url ||
+                'https://placehold.co/300x160?text=Sin+Imagen'
+              }
               alt={producto.nombre}
               className="w-full h-40 object-contain rounded-xl mb-4 bg-white"
             />
 
-            <h2 className="text-xl font-semibold text-gray-800">{producto.nombre}</h2>
+            <h2 className="text-xl font-semibold text-gray-800">
+              {producto.nombre}
+            </h2>
             <p className="text-purple-700 font-bold text-lg">Q{producto.precio}</p>
-            <p className={`text-sm ${
-              producto.stock > 10 ? 'text-green-600' : 
-              producto.stock > 0 ? 'text-yellow-600' : 'text-red-600'
-            }`}>
-              Stock: {producto.stock}
-            </p>
+            <p className="text-sm text-gray-500">Stock: {producto.stock}</p>
             
-            {producto.stock > 0 ? (
+            {producto.stock > 0 && (
               <div className="mt-4">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Cantidad a reservar:
@@ -340,7 +330,9 @@ export default function CatalogoPage() {
                     min="0"
                     max={producto.stock}
                     value={cantidades[producto.id] || 0}
-                    onChange={(e) => handleCantidadChange(producto.id, e.target.value)}
+                    onChange={(e) =>
+                      handleCantidadChange(producto.id, e.target.value)
+                    }
                     className="w-20 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
                     disabled={reservando[producto.id] || !usuarioId}
                   />
@@ -376,12 +368,6 @@ export default function CatalogoPage() {
           </div>
         ))}
       </div>
-
-      {productos.length === 0 && !mensaje && (
-        <div className="text-center text-gray-600 mt-10">
-          No hay productos disponibles en este momento.
-        </div>
-      )}
     </div>
   );
 }
