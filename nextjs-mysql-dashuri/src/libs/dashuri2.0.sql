@@ -68,6 +68,34 @@ INSERT INTO `cita_servicio` VALUES (4,'2025-05-23','11:01:00','Pendiente',400.00
 /*!40000 ALTER TABLE `cita_servicio` ENABLE KEYS */;
 UNLOCK TABLES;
 
+
+--
+-- Table structure for table `cita_servicio_detalle`
+--
+
+DROP TABLE IF EXISTS `bitacora_transacciones`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE bitacora_transacciones (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_id INT,
+  accion VARCHAR(50),
+  detalle JSON,
+  estado ENUM('INICIO','CONFIRMADO','ERROR','REVERTIDO'),
+  fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+--
+-- Dumping data for table `bitacora_transacciones`
+--
+
+LOCK TABLES `bitacora_transacciones` WRITE;
+/*!40000 ALTER TABLE `bitacora_transacciones` DISABLE KEYS */;
+/*!40000 ALTER TABLE `bitacora_transacciones` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+
 --
 -- Table structure for table `cita_servicio_detalle`
 --
