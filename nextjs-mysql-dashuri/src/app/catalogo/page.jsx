@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import axios from 'axios';
 
 export default function CatalogoPage() {
   const [productos, setProductos] = useState([]);
@@ -16,36 +17,52 @@ export default function CatalogoPage() {
   const [mostrarReservas, setMostrarReservas] = useState(false);
 
   // 🔹 Registrar evento en bitácora
-  const registrarEnBitacora = async (accion, detalle, estado = "pendiente") => {
-    const evento = {
-      fecha: new Date().toISOString(),
-      usuarioId,
-      accion,
-      detalle,
-      estado,
-    };
+// 🔹 Registrar evento en bitácora con estados más cortos
 
-    // Guardar localmente
-    setBitacora((prev) => [...prev, evento]);
-    console.log("📒 Bitácora:", evento);
+// ...
+const registrarEnBitacora = async (accion, detalle, estado = "pendiente") => {
+  const fechaFormateada = new Date().toLocaleString('es-GT', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    timeZone: 'America/Guatemala'
+  });
 
-    // Guardar en la BD
-    try {
-      await fetch("/api/bitacora", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          usuario_id: usuarioId,
-          accion,
-          detalle,
-          estado,
-          fecha: evento.fecha,
-        }),
-      });
-    } catch (error) {
-      console.error("❌ Error al registrar en BD:", error);
-    }
+  const estadosMap = {
+    'pendiente': 'pendiente',
+    'en_proceso': 'proceso',
+    'exitoso': 'exitoso',
+    'fallido': 'fallido',
+    'error': 'error',
+    'completado': 'completo',
+    'cancelado': 'cancelado'
   };
+
+  const estadoCorto = estadosMap[estado] || estado;
+
+  const datosParaBD = {
+    usuario_id: usuarioId,
+    accion,
+    detalle,
+    estado: estadoCorto,
+    fecha: fechaFormateada,
+  };
+
+  // Guardar local para mostrar en UI
+  setBitacora((prev) => [...prev, { ...datosParaBD, estado }]);
+
+  try {
+    //const response = await fetch("api/bitacora")
+    const res = await fetch("/api/bitacora", datosParaBD);
+    console.log("✅ Registro guardado en BD:", res.data);
+  } catch (error) {
+    console.error("❌ Error al registrar en BD:", error);
+  }
+};
+
 
   useEffect(() => {
     // Verificar usuario
@@ -174,7 +191,7 @@ export default function CatalogoPage() {
 
       if (response.ok) {
         // 🔹 Registrar éxito
-        registrarEnBitacora("Reserva confirmada", {
+        registrarEnBitacora("Reserva realizada", {
           productoId,
           cantidad,
           ventaId: data.id,
@@ -209,38 +226,73 @@ export default function CatalogoPage() {
   };
 
   const manejarReserva = async (ventaId, accion) => {
-    try {
-      const response = await fetch('/api/reservas', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+  try {
+    // 🔹 Obtener información de la reserva antes de procesarla
+    const reserva = reservas.find(r => r.venta_id === ventaId);
+    const detalleReserva = {
+      ventaId,
+      productoNombre: reserva?.producto_nombre || 'Producto desconocido',
+      cantidad: reserva?.cantidad || 0,
+      total: reserva?.total || 0
+    };
+
+    // 🔹 Registrar el inicio de la acción en bitácora
+    registrarEnBitacora(
+      accion === 'confirmar' ? "Confirmando reserva" : "Cancelando reserva", 
+      detalleReserva, 
+      "en_proceso"
+    );
+
+    const response = await fetch('/api/reservas', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ venta_id: ventaId, accion }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      // 🔹 Registrar el éxito de la acción en bitácora
+      registrarEnBitacora(
+        accion === 'confirmar' ? "Reserva confirmada por usuario" : "Reserva cancelada por usuario",
+        {
+          ...detalleReserva,
+          resultado: data.message || `Reserva ${accion}ada exitosamente`
         },
-        body: JSON.stringify({ venta_id: ventaId, accion }),
-      });
+        "exitoso"
+      );
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setMensaje(data.message);
-
-        const productosResponse = await fetch('/api/catalogo');
-        const productosData = await productosResponse.json();
-        setProductos(productosData);
-
-        await cargarReservas();
-
-        setTimeout(() => setMensaje(''), 3000);
-      } else {
-        const errorMessage = data.error ||
-          data.message ||
-          data.details ||
-          'Error al procesar la reserva';
-        throw new Error(errorMessage);
-      }
-    } catch (error) {
-      setMensaje(`❌ ${error.message}`);
+      setMensaje(data.message);
+      
+      // Actualizar productos y reservas
+      const productosResponse = await fetch('/api/catalogo');
+      const productosData = await productosResponse.json();
+      setProductos(productosData);
+      await cargarReservas();
+      
+      setTimeout(() => setMensaje(''), 3000);
+    } else {
+      const errorMessage = data.error || data.message || data.details || 'Error al procesar la reserva';
+      throw new Error(errorMessage);
     }
-  };
+  } catch (error) {
+    // 🔹 Registrar el error en bitácora
+    registrarEnBitacora(
+      accion === 'confirmar' ? "Error al confirmar reserva" : "Error al cancelar reserva",
+      {
+        ventaId,
+        error: error.message,
+        accion
+      },
+      "fallido"
+    );
+    
+    console.error('Error al manejar reserva:', error);
+    setMensaje(`❌ ${error.message}`);
+  }
+};
 
   const toggleReservas = async () => {
     if (!mostrarReservas) {
