@@ -29,12 +29,18 @@ export default function VentasPage() {
             const response = await fetch('/api/Ventas');
             
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(
-                    errorData.message || 
-                    `Error HTTP ${response.status} al cargar las ventas`
-                );
-            }
+    let errorData = {};
+    try {
+        errorData = await response.json();
+    } catch {
+        errorData = { message: "Respuesta vacía o no hay JSON" };
+    }
+
+    throw new Error(
+        errorData.message ||
+        `Error HTTP ${response.status} al cargar las ventas`
+    );
+}
             
             const data = await response.json();
             setVentas(Array.isArray(data) ? data : (data.data || []));
