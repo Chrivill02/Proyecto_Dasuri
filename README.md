@@ -1,3 +1,32 @@
+# Dashuri - Sistema Integral de Inventario y Citas
+
+Dashuri es una plataforma Full-Stack escalable diseñada específicamente para el sector de belleza y cosmética. El sistema centraliza la gestión operativa del negocio, combinando un punto de venta (POS) para productos físicos, control avanzado de inventario y un motor de reservas para servicios y citas.
+
+## Características Principales (Features)
+
+* **Gestión de Agenda y Servicios:** Módulo de reservas dinámico que permite la creación de nuevas citas, administración de los servicios ofrecidos por el salón y control de disponibilidad de horarios.
+* **Control de Inventario de Maquillaje:** CRUD completo para productos y categorías. Monitoreo de stock en tiempo real, registro de entradas/salidas y gestión de compras directas a proveedores.
+* **Catálogo Digital:** Interfaz orientada al cliente para la visualización de productos disponibles filtrados por categoría.
+* **Arquitectura de API REST:** Backend construido nativamente con Next.js API Routes, garantizando respuestas rápidas y una integración perfecta con el frontend.
+* **Autenticación y Seguridad:** Sistema de login y registro para proteger rutas administrativas e información sensible del negocio.
+
+## Tech Stack
+
+**Frontend:**
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+
+**Backend & API:**
+![Node.js](https://img.shields.io/badge/Next_API_Routes-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+*(Nota: Añade aquí el badge de tu base de datos, ej: MySQL o PostgreSQL)*
+
+## ⚙️ Instalación y Configuración Local
+
+1. Clonar el repositorio:
+   ```bash
+   git clone [TU_URL_DEL_REPOSITORIO]
+
 # Configuración del Proyecto Dashuri (Windows)
 
 ```bash
